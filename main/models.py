@@ -29,7 +29,7 @@ class UserRole(models.Model):
 
 # Главная инфа гтд (1 на весь документ)
 class GtdMain(models.Model):
-    gtdId = models.CharField(max_length=23, verbose_name='Номер гтд')
+    gtdId = models.CharField(max_length=23, verbose_name='Номер гтд', unique=True)
     customs_house = models.ForeignKey('CustomsHouse', on_delete=models.PROTECT, verbose_name='id таможенного отделения', related_name="+")
     date = models.DateField(verbose_name='Дата')
     order_num = models.CharField(max_length=7, verbose_name='Порядковый номер')

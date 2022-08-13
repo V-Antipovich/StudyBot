@@ -42,11 +42,11 @@ def upload_gtd(request):
             last_file = last_one.document
             path = os.path.join(settings.MEDIA_ROOT, str(last_file))
             # Получили словарь с распарсенной гтд
-            get_gtdmain = parse_gtd(path)  # TODO: Путь правильный, необходимо редачить файл с парсингом!
+            get_gtdmain = parse_gtd(path)
 
-            # Получим данные из базы для полей-внешних ключей
-
+            # Работа с GtdMain - основная инфа в шапке ГТД
             # Обновим справочник экспортеров если требуется
+            #  TODO: вероятно, придется фиксить повторяющихся экспортеров (путаница с городами, странами и регионами)
             exporter_info = get_gtdmain["exporter"]
             add_exporter, exp_created = Exporter.objects.get_or_create(
                 name=exporter_info["name"],
@@ -60,48 +60,46 @@ def upload_gtd(request):
 
             # Обновим справочник импортеров если требуется
             importer_info = get_gtdmain["importer"]
-            if not Importer.objects.get(name=importer_info["name"]):
-                add_importer = Importer(
-                    name=importer_info["name"],
-                    postal_code=importer_info["postal_code"],
-                    country=Country.objects.get(code=importer_info["country"]).pk,
-                    city=importer_info["city"],
-                    street_house=importer_info["street_house"],
-                    house=importer_info["house"],
-                    inn=importer_info["inn"],
-                    ogrn=importer_info["ogrn"],
-                    kpp=importer_info["kpp"]
-                )
-                add_importer.save()
-
-            add_gtdmain = GtdMain(
-                gtdId=get_gtdmain["gtdId"],
-                customs_house=CustomsHouse.objects.get(house_num=get_gtdmain["customs_house"]).pk,
-                date=get_gtdmain["date"],
-                order_num=get_gtdmain["order_num"],
-                total_goods_number=get_gtdmain["total_goods_number"],
-                exporter=Exporter.objects.get(name=exporter_info["name"]),
-                importer=Importer.objects.get(name=importer_info["name"]),
-                trading_country=Country.objects.get(code=get_gtdmain["trading_country"]),
-                total_cost=get_gtdmain["total_cost"],
-                currency=Currency.objects.get(short_name=get_gtdmain["currency"]).pk,
-                total_invoice_amount=get_gtdmain["total_invoice_amount"],
-                currency_rate=get_gtdmain["currency_rate"],
-                deal_type=DealType.objects.get(code=get_gtdmain["deal_type"]).pk,
-                gtd_file=last_file  # TODO: тут костыль, его надо бы поправить как-то
+            add_importer, imp_created = Importer.objects.get_or_create(
+                name=importer_info["name"],
+                postal_code=importer_info["postal_code"],
+                country=Country.objects.get(code=importer_info["country"]),
+                city=importer_info["city"],
+                street_house=importer_info["street_house"],
+                house=importer_info["house"],
+                inn=importer_info["inn"],
+                ogrn=importer_info["orgn"],
+                kpp=importer_info["kpp"]
             )
-            add_gtdmain.save()
 
-            # TODO: необходимо внедрить парсинг
+            # Теперь добавляем главную инфу гтд, если номера документа еще нет в базе.
+            if not GtdMain.objects.filter(gtdId=get_gtdmain["gtdId"]).exists():
+                add_gtdmain = GtdMain(
+                    gtdId=get_gtdmain["gtdId"],
+                    customs_house=CustomsHouse.objects.get(house_num=get_gtdmain["customs_house"]),
+                    date=get_gtdmain["date"],
+                    order_num=get_gtdmain["order_num"],
+                    total_goods_number=get_gtdmain["total_goods_number"],
+                    exporter=Exporter.objects.get(name=exporter_info["name"]),
+                    importer=Importer.objects.get(name=importer_info["name"]),
+                    trading_country=Country.objects.get(code=get_gtdmain["trading_country"]),
+                    total_cost=get_gtdmain["total_cost"],
+                    currency=Currency.objects.get(short_name=get_gtdmain["currency"]),
+                    total_invoice_amount=get_gtdmain["total_invoice_amount"],
+                    currency_rate=get_gtdmain["currency_rate"],
+                    deal_type=DealType.objects.get(code=get_gtdmain["deal_type"]),
+                    gtd_file=last_one
+                )
+                add_gtdmain.save()
             context = {
                 "one": request.POST,
                 "two": request.POST,
                 "three": last_one,
                 'path': path,
                 'export': add_exporter,
-                # 'gtd': add_gtdmain
+                #'gtd': add_gtdmain
             }
-            return render(request, 'main/test.html', context)  # Заглушка, потребуется переадресация на другую страницу
+            return render(request, 'main/test.html', context)  # TODO: Заглушка, потребуется переадресация на другую страницу
     else:
         form = UploadGtdForm()
     context = {'form': form}
