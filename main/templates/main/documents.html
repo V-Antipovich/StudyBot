@@ -1,0 +1,7 @@
+{% extends 'layout/base.html' %}
+{% load bootstrap4 %}
+{% block title %}Документы{% endblock %}
+{% block content %}
+<div class="font-weight-bold" >Здесь будут документы</div>
+<div><a href="{% url 'main:upload_gtd' %}">Загрузить ГТД</a> </div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'layout/base.html' %}
+{% block title %}Проверяем штучки-дрючки{% endblock %}
+{% block content %}
+    <p>Ура, ты попал на секретную страницу после загрузки ГТД</p>
+    <div>
+        {{ one }}
+    </div>
+    <div> ----------------------------------------------------</div>
+    <div>
+        {{ two.description }}
+    </div>
+    <div> ----------------------------------------------------</div>
+    <div>{{ three.description }}</div>
+    <div>{{ three.uploaded_at }}</div>
+    <div>{{ three.document }}</div>
+    <div>-------------------</div>
+    <div>{{ path }}</div>
+    <div>---------------------------</div>
+    <p>{{ export }}</p>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "layout/base.html" %}
+
+{% block title %}ГТД{% endblock %}
+
+{% block content %}
+    {% for gtd_file in gtd_files %}
+        <p>{{ gtd_file.description }}</p>
+        <p>{{ gtd_file.document }}</p>
+        <p>{{ gtd_file.uploaded_at }}</p>
+        <p>---------------------------</p>
+    {% endfor %}
+{% endblock %}
