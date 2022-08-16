@@ -8,7 +8,7 @@ def parse_gtd(filename):
     f.close()
     raw_gtd = Bs(content, "xml")
     # groups, goods, documents = [], [], []
-    gtd_groups, gtd_goods, gtd_documents = [], [], []
+    gtd_groups = []
 
     # В таблицу ГТД (1 на весь документ)
     # Номер гтд
@@ -119,9 +119,7 @@ def parse_gtd(filename):
         'total_invoice_amount': total_invoice_amount,
         'currency_rate': currency_rate,
         'deal_type': deal_type_code,
-
     }
-    return gtd_main
 
     # В таблицу с группами товаров (несколько на весь документ) + СОПРОВОДИТЕЛЬНЫЕ ДОКУМЕНТЫ
     raw_groups = raw_gtd.find_all("ESADout_CUGoods")
@@ -170,27 +168,16 @@ def parse_gtd(filename):
             elif tax_type == '2010':
                 fee += float(tax.find('PaymentAmount').text)
                 fee_percent += float(tax.find('Rate').text)
-        gtd_group = {
-            'number': group_number,
-            'gross_weight': gross_weight,
-            'net_weight': net_weight,
-            'customs_cost': customs_cost,
-            'fee': fee,
-            'ndc': ndc,
-            'fee_percent': fee_percent,
-            'ndc_percent': ndc_percent,
-            'country': origin_country,
-            'prev_procedure': prev_type_code,
-            'procedure': main_type_code,
-            'tn_ved': TN_VED
-        }
-        gtd_groups.append(gtd_group)
 
         # Сопроводительные документы
+        gtd_documents = []
         raw_docs = raw_group.find_all('ESADout_CUPresentedDocument')
         for raw_doc in raw_docs:
             # Название документа
             doc_name = raw_doc.find('PrDocumentName').text
+
+            # Тип документа
+            doc_type = int(raw_doc.find('PresentedDocumentModeCode').text)
 
             # Номер документа
             doc_number = raw_doc.find('PrDocumentNumber').text
@@ -199,7 +186,9 @@ def parse_gtd(filename):
             present_code_num = raw_doc.find('DocPresentKindCode').text
 
             # Дата
-            doc_date = raw_doc.find('PrDocumentDate').text
+            doc_date = raw_doc.find('PrDocumentDate')
+            if doc_date:
+                doc_date = doc_date.text
 
             # Дата начала действия
             attempt = raw_doc.find('DocumentBeginActionsDate')
@@ -214,22 +203,25 @@ def parse_gtd(filename):
                 doc_expire_date = attempt.text
             else:
                 doc_expire_date = None
-            document = {
-                'document_name': doc_name,
-                'date': doc_date,
-                'begin_date': doc_begin_date,
-                'expire_date': doc_expire_date,
-                'present_code': present_code_num
+            gtd_document = {
+                    'name': doc_name,
+                    'number': doc_number,
+                    'doc_type': doc_type,
+                    'date': doc_date,
+                    'begin_date': doc_begin_date,
+                    'expire_date': doc_expire_date,
             }
-            gtd_documents.append(document)
+            gtd_documents.append(gtd_document)
 
         # Товары в ГТД (в цикле)
+        gtd_goods = []
         raw_goods = raw_gtd.find_all('GoodsGroupDescription')
         for raw_good in raw_goods:
             # Название товара
             good_name = raw_good.find('GoodsDescription').text
-
             raw_good_infos = raw_good.find_all('GoodsGroupInformation')
+            # Номер товара в группе
+            good_group_num = raw_good.find('GroupNum').text
             for raw_good_info in raw_good_infos:
                 # Ариткул
                 attempt = raw_good_info.find('GoodsMarking')
@@ -237,15 +229,51 @@ def parse_gtd(filename):
                     good_marking = attempt.text
                 else:
                     good_marking = raw_good_info.find('GoodsModel').text
-
                 # Торговый знак
-                trade_mark = raw_good_info.find('TradeMark').text
-
+                trade_mark = raw_good_info.find('TradeMark')
+                if trade_mark:
+                    trade_mark = trade_mark.text
                 # Торговая марка
-                good_mark = raw_good_info.find('GoodsMark').text
-
+                good_mark = raw_good_info.find('GoodsMark')
+                if good_mark:
+                    good_mark = good_mark.text
                 # Производитель
-                manufacturer = raw_good_info.find("Manufacturer").text
+                manufacturer = raw_good_info.find("Manufacturer")
+                if manufacturer:
+                    manufacturer = manufacturer.text
+                raw_quantity = raw_good_info.find('GoodsGroupQuantity')
+                quantity = raw_quantity.find('GoodsQuantity').text
+                qualifier_code = raw_quantity.find('MeasureUnitQualifierCode').text
+                gtd_good = {
+                    'good': {
+                        'marking': good_marking,
+                        'name': good_name,
+                        'trademark': trade_mark,
+                        'brand': good_mark,
+                    },
+                    'good_num': good_group_num,
+                    'quantity': quantity,
+                    'qualifier_code': qualifier_code,
+                    'manufacturer': manufacturer,
+                }
+                gtd_goods.append(gtd_good)
 
-                # Номер товара в группе
-            good_group_num = raw_good.find('GroupNum').text
+        gtd_group = {
+            'tn_ved': TN_VED,
+            'number': group_number,
+            'gross_weight': gross_weight,
+            'net_weight': net_weight,
+            'country': origin_country,
+            'procedure': main_type_code,
+            'prev_procedure': prev_type_code,
+            'customs_cost': customs_cost,
+            'fee': fee,
+            'ndc': ndc,
+            'fee_percent': fee_percent,
+            'ndc_percent': ndc_percent,
+            'documents': gtd_documents,
+            'goods': gtd_goods,
+        }
+        gtd_groups.append(gtd_group)
+
+    return gtd_main, gtd_groups
