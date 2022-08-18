@@ -4,7 +4,7 @@ from .forms import UploadGtdForm
 from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType, Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType
 from django.conf import settings
 import os
-from .utilities import parse_gtd
+from .utilities import parse_gtd, get_tnved_name
 
 
 # Create your views here.
@@ -43,11 +43,7 @@ def upload_gtd(request):
                 # Получили словарь с распарсенной гтд
                 get_gtdmain, get_gtdgroups = parse_gtd(path)
 
-
-
-                # TODO: замени всю эту херню на get_or_create, не позорься
                 # Работа с GtdMain - основная инфа в шапке ГТД
-
 
             # Обновим справочник экспортеров если требуется
                 exporter_info = get_gtdmain["exporter"]
@@ -60,6 +56,7 @@ def upload_gtd(request):
                     house=exporter_info["house"],
                     region=exporter_info['region']
                 )
+
 
                 # Обновим справочник импортеров
                 importer_info = get_gtdmain["importer"]
@@ -78,34 +75,43 @@ def upload_gtd(request):
                     add_importer.save()
 
                 # Добавим непосредственно главную инфу гтд
+                """if not GtdMain.objects.filter(gtdId=get_gtdmain["gtdId"]).exists():
+                    GtdMain = ()"""
                 add_gtdmain, gtdmain_created = GtdMain.objects.get_or_create(
                     gtdId=get_gtdmain["gtdId"],
+                    customs_house=CustomsHouse.objects.get(house_num=get_gtdmain["customs_house"]),
+                    date=get_gtdmain["date"],
+                    order_num=get_gtdmain["order_num"]
                 )
-
                 if gtdmain_created:
-                    add_gtdmain.customs_house = CustomsHouse.objects.get(house_num=get_gtdmain["customs_house"]),
-                    add_gtdmain.date = get_gtdmain["date"],
-                    add_gtdmain.order_num = get_gtdmain["order_num"],
-                    add_gtdmain.total_goods_number = get_gtdmain["total_goods_number"],
-                    add_gtdmain.exporter = add_exporter,
-                    add_gtdmain.importer = add_importer,
-                    add_gtdmain.trading_country = Country.objects.get(code=get_gtdmain["trading_country"]),
-                    add_gtdmain.total_cost = get_gtdmain["total_cost"],
-                    add_gtdmain.currency = Currency.objects.get(short_name=get_gtdmain["currency"]),
-                    add_gtdmain.total_invoice_amount = get_gtdmain["total_invoice_amount"],
-                    add_gtdmain.currency_rate = get_gtdmain["currency_rate"],
-                    add_gtdmain.deal_type = DealType.objects.get(code=get_gtdmain["deal_type"]),
+                    add_gtdmain.total_goods_number = get_gtdmain["total_goods_number"]
+                    add_gtdmain.exporter = Exporter.objects.get(name=exporter_info['name'])
+                    add_gtdmain.importer = Importer.objects.get(name=importer_info['name'])
+                    add_gtdmain.trading_country = Country.objects.get(code=get_gtdmain["trading_country"])
+                    add_gtdmain.total_cost = get_gtdmain["total_cost"]
+                    add_gtdmain.currency = Currency.objects.get(short_name=get_gtdmain["currency"])
+                    add_gtdmain.total_invoice_amount = get_gtdmain["total_invoice_amount"]
+                    add_gtdmain.currency_rate = get_gtdmain["currency_rate"]
+                    add_gtdmain.deal_type = DealType.objects.get(code=get_gtdmain["deal_type"])
                     add_gtdmain.gtd_file = last_one
                     add_gtdmain.save()
-
 
                 # Теперь в цикле надо пройтись по группам ГТД.
                 # gtd_id = GtdMain.objects.get(gtdId=get_gtdmain["gtdId"])
                 for group in get_gtdgroups:
                     # Заносим группу, если такой ещё не было
+
+                    # Проверяем ТН ВЭД
+                    add_tnved, tnved_created = TnVed.objects.get_or_create(
+                        code=group["tn_ved"]
+                    )
+                    if tnved_created:
+                        add_tnved.subposition = get_tnved_name(str(group["tn_ved"]))
+                        add_tnved.save()
+
                     add_gtdgroup, gtdgroup_created = GtdGroup.objects.get_or_create(
                         gtd=add_gtdmain,
-                        tn_ved=TnVed.objects.get(code=group["tn_ved"]), # TODO: Надо как-то быстро парсить сайт и добавлять если такого номера нет!
+                        tn_ved=add_tnved,
                         number=group["number"],
                         gross_weight=group['gross_weight'],
                         net_weight=group['net_weight'],
@@ -188,18 +194,14 @@ def upload_gtd(request):
                             group=add_gtdgroup,
                             document=add_document,
                         )
-                # TODO: верни на место
-                # docs = [gtd_group['documents'] for gtd_group in get_gtdgroups]
-                # doctype = [[(piece['doc_type'], DocumentType.objects.filter(code=piece['doc_type']).exists()) for piece in doc] for doc in docs]
                 context = {
                     # "one": request.POST,
                     # "two": request.POST,
                     # "three": last_one,
                     # 'path': path,
-                    'main': get_gtdmain,
-                    'customs': str(type(CustomsHouse.objects.get(house_num=get_gtdmain["customs_house"])))
-                    # 'doctypes': doctype
-                    # 'check': [x["doc_type"] for x in gtd_documents],
+                    'main': add_gtdmain,
+                    #  'get': add_gtdmain,
+                    'exp': add_exporter  # Exporter.objects.get(name=exporter_info['name'])
                 }
                 return render(request, 'main/test.html',
                               context)  # TODO: Заглушка, потребуется переадресация на другую страницу

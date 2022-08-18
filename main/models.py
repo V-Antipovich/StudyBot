@@ -23,8 +23,8 @@ class RegUser(AbstractUser):
 
 # Какие роли есть у данного юзера
 class UserRole(models.Model):
-    user = models.ForeignKey('RegUser', on_delete=models.PROTECT, verbose_name='id пользователя', related_name="+")
-    role = models.ForeignKey('Role', on_delete=models.PROTECT, verbose_name='id роли', related_name="+")
+    user = models.ForeignKey('RegUser', on_delete=models.PROTECT, verbose_name='id пользователя', related_name="users")
+    role = models.ForeignKey('Role', on_delete=models.PROTECT, verbose_name='id роли', related_name="roles")
 
     class Meta:
         verbose_name_plural = 'Роли пользователей'
@@ -34,24 +34,25 @@ class UserRole(models.Model):
 # Главная инфа гтд (1 на весь документ)
 class GtdMain(models.Model):
     gtdId = models.CharField(max_length=23, verbose_name='Номер гтд')
-    customs_house = models.ForeignKey('CustomsHouse', on_delete=models.PROTECT, verbose_name='id таможенного отделения', related_name="+", null=True, blank=True)
+    customs_house = models.ForeignKey('CustomsHouse', on_delete=models.PROTECT, verbose_name='id таможенного отделения', related_name="customs_houses", null=True, blank=True)
     date = models.DateField(verbose_name='Дата', null=True, blank=True)
     order_num = models.CharField(max_length=7, verbose_name='Порядковый номер', null=True, blank=True)
     total_goods_number = models.IntegerField(verbose_name='Всего товаров', null=True, blank=True)
-    exporter = models.ForeignKey('Exporter', verbose_name='id Экспортера', on_delete=models.PROTECT, related_name="+", null=True, blank=True)
-    importer = models.ForeignKey('Importer', verbose_name='id импортера', on_delete=models.PROTECT, related_name="+", null=True, blank=True)
-    trading_country = models.ForeignKey('Country', verbose_name='id торгующей страны', on_delete=models.PROTECT, null=True, blank=True)
+    exporter = models.ForeignKey('Exporter', verbose_name='id Экспортера', on_delete=models.PROTECT, related_name="exporters", null=True, blank=True)
+    importer = models.ForeignKey('Importer', verbose_name='id импортера', on_delete=models.PROTECT, related_name="importers", null=True, blank=True)
+    trading_country = models.ForeignKey('Country', verbose_name='id торгующей страны', on_delete=models.PROTECT, null=True, blank=True, related_name='trading_countries')
     total_cost = models.FloatField(verbose_name='Общая стоимость', null=True, blank=True)
-    currency = models.ForeignKey('Currency', verbose_name='id валюты', on_delete=models.PROTECT, related_name="+", null=True, blank=True)
+    currency = models.ForeignKey('Currency', verbose_name='id валюты', on_delete=models.PROTECT, related_name="currencies", null=True, blank=True)
     total_invoice_amount = models.FloatField(verbose_name='Общая стоимость по счету', null=True, blank=True)
     currency_rate = models.FloatField(verbose_name='Курс валюты', null=True, blank=True)
-    deal_type = models.ForeignKey('DealType', verbose_name='id характера сделки', on_delete=models.PROTECT, related_name="+", null=True, blank=True)
-    gtd_file = models.ForeignKey('UploadGtd', verbose_name='id xml-документа гтд', on_delete=models.PROTECT, related_name="+", null=True, blank=True)
+    deal_type = models.ForeignKey('DealType', verbose_name='id характера сделки', on_delete=models.PROTECT, related_name="deal_types", null=True, blank=True)
+    gtd_file = models.ForeignKey('UploadGtd', verbose_name='id xml-документа гтд', on_delete=models.PROTECT, related_name="gtd_files", null=True, blank=True)
 
     class Meta:
         verbose_name = 'Грузовая таможенная декларация'
         verbose_name_plural = 'Грузовые таможенные декларации'
         ordering = ['-date']
+        unique_together = ('gtdId', 'customs_house', 'date', 'order_num')
 
 
 # Отделы таможни
@@ -60,8 +61,8 @@ class CustomsHouse(models.Model):
     house_name = models.CharField(max_length=255, verbose_name='Название отдела')
 
     class Meta:
-        # verbose_name = 'Таможенный отдел'
-        verbose_name_plural = verbose_name = 'Таможенные отделы'
+        verbose_name = 'Таможенный отдел'
+        verbose_name_plural = 'Таможенные отделы'
 
 
 class Exporter(models.Model):
@@ -82,17 +83,18 @@ class Exporter(models.Model):
 class Importer(models.Model):
     name = models.CharField(max_length=255, verbose_name='Название компании', unique=True)
     postal_code = models.CharField(max_length=20, verbose_name='Почтовый индекс', null=True, blank=True)
-    country = models.ForeignKey('Country', on_delete=models.PROTECT, verbose_name='id страны', related_name="+")
+    country = models.ForeignKey('Country', on_delete=models.PROTECT, verbose_name='id страны', related_name="+", null=True, blank=True)
     city = models.CharField(max_length=100, verbose_name='Город', null=True, blank=True)
     street_house = models.CharField(max_length=100, verbose_name='Улица (и/или дом)', null=True, blank=True)
     house = models.CharField(max_length=100, verbose_name='Дом', null=True, blank=True)
     inn = models.CharField(max_length=15, verbose_name='ИНН', unique=True)
     ogrn = models.CharField(max_length=20, verbose_name='ОГРН', unique=True)
-    kpp = models.CharField(max_length=20, verbose_name='КПП')
+    kpp = models.CharField(max_length=20, verbose_name='КПП', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Импортер'
         verbose_name_plural = 'Импортеры'
+
 
 # Государства
 class Country(models.Model):
@@ -151,7 +153,7 @@ class GtdGroup(models.Model):
 # Классификатор товаров ТН ВЭД
 class TnVed(models.Model):
     code = models.CharField(max_length=18, verbose_name='Номер группы')
-    subposition = models.TextField(verbose_name='Подсубпозиция')
+    subposition = models.TextField(verbose_name='Подсубпозиция', null=True, blank=True)
 
     class Meta:
         verbose_name = 'ТН ВЭД'

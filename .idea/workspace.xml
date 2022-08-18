@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="GtdMain works properly!">
-      <change beforePath="$PROJECT_DIR$/.idea/customs_declarations_database.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/customs_declarations_database.iml" afterDir="false" />
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="everything's broken, but i need a backup">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/templates/main/test.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/test.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/utilities.py" afterDir="false" />
@@ -46,6 +44,9 @@
   },
   "keyToStringList": {
     "ChangesTree.GroupingKeys": [
+    ],
+    "DatabaseDriversLRU": [
+      "mysql"
     ]
   }
 }]]></component>
@@ -117,7 +118,7 @@
       <workItem from="1660225748554" duration="7772000" />
       <workItem from="1660372815670" duration="914000" />
       <workItem from="1660373810951" duration="24936000" />
-      <workItem from="1660492731548" duration="50638000" />
+      <workItem from="1660492731548" duration="63836000" />
     </task>
     <task id="LOCAL-00001" summary="restored most files after fixing models of exporters and importers">
       <created>1660373120746</created>
@@ -140,7 +141,21 @@
       <option name="project" value="LOCAL" />
       <updated>1660380269561</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="everything's broken, but i need a backup">
+      <created>1660679946378</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1660679946378</updated>
+    </task>
+    <task id="LOCAL-00005" summary="everything's broken, but i need a backup">
+      <created>1660679981699</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1660679981699</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -160,7 +175,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="restored most files after fixing models of exporters and importers" />
     <MESSAGE value="GtdMain works properly!" />
-    <option name="LAST_COMMIT_MESSAGE" value="GtdMain works properly!" />
+    <MESSAGE value="everything's broken, but i need a backup" />
+    <option name="LAST_COMMIT_MESSAGE" value="everything's broken, but i need a backup" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />

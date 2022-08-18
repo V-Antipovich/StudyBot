@@ -1,5 +1,6 @@
 import datetime
 from bs4 import BeautifulSoup as Bs
+import requests
 
 
 def parse_gtd(filename):
@@ -128,7 +129,7 @@ def parse_gtd(filename):
         group_number = raw_group.find("GoodsNumeric").text
 
         # Подсубпозиция товара (код ТН ВЭД)
-        TN_VED = raw_group.find('GoodsTNVEDCode').text
+        TN_VED = str(int(raw_group.find('GoodsTNVEDCode').text))
 
         # Масса брутто
         gross_weight = raw_group.find('GrossWeightQuantity').text
@@ -174,7 +175,11 @@ def parse_gtd(filename):
         raw_docs = raw_group.find_all('ESADout_CUPresentedDocument')
         for raw_doc in raw_docs:
             # Название документа
-            doc_name = raw_doc.find('PrDocumentName').text
+            doc_name = raw_doc.find('PrDocumentName')
+            if doc_name:
+                doc_name = doc_name.text
+            else:
+                doc_name = 'Документ не предоставлен'
 
             # Тип документа
             doc_type = int(raw_doc.find('PresentedDocumentModeCode').text)
@@ -277,3 +282,18 @@ def parse_gtd(filename):
         gtd_groups.append(gtd_group)
 
     return gtd_main, gtd_groups
+
+
+def get_tnved_name(code):
+    url = 'https://www.tks.ru/db/tnved/search?searchstr=' + code
+    response = requests.get(url)
+    soup = Bs(response.text, 'html.parser')
+    name = soup.find('ul', {'class': 'tnved'})
+    if name:
+        final_name = name.find('li').text[len(code)+5:]
+    else:
+        url = 'https://www.tks.ru/db/tnved/search?searchstr=' + '0' + code
+        response = requests.get(url)
+        soup = Bs(response.text, 'html.parser')
+        final_name = soup.find('ul', {'class': 'tnved'}).find('li').text[len(code)+6:]
+    return final_name
