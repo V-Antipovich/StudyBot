@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import RegUser, Role, CustomsHouse, Country, Currency, DealType, TnVed, Procedure, GtdMain, UserRole, Exporter, Importer, GtdGroup, GtdGood, Good, TradeMark, GoodsMark, Manufacturer, GtdDocument, Document, UploadGtd
+from .models import RegUser, Role, CustomsHouse, Country, Currency, DealType, TnVed, Procedure, GtdMain, UserRole, Exporter, Importer, GtdGroup, GtdGood, Good, TradeMark, GoodsMark, Manufacturer, GtdDocument, Document, UploadGtd, DocumentType
 # Register your models here.
 
 
@@ -24,3 +24,4 @@ admin.site.register(GoodsMark)
 admin.site.register(TradeMark)
 admin.site.register(Good)
 admin.site.register(GtdGood)
+admin.site.register(DocumentType)

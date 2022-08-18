@@ -26,7 +26,7 @@ def documents(request):
 
 # Сначала просто будем выводить все xml для скачивания, позже добавим другую инфу (как распарсим файлы)
 def show_gtd(request):
-    gtd_files = UploadGtd.objects.all()
+    gtd_files = GtdMain.objects.all()
     context = {'gtd_files': gtd_files}
     # TODO: Выводить из модели GtdMain
     return render(request, 'main/show_gtd.html', context)  # Заглушка: вывод не тех данных
