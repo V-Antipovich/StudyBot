@@ -1,19 +1,15 @@
 from django.shortcuts import render, redirect
 from django.db import IntegrityError
-from .forms import UploadGtdForm
-from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType, Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType
+from django.urls import reverse_lazy
+from .forms import UploadGtdfilesForm
+from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType, Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType, UploadGtdFile
 from django.conf import settings
+from django.views.generic.edit import FormView
 import os
 from .utilities import parse_gtd, get_tnved_name
 
 
 # Create your views here.
-
-
-def test_view(request):
-    return render(request, 'main/test.html')
-
-
 def index(request):
     return render(request, 'main/index.html')
 
@@ -26,26 +22,43 @@ def documents(request):
 
 # Сначала просто будем выводить все xml для скачивания, позже добавим другую инфу (как распарсим файлы)
 def show_gtd(request):
-    gtd_files = GtdMain.objects.all()
-    context = {'gtd_files': gtd_files}
-    # TODO: Выводить из модели GtdMain
-    return render(request, 'main/show_gtd.html', context)  # Заглушка: вывод не тех данных
+    declarations = GtdMain.objects.all()
+    # TODO: Шаблон привести в порядок, организовать вывод в списке (может там какой-нибудь listview)
+    context = {'gtds': declarations}
+    return render(request, 'main/show_gtd.html', context)
 
 
 def upload_gtd(request):
-        if request.method == 'POST':
-            form = UploadGtdForm(request.POST, request.FILES)
-            if form.is_valid():
-                form.save()
-                last_one = UploadGtd.objects.last()  # TODO: это костыль, который надо убрать при добавлении ролей
-                last_file = last_one.document
+    if request.method == 'POST':
+        form = UploadGtdfilesForm(request.POST, request.FILES)
+        if form.is_valid():
+            uploaded_gtd = UploadGtd(
+                description=request.POST['comment']
+            )
+            uploaded_gtd.save()
+            files = request.FILES.getlist('document')
+            file_objects = []
+            for file in files:
+                uploaded_gtd_file = UploadGtdFile(
+                    uploaded_gtd=uploaded_gtd,
+                    document=file
+                )
+                uploaded_gtd_file.save()
+                file_objects.append(uploaded_gtd_file)
+
+            uploaded_gtd.files_num = len(file_objects)
+            uploaded_gtd.save()
+
+            for gtd in file_objects:
+                last_file = gtd.document
+
                 path = os.path.join(settings.MEDIA_ROOT, str(last_file))
                 # Получили словарь с распарсенной гтд
                 get_gtdmain, get_gtdgroups = parse_gtd(path)
 
                 # Работа с GtdMain - основная инфа в шапке ГТД
 
-            # Обновим справочник экспортеров если требуется
+                # Обновим справочник экспортеров если требуется
                 exporter_info = get_gtdmain["exporter"]
                 add_exporter, exp_created = Exporter.objects.get_or_create(
                     name=exporter_info["name"],
@@ -93,7 +106,7 @@ def upload_gtd(request):
                     add_gtdmain.total_invoice_amount = get_gtdmain["total_invoice_amount"]
                     add_gtdmain.currency_rate = get_gtdmain["currency_rate"]
                     add_gtdmain.deal_type = DealType.objects.get(code=get_gtdmain["deal_type"])
-                    add_gtdmain.gtd_file = last_one
+                    add_gtdmain.gtd_file = gtd
                     add_gtdmain.save()
 
                 # Теперь в цикле надо пройтись по группам ГТД.
@@ -194,19 +207,21 @@ def upload_gtd(request):
                             group=add_gtdgroup,
                             document=add_document,
                         )
-                context = {
-                    # "one": request.POST,
-                    # "two": request.POST,
-                    # "three": last_one,
-                    # 'path': path,
-                    'main': add_gtdmain,
-                    #  'get': add_gtdmain,
-                    'exp': add_exporter  # Exporter.objects.get(name=exporter_info['name'])
-                }
-                return render(request, 'main/test.html',
-                              context)  # TODO: Заглушка, потребуется переадресация на другую страницу
-
+            context = {
+                "one": request.POST,
+                "two": request.FILES,
+                'three': uploaded_gtd.files_num,
+                'four': file_objects
+            }
+            # TODO: Заглушка, потребуется переадресация на другую страницу
+            return render(request, 'main/test.html', context)
+            #  return redirect('main:index')
         else:
-            form = UploadGtdForm()
-            context = {'form': form}
-            return render(request, 'main/upload_gtd.html', context)
+            return render(request, 'main/error.html')
+
+
+
+    else:
+        form = UploadGtdfilesForm()
+        context = {'form': form}
+        return render(request, 'main/upload_gtd.html', context)

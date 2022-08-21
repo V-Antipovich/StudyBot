@@ -25,3 +25,5 @@ admin.site.register(TradeMark)
 admin.site.register(Good)
 admin.site.register(GtdGood)
 admin.site.register(DocumentType)
+
+# TODO: нужен какой-то Inline для UploadGtd вместе с UploadGtdFile

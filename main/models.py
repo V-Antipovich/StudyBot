@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 # Роли
+# TODO: на админ панели заполнить
 class Role(models.Model):
     role_name = models.CharField(max_length=20, verbose_name='Роль', unique=True, editable=False)
 
@@ -46,7 +47,7 @@ class GtdMain(models.Model):
     total_invoice_amount = models.FloatField(verbose_name='Общая стоимость по счету', null=True, blank=True)
     currency_rate = models.FloatField(verbose_name='Курс валюты', null=True, blank=True)
     deal_type = models.ForeignKey('DealType', verbose_name='id характера сделки', on_delete=models.PROTECT, related_name="deal_types", null=True, blank=True)
-    gtd_file = models.ForeignKey('UploadGtd', verbose_name='id xml-документа гтд', on_delete=models.PROTECT, related_name="gtd_files", null=True, blank=True)
+    gtd_file = models.ForeignKey('UploadGtdFile', verbose_name='id xml-документа гтд', on_delete=models.PROTECT, related_name="gtd_files", null=True, blank=True)
 
     class Meta:
         verbose_name = 'Грузовая таможенная декларация'
@@ -202,7 +203,7 @@ class GoodsMark(models.Model):
 
 # Заводы (производители)
 class Manufacturer(models.Model):
-    manufacturer = models.CharField(max_length=100, verbose_name='Производитель')
+    manufacturer = models.CharField(max_length=255, verbose_name='Производитель')
 
     class Meta:
         verbose_name = 'Производитель'
@@ -279,11 +280,21 @@ class GtdDocument(models.Model):
 #  TODO: нужно поле, которое покажет id пользователя, который скинул файл (потом)
 class UploadGtd(models.Model):
     description = models.CharField(max_length=255, blank=True, verbose_name='Краткий комментарий')
-    document = models.FileField(upload_to='gtd/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
+    files_num = models.IntegerField(verbose_name='Количество прикрепленных файлов', null=True, blank=True)
     # Надо чтобы в таблице с главной инфой ГТД было еще поле со ссылкой на файл xml
 
     class Meta:
         verbose_name = 'Загруженная ГТД'
         verbose_name_plural = 'Загруженные ГТД'
         ordering = ['uploaded_at']
+
+
+class UploadGtdFile(models.Model):
+    uploaded_gtd = models.ForeignKey('UploadGtd', on_delete=models.PROTECT, verbose_name='id партии загруженных ГТД')
+    document = models.FileField(upload_to='gtd/')
+    uploaded_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Загруженный файл ГТД'
+        verbose_name_plural = 'Загруженные файлы ГТД'
