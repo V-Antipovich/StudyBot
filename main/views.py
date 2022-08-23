@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.db import IntegrityError
 from django.urls import reverse_lazy
 from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
+from django.http import FileResponse, HttpResponse
 from .forms import UploadGtdfilesForm
 from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType, Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType, UploadGtdFile
 from django.conf import settings
@@ -21,14 +23,8 @@ def test_view(request):
     }
     return render(request, 'main/test.html', context)
 
-"""
-def show_gtd(request):
-    declarations = GtdMain.objects.all()
-    # TODO: Шаблон привести в порядок, организовать вывод в списке (может там какой-нибудь listview)
-    context = {'gtds': declarations}
-    return render(request, 'main/show_gtd.html', context)"""
 
-
+# Список всех ГТД
 class ShowGtdView(ListView):
     template_name = 'main/show_gtd.html'
     context_object_name = 'gtds'
@@ -38,6 +34,39 @@ class ShowGtdView(ListView):
         return GtdMain.objects.all()
 
 
+class ShowGtdGroups(ListView):
+    template_name = 'main/groups_per_gtd.html'
+    context_object_name = 'groups'
+    paginate_by = 4
+
+    def get_queryset(self, *args, **kwargs):
+        return GtdGroup.objects.filter(gtd=self.kwargs.get('pk'))
+
+
+class ShowGtdGoodsInGroup(ListView):
+    template_name = 'main/goods_per_group.html'
+    context_object_name = 'goods'
+    paginate_by = 4
+
+    def get_queryset(self, *args, **kwargs):
+        return GtdGood.objects.filter(gtd=self.kwargs.get('gtd'), group=self.kwargs.get('group_pk'))
+
+
+class ShowGtdDocumentsInGroup(ListView):
+    template_name = 'main/documents_per_group.html'
+    context_object_name = 'documents'
+    paginate_by = 5
+
+    def get_queryset(self, *args, **kwargs):
+        return GtdDocument.objects.filter(gtd=self.kwargs.get('gtd'), group=self.kwargs.get('group_pk'))
+
+
+def show_gtd_file(request, filename):
+    get_path = os.path.join(settings.MEDIA_ROOT, str(filename))
+    return HttpResponse(open(get_path, 'r', encoding='utf-8'), content_type='application/xml')
+
+
+# Загрузка файлов ГТД в формате .xml
 def upload_gtd(request):
     if request.method == 'POST':
         form = UploadGtdfilesForm(request.POST, request.FILES)

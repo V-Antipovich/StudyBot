@@ -1,5 +1,13 @@
 {% extends 'layout/base.html' %}
 {% block title %} Главная страница {% endblock %}
 {% block content %}
-<div>Страница index</div>
+    {% if user.is_authenticated %}
+        {% if user.firstname %}
+            <div>Добро пожаловать, {{ user.firstname }}!</div>
+        {% else %}
+            <div>Добро пожаловать!</div>
+        {% endif %}
+    {% else %}
+        <div>Чтобы начать пользоваться функционалом Базы, пожалуйста, войдите</div>
+    {% endif %}
 {% endblock %}

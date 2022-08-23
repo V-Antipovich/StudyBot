@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.template.defaultfilters import slugify
 
 
 # Create your models here.
@@ -216,7 +217,6 @@ class GtdGood(models.Model):
     quantity = models.FloatField(verbose_name='Количество', null=True, blank=True)
     qualifier = models.ForeignKey('MeasureQualifier', on_delete=models.PROTECT, related_name="+", verbose_name='id единицы измерения', null=True, blank=True)
     manufacturer = models.ForeignKey('Manufacturer', on_delete=models.PROTECT, related_name="+", verbose_name='id производителя', null=True, blank=True)
-    # TODO: разберись уже, куда марку сувать
 
     class Meta:
         verbose_name = 'Товар в ГТД'
@@ -260,7 +260,6 @@ class GtdDocument(models.Model):
         unique_together = ('gtd', 'group', 'document')
 
 
-#  TODO: нужно добавить возможность скидывать несколько файлов
 #  TODO: нужно поле, которое покажет id пользователя, который скинул файл (потом)
 class UploadGtd(models.Model):
     description = models.CharField(max_length=255, blank=True, verbose_name='Краткий комментарий')

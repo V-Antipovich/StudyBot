@@ -1,5 +1,5 @@
 {% extends "layout/base.html" %}
-
+{% load bootstrap4 %}
 {% block title %}ГТД{% endblock %}
 
 {% block content %}
@@ -14,8 +14,13 @@
         <div>Общая стоимость: {{ gtd.total_cost }}</div>
         <div>Валюта: {{ gtd.currency.name }}</div>
         <div>Общая стоимость по счёту: {{ gtd.total_invoice_amount }} </div>
-        <div>Характер сделки. Номер - {{ gtd.deal_type.code }}; Характер - {{ gtd.deal_type.deal_type }} </div>
-        <div><a href="#" >Посмотреть документ ГТД</a> </div>
+        <div>Характер сделки. Код - {{ gtd.deal_type.code }}; Характер - {{ gtd.deal_type.deal_type }} </div>
+        {% if gtd.gtd_file %}
+            {% url 'main:show_gtd_file' filename=gtd.gtd_file.document as file_url %}
+            <div>Документ ГТД: <a href={{ file_url }} >Посмотреть</a> / <a href={{ file_url }} download >Скачать</a> </div>
+        {% endif %}
+        {% url 'main:groups_per_gtd' pk=gtd.pk as groups_url %}
+        <div><a href={{ groups_url }}>Посмотреть группы товаров этой ГТД</a> </div>
         <hr>
     {% endfor %}
     <div class="pagination">
