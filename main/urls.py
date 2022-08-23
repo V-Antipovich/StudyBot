@@ -1,9 +1,11 @@
 from django.urls import path
-from .views import index, upload_gtd, ShowGtdView, test_view, ShowGtdGroups, show_gtd_file, ShowGtdGoodsInGroup, ShowGtdDocumentsInGroup
+from .views import index, upload_gtd, ShowGtdView, test_view, ShowGtdGroups, show_gtd_file, ShowGtdGoodsInGroup, ShowGtdDocumentsInGroup, CDDLogin, CDDLogout
 
 
 app_name = 'main'
 urlpatterns = [
+    path('accounts/login', CDDLogin.as_view(), name='login'),
+    path('accounts/logout', CDDLogout.as_view(), name='logout'),
     path('documents/show_gtd/docs/<int:gtd>/<int:group_pk>', ShowGtdDocumentsInGroup.as_view(), name='documents_per_group'),
     path('documents/show_gtd/goods/<int:gtd>/<int:group_pk>', ShowGtdGoodsInGroup.as_view(), name='goods_per_group'),
     path('documents/show_gtd/file/<path:filename>', show_gtd_file, name='show_gtd_file'),

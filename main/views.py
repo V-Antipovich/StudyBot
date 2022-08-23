@@ -1,3 +1,5 @@
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.db import IntegrityError
 from django.urls import reverse_lazy
@@ -13,10 +15,14 @@ from .utilities import parse_gtd, get_tnved_name
 
 
 # Create your views here.
+
+# Начальная страница
 def index(request):
     return render(request, 'main/index.html')
 
 
+# TODO: убрать после того, как станет не нужен
+# Контроллер для тестовой странички
 def test_view(request):
     context = {
         'five': request.user
@@ -34,6 +40,7 @@ class ShowGtdView(ListView):
         return GtdMain.objects.all()
 
 
+# Список групп выбранной ГТД
 class ShowGtdGroups(ListView):
     template_name = 'main/groups_per_gtd.html'
     context_object_name = 'groups'
@@ -43,6 +50,7 @@ class ShowGtdGroups(ListView):
         return GtdGroup.objects.filter(gtd=self.kwargs.get('pk'))
 
 
+# Список товаров в выбранной группе ГТД
 class ShowGtdGoodsInGroup(ListView):
     template_name = 'main/goods_per_group.html'
     context_object_name = 'goods'
@@ -52,6 +60,7 @@ class ShowGtdGoodsInGroup(ListView):
         return GtdGood.objects.filter(gtd=self.kwargs.get('gtd'), group=self.kwargs.get('group_pk'))
 
 
+# Список документов в выбранной группе ГТД
 class ShowGtdDocumentsInGroup(ListView):
     template_name = 'main/documents_per_group.html'
     context_object_name = 'documents'
@@ -61,9 +70,19 @@ class ShowGtdDocumentsInGroup(ListView):
         return GtdDocument.objects.filter(gtd=self.kwargs.get('gtd'), group=self.kwargs.get('group_pk'))
 
 
+# Вывод xml-файла выбранной ГТД
 def show_gtd_file(request, filename):
     get_path = os.path.join(settings.MEDIA_ROOT, str(filename))
     return HttpResponse(open(get_path, 'r', encoding='utf-8'), content_type='application/xml')
+
+
+class CDDLogin(LoginView):
+    template_name = 'main/login.html'
+    next_page = 'main:index'
+
+
+class CDDLogout(LogoutView, LoginRequiredMixin):
+    template_name = 'main/logout.html'
 
 
 # Загрузка файлов ГТД в формате .xml
