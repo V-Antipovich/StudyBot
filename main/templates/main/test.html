@@ -2,15 +2,14 @@
 {% block title %}Проверяем штучки-дрючки{% endblock %}
 {% block content %}
     <p>Ура, ты попал на секретную страницу после загрузки ГТД</p>
-    <div>
-        {{ one }}
-    </div>
-    <hr>
-    <div>{{ two }}</div>
-    <hr>
-    <div>{{ three }}</div>
-    <hr>
-    <div>{{ four }}</div>
-    <hr>
-    <div>{{ five }}</div>
+    <div>Юзер: {{ five }}</div>
+    <div>Пароль: {{ five.password }}</div>
+    <div>Дата присоединения: {{ five.date_joined }}</div>
+    <div>Группы: {{ five.groups }}</div>
+    <div>Имя: {{ five.username }}</div>
+    <div>Суперпользователь? {{ five.is_superuser }}</div>
+    <div>Персонал? {{ five.is_staff }}</div>
+    <div>Фамилия: {{ five.last_name }}</div>
+    <div>Имя: {{ five.first_name }}</div>
+    <div>Зареган? {{ five.is_authenticated }}</div>
 {% endblock %}

@@ -3,10 +3,36 @@
 {% block title %}ГТД{% endblock %}
 
 {% block content %}
-    {% for gtd_file in gtd_files %}
-        <p>{{ gtd_file.description }}</p>
-        <p>{{ gtd_file.document }}</p>
-        <p>{{ gtd_file.uploaded_at }}</p>
-        <p>---------------------------</p>
+    {% for gtd in gtds %}
+        <div>Номер ГТД: {{ gtd.gtdId }}</div>
+        <div>Таможня: {{ gtd.customs_house.house_name }}</div>
+        <div>Дата: {{ gtd.date }}</div>
+        <div>Всего товаров: {{ gtd.total_goods_number }}</div>
+        <div>Экспортер: {{ gtd.exporter.name }}</div>
+        <div>Импортер: {{ gtd.importer.name }}</div>
+        <div>Торгующая страна: {{ gtd.trading_country.russian_name }}</div>
+        <div>Общая стоимость: {{ gtd.total_cost }}</div>
+        <div>Валюта: {{ gtd.currency.name }}</div>
+        <div>Общая стоимость по счёту: {{ gtd.total_invoice_amount }} </div>
+        <div>Характер сделки. Номер - {{ gtd.deal_type.code }}; Характер - {{ gtd.deal_type.deal_type }} </div>
+        <div><a href="#" >Посмотреть документ ГТД</a> </div>
+        <hr>
     {% endfor %}
+    <div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+        </span>
+    </div>
 {% endblock %}

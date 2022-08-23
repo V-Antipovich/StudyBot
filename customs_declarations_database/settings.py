@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'bootstrap4',
     'django_cleanup',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [

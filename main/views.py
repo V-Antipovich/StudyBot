@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.db import IntegrityError
 from django.urls import reverse_lazy
+from django.views.generic.list import ListView
 from .forms import UploadGtdfilesForm
 from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType, Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType, UploadGtdFile
 from django.conf import settings
@@ -14,24 +15,35 @@ def index(request):
     return render(request, 'main/index.html')
 
 
-"""
-def documents(request):
-    return render(request, 'main/documents.html')
-"""
+def test_view(request):
+    context = {
+        'five': request.user
+    }
+    return render(request, 'main/test.html', context)
 
-
-# Сначала просто будем выводить все xml для скачивания, позже добавим другую инфу (как распарсим файлы)
+"""
 def show_gtd(request):
     declarations = GtdMain.objects.all()
     # TODO: Шаблон привести в порядок, организовать вывод в списке (может там какой-нибудь listview)
     context = {'gtds': declarations}
-    return render(request, 'main/show_gtd.html', context)
+    return render(request, 'main/show_gtd.html', context)"""
+
+
+class ShowGtdView(ListView):
+    template_name = 'main/show_gtd.html'
+    context_object_name = 'gtds'
+    paginate_by = 6
+
+    def get_queryset(self):
+        return GtdMain.objects.all()
 
 
 def upload_gtd(request):
     if request.method == 'POST':
         form = UploadGtdfilesForm(request.POST, request.FILES)
         if form.is_valid():
+            # TODO: проверка качества контента
+            # TODO: Более подробно указывать возможные ошибки на страницах ошибки
             uploaded_gtd = UploadGtd(
                 description=request.POST['comment']
             )
@@ -207,21 +219,24 @@ def upload_gtd(request):
                             group=add_gtdgroup,
                             document=add_document,
                         )
-            context = {
-                "one": request.POST,
-                "two": request.FILES,
-                'three': uploaded_gtd.files_num,
-                'four': file_objects
-            }
-            # TODO: Заглушка, потребуется переадресация на другую страницу
-            return render(request, 'main/test.html', context)
-            #  return redirect('main:index')
+            # context = {
+            #     "one": request.POST,
+            #     "two": request.FILES,
+            #     'three': uploaded_gtd.files_num,
+            #     'four': file_objects,
+            #     'five': request.user
+            # }
+            # # TODO: Заглушка, потребуется переадресация на другую страницу
+            # return render(request, 'main/test.html', context)
+            return redirect('main:show_gtd')
         else:
             return render(request, 'main/error.html')
-
-
 
     else:
         form = UploadGtdfilesForm()
         context = {'form': form}
         return render(request, 'main/upload_gtd.html', context)
+
+# TODO: Обработчик добавления и удаления юзеров
+# TODO: Регистрация пользователей должна производиться только админом
+# TODO: Контроллеры входа, сброса пароля, смены пароля

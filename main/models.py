@@ -3,33 +3,17 @@ from django.contrib.auth.models import AbstractUser
 
 
 # Create your models here.
-# Роли
-# TODO: на админ панели заполнить
-class Role(models.Model):
-    role_name = models.CharField(max_length=20, verbose_name='Роль', unique=True, editable=False)
 
-    class Meta:
-        verbose_name = 'Роль'
-        verbose_name_plural = 'Роли'
-
-
+# Роли реализованы в виде групп (уже существующей структуры)
 # Пользователи базы
 class RegUser(AbstractUser):
     is_activated = models.BooleanField(default=True, db_index=True, verbose_name='Прошел активацию?')
+    email = models.EmailField(verbose_name='Электронная почта', unique=True)
+    # roles = models.ManyToManyField('Role', verbose_name='Роли пользователя')
 
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-
-
-# Какие роли есть у данного юзера
-class UserRole(models.Model):
-    user = models.ForeignKey('RegUser', on_delete=models.PROTECT, verbose_name='id пользователя', related_name="users")
-    role = models.ForeignKey('Role', on_delete=models.PROTECT, verbose_name='id роли', related_name="roles")
-
-    class Meta:
-        verbose_name_plural = 'Роли пользователей'
-        verbose_name = 'Роль пользователя'
 
 
 # Главная инфа гтд (1 на весь документ)
