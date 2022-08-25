@@ -2,7 +2,26 @@ import datetime
 from bs4 import BeautifulSoup as Bs
 import requests
 
+# TODO: потом вернуться к этому
+# from customs_declarations_database.settings import ALLOWED_HOSTS
+# from django.core.signing import Signer
+# from django.template.loader import render_to_string
+#
+# signer = Signer()
+#
+# # TODO: закончи потом с регистрацией и имейлами
+# def send_activation_email(user):
+#     if ALLOWED_HOSTS:
+#         host = 'http://' + ALLOWED_HOSTS[0]
+#     else:
+#         host = 'http://localhost:8000'
+#     context = {'user': user, 'host': host, 'sign': signer.sign(user.username)}
+#     subject = render_to_string('email/activation_email_subject.txt', context)
+#     body_text = render_to_string('email/activation_email_body.txt', context)
+#     user.email_user(subject, body_text)
 
+
+# Парсинг xml-файла ГТД
 def parse_gtd(filename):
     f = open(filename, 'r', encoding='utf-8')
     content = f.read()
@@ -127,7 +146,10 @@ def parse_gtd(filename):
     for raw_group in raw_groups:
         # Номер товарной группы
         group_number = raw_group.find("GoodsNumeric").text
-
+        # TODO: добавить имя группы и описание, исправить косяк с именем товара (если маленькое - взять от имени группы
+        name_n_desc = raw_group.find_all('GoodsDescription')
+        group_name = name_n_desc[0].text
+        group_description = name_n_desc[1].text
         # Подсубпозиция товара (код ТН ВЭД)
         TN_VED = str(int(raw_group.find('GoodsTNVEDCode').text))
 
@@ -224,6 +246,8 @@ def parse_gtd(filename):
         for raw_good in raw_goods:
             # Название товара
             good_name = raw_good.find('GoodsDescription').text
+            if len(good_name) < 10:
+                good_name = group_name
             raw_good_infos = raw_good.find_all('GoodsGroupInformation')
             # Номер товара в группе
             good_group_num = raw_good.find('GroupNum').text

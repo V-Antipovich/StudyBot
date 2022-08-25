@@ -4,19 +4,10 @@ from .models import RegUser, CustomsHouse, Country, Currency, DealType, TnVed, P
 
 
 class RegUserAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'is_activated', 'email')
+    list_display = ('__str__', 'email')
 
 
 admin.site.register(RegUser, RegUserAdmin)
-
-"""
-class RoleAdmin(admin.ModelAdmin):
-    list_display = ('name',)
-
-
-admin.site.register(Role, RoleAdmin)"""
-
-
 admin.site.register(CustomsHouse)
 admin.site.register(Country)
 admin.site.register(Currency)

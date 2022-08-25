@@ -1,0 +1,37 @@
+{% extends 'layout/base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}Тестируем справочники{% endblock %}
+{% block content %}
+    <h2>Справочник - {{ handbook_name }}</h2>
+    <hr>
+    <div>
+    <div class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                   aria-expanded="false">Выберите справочник</div>
+        <div class="dropdown-menu">
+            {% for handbook in avaliable_handbooks %}
+                {% url 'main:handbook' as choose_handbook_url %}
+                <a class="dropdown-item" href="{{ choose_handbook_url }}?choice={{ handbook.0 }}">{{ handbook.1.1 }}</a>
+            {% endfor %}
+        </div>
+    <hr>
+    <table class="table">
+    <thead>
+        <tr>
+            {% for name in verbose_names %}
+                <th>{{ name }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for value_row in values %}
+            <tr>
+                {% for value in value_row %}
+                    <td>{{ value }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+
+{% endblock %}

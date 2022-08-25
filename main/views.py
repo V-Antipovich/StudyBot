@@ -1,21 +1,80 @@
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
 from django.db import IntegrityError
 from django.urls import reverse_lazy
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
+from django.views.generic.base import TemplateView
+from django.views.generic.edit import CreateView
 from django.http import FileResponse, HttpResponse
-from .forms import UploadGtdfilesForm
+from .forms import UploadGtdfilesForm #, RegisterUserForm
 from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType, Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType, UploadGtdFile
-from django.conf import settings
 from django.views.generic.edit import FormView
 import os
 from .utilities import parse_gtd, get_tnved_name
+from .models import RegUser
+from customs_declarations_database.settings import MEDIA_ROOT
 
 
-# Create your views here.
+# Вспомогательные функции контроля доступа
+def superuser_check(user):
+    return user.is_superuser
 
+# TODO: сортировка в каждой колонке таблицы (это видимо Js)
+
+
+def handbook(request):
+    choice = request.GET.get('choice', 'default')
+    # TODO: choice - это какой справочник надо выводить. И имя соответственно тоже должно быть его
+    avaliable_handbooks = {
+        'customs_houses': (CustomsHouse, 'Отделы таможни'),  # Ошибка выскакивает
+        'exporters': (Exporter, 'Экспортеры'),  # Ошибка выскакивает
+        'importers': (Importer, 'Импортеры'),  # Ошибка выскакивает
+        'countries': (Country, 'Государства'),  # Ошибка выскакивает
+        'currencies': (Currency, 'Валюты'),  # Ошибка выскакивает
+        'deal_types': (DealType, 'Классификатор характера сделки'),  # Ошибка выскакивает
+        'tn_ved': (TnVed, 'Классификатор ТН ВЭД'),
+        'procedures': (Procedure, 'Таможенные процедуры'),
+        'goods': (Good, 'Товары'),
+        'trade_marks': (TradeMark, 'Товарные знаки'),
+        'goods_marks': (GoodsMark, 'Торговые марки'),
+        'manufacturers': (Manufacturer, 'Производители (заводы)'),
+        'qualifiers': (MeasureQualifier, 'Единицы измерения'),
+        'documents': (Document, 'Документы'),   # Ошибка выскакивает
+        'doc_types': (DocumentType, 'Классификатор типов документов'),
+    }
+
+    if choice == 'default':
+        choice = 'goods'
+    handbook_name = avaliable_handbooks[choice][1]
+    handbook_class = avaliable_handbooks[choice][0]
+    handbook_objects = handbook_class.objects.all()
+    # a = [(i, getattr(TnVed, i), callable(getattr(TnVed, i))) for i in dir(TnVed)]
+    # not_callables = [i for i in a if not i[2]]
+    meta = handbook_class._meta
+    fields_system_names = [field.attname for field in meta.get_fields()]
+    fields_verbose_names = [field.verbose_name for field in meta.get_fields()]
+    if 'ID' in fields_verbose_names:
+        fields_verbose_names.remove('ID')
+    if 'id' in fields_system_names:
+        fields_system_names.remove('id')
+    handbook_data = []
+    for obj in handbook_objects:
+        handbook_data.append([getattr(obj, field) for field in fields_system_names])
+    context = {
+        'choice': choice,
+        'verbose_names': fields_verbose_names,
+        'handbook_name': handbook_name,
+        'values': handbook_data[:1000],
+        'avaliable_handbooks': list(avaliable_handbooks.items()),
+        }
+
+    return render(request, 'main/handbook.html', context)
+
+
+# TODO: нужен контроллер для добавления пользователей администратором (+ письмо активации)
 # Начальная страница
 def index(request):
     return render(request, 'main/index.html')
@@ -24,15 +83,19 @@ def index(request):
 # TODO: убрать после того, как станет не нужен
 # Контроллер для тестовой странички
 def test_view(request):
+    check_class = Exporter
+    meta = check_class._meta
+    fields = [(field, dir(field) for field in meta)]
     context = {
-        'five': request.user
+        'fields': fields,
     }
     return render(request, 'main/test.html', context)
 
 
 # Список всех ГТД
-class ShowGtdView(ListView):
+class ShowGtdView(LoginRequiredMixin, ListView):
     template_name = 'main/show_gtd.html'
+    login_url = reverse_lazy('main:login')
     context_object_name = 'gtds'
     paginate_by = 6
 
@@ -72,7 +135,7 @@ class ShowGtdDocumentsInGroup(ListView):
 
 # Вывод xml-файла выбранной ГТД
 def show_gtd_file(request, filename):
-    get_path = os.path.join(settings.MEDIA_ROOT, str(filename))
+    get_path = os.path.join(MEDIA_ROOT, str(filename))
     return HttpResponse(open(get_path, 'r', encoding='utf-8'), content_type='application/xml')
 
 
@@ -84,8 +147,22 @@ class CDDLogin(LoginView):
 class CDDLogout(LogoutView, LoginRequiredMixin):
     template_name = 'main/logout.html'
 
+#  TODO: хендлеры справочников
+
+# TODO: потом вернемся, при работе с пользователями
+# class RegisterUserView(CreateView):
+#     model = RegUser
+#     template_name = 'main/register_user.html'
+#     form_class = RegisterUserForm
+#     success_url = reverse_lazy('main:register_done')
+
+
+class RegisterDoneView(TemplateView):
+    template_name = 'main/'
+
 
 # Загрузка файлов ГТД в формате .xml
+@login_required(login_url='/accounts/login/')
 def upload_gtd(request):
     if request.method == 'POST':
         form = UploadGtdfilesForm(request.POST, request.FILES)
@@ -112,7 +189,7 @@ def upload_gtd(request):
             for gtd in file_objects:
                 last_file = gtd.document
 
-                path = os.path.join(settings.MEDIA_ROOT, str(last_file))
+                path = os.path.join(MEDIA_ROOT, str(last_file))
                 # Получили словарь с распарсенной гтд
                 get_gtdmain, get_gtdgroups = parse_gtd(path)
 
