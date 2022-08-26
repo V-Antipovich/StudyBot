@@ -103,8 +103,8 @@ class Importer(models.Model):
 # Государства - Справочник
 class Country(models.Model):
     code = models.CharField(max_length=2, verbose_name='Код страны')
-    russian_name = models.CharField(max_length=150, verbose_name='Название на русском')
-    english_name = models.CharField(max_length=150, verbose_name='Название на английском')
+    russian_name = models.CharField(max_length=150, verbose_name='Название страны на русском')
+    english_name = models.CharField(max_length=150, verbose_name='Название страны на английском')
 
     class Meta:
         verbose_name = 'Страна'
@@ -272,7 +272,7 @@ class Document(models.Model):
 # TODO: Добавить модель типов документов
 # Тип документов - справочник
 class DocumentType(models.Model):
-    code = models.CharField(max_length=8, verbose_name='Код')
+    code = models.CharField(max_length=8, verbose_name='Код типа документа')
     name = models.TextField(verbose_name='Название документа')
 
     class Meta:

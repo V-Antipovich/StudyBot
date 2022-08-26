@@ -4,7 +4,7 @@ from .views import index, upload_gtd, ShowGtdView, test_view, ShowGtdGroups, sho
 
 app_name = 'main'
 urlpatterns = [
-    path('test_handbook', handbook, name='handbook'),
+    path('handbook', handbook, name='handbook'),
     path('register_user/done/', RegisterDoneView.as_view(), name='register_done'),
    # path('register_user/', RegisterUserView.as_view(), name='register'),
     path('accounts/login/', CDDLogin.as_view(), name='login'),

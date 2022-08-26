@@ -27,50 +27,114 @@ def superuser_check(user):
 
 def handbook(request):
     choice = request.GET.get('choice', 'default')
-    # TODO: choice - это какой справочник надо выводить. И имя соответственно тоже должно быть его
+
+    # Словарь со всеми справочниками системы
+    # Ключ - параметр url, Значение - (<Модель этого справочника>, <Название справочника для пользователей>)
     avaliable_handbooks = {
-        'customs_houses': (CustomsHouse, 'Отделы таможни'),  # Ошибка выскакивает
-        'exporters': (Exporter, 'Экспортеры'),  # Ошибка выскакивает
-        'importers': (Importer, 'Импортеры'),  # Ошибка выскакивает
-        'countries': (Country, 'Государства'),  # Ошибка выскакивает
-        'currencies': (Currency, 'Валюты'),  # Ошибка выскакивает
-        'deal_types': (DealType, 'Классификатор характера сделки'),  # Ошибка выскакивает
+        'customs_houses': (CustomsHouse, 'Отделы таможни'),
+        'exporters': (Exporter, 'Экспортеры'),  # Содержит обращение к другим моделям
+        'importers': (Importer, 'Импортеры'),  # Содержит обращение к другим моделям
+        'countries': (Country, 'Государства'),
+        'currencies': (Currency, 'Валюты'),
+        'deal_types': (DealType, 'Классификатор характера сделки'),
         'tn_ved': (TnVed, 'Классификатор ТН ВЭД'),
         'procedures': (Procedure, 'Таможенные процедуры'),
         'goods': (Good, 'Товары'),
-        'trade_marks': (TradeMark, 'Товарные знаки'),
-        'goods_marks': (GoodsMark, 'Торговые марки'),
+        'trade_marks': (TradeMark, 'Товарные знаки'),  # Содержит обращение к другим моделям
+        'goods_marks': (GoodsMark, 'Торговые марки'),  # Содержит обращение к другим моделям
         'manufacturers': (Manufacturer, 'Производители (заводы)'),
         'qualifiers': (MeasureQualifier, 'Единицы измерения'),
-        'documents': (Document, 'Документы'),   # Ошибка выскакивает
+        'documents': (Document, 'Документы'),  # Содержит обращение к другим моделям
         'doc_types': (DocumentType, 'Классификатор типов документов'),
     }
 
+    # Некоторые справочники содержат FK, которые для фронта надо подменять
+    # Словарь с зависимыми моделями
+    # Ключи - поля FK, которые встречаются в моделях из avaliable_handbooks
+    # Значения - (<Модель, с которой через FK отношение m2o>,
+    #             <Поле из этой модели, чье значение требуется>,
+    #             <Порядковый номер поля в списке полей этой модели>)
+    dependent_models = {
+        'country_id': (Country, 'russian_name', 2),
+        'goodsmark_id': (GoodsMark, 'goodsmark', 1),
+        'trademark_id': (TradeMark, 'trademark', 1),
+        'doc_type_id': (DocumentType, 'code', 1),
+    }
+    # По умолчанию на странице справочников будет открыт справочник товаров
     if choice == 'default':
         choice = 'goods'
-    handbook_name = avaliable_handbooks[choice][1]
-    handbook_class = avaliable_handbooks[choice][0]
+    # TODO: Может быть, всё вот это - получение презентабельного поля связанной модели - обернуть во внешнюю функцию?
+    # По параметру ссылки получаем название и модель справочника
+    get_handbook = avaliable_handbooks[choice]
+    handbook_name = get_handbook[1]
+    handbook_class = get_handbook[0]
+
     handbook_objects = handbook_class.objects.all()
-    # a = [(i, getattr(TnVed, i), callable(getattr(TnVed, i))) for i in dir(TnVed)]
-    # not_callables = [i for i in a if not i[2]]
+
+    # Доступ к полям модели справочника
     meta = handbook_class._meta
-    fields_system_names = [field.attname for field in meta.get_fields()]
-    fields_verbose_names = [field.verbose_name for field in meta.get_fields()]
-    if 'ID' in fields_verbose_names:
-        fields_verbose_names.remove('ID')
-    if 'id' in fields_system_names:
-        fields_system_names.remove('id')
+    get_fields = meta.get_fields()
+
+    # Массив для хранения служебной инфы для махинаций с атрибутами
+    fields_system_data = []
+    # Массив для имен колонок таблицы - как они будут отображаться на фронте
+    fields_verbose_names = []
+
+    for field in get_fields:
+        methods = dir(field)
+        # Служебное поле PK не включаем
+        if '_check_primary_key' not in methods:
+            # Обработаем FK - Выведем данные непосредственно из связанной таблицы
+            if '_related_query_name' in methods:
+                # Достаем данные связанной модели
+                dependent_tuple = dependent_models[field.attname]
+
+                dependent_model = dependent_tuple[0]
+                dependent_objects = dependent_model.objects
+
+                # Для имени колонки возьмем один объект из связанной модели
+                dependent_object = dependent_models[field.attname][0].objects.last()
+                needed_field = dependent_tuple[1]
+
+                # Объекты массива служебной инфы
+                # (<Bool: поле внешнего ключа?>, <Имя поля>,
+                # <Объекты связанной модели>, <Нужное поле из связанной модели>)
+                sys_attrs = (True, field.attname, dependent_objects, needed_field)
+
+                # Имя поля для пользователя в связанной модели
+                verbose_name = dependent_object._meta.get_fields()[dependent_tuple[2]].verbose_name
+
+            else:
+                # (<Bool: поле внешнего ключа?>, <имя поля для фронта>)
+                sys_attrs = (False, field.attname)
+
+                verbose_name = field.verbose_name
+
+            fields_system_data.append(sys_attrs)
+            fields_verbose_names.append(verbose_name)
+
+    # Собираем непосредственно данные справочника
     handbook_data = []
     for obj in handbook_objects:
-        handbook_data.append([getattr(obj, field) for field in fields_system_names])
+        attrs = []
+        # Для каждого атрибута пройдемся по его полям
+        for field in fields_system_data:
+            if field[0]:
+                # Если поле внешнего ключа, обращаемся к связанной модели и получаем данные оттуда
+                needed_data = getattr(field[2].get(pk=getattr(obj, field[1])), field[3])
+            else:
+                # В противном случае просто обращаемся к значению нужного поля
+                needed_data = getattr(obj, field[1])
+            attrs.append(needed_data)
+        handbook_data.append(attrs)
+
     context = {
         'choice': choice,
-        'verbose_names': fields_verbose_names,
         'handbook_name': handbook_name,
-        'values': handbook_data[:1000],
+        'verbose_names': fields_verbose_names,
+        'values': handbook_data,
         'avaliable_handbooks': list(avaliable_handbooks.items()),
         }
-
     return render(request, 'main/handbook.html', context)
 
 
@@ -85,9 +149,27 @@ def index(request):
 def test_view(request):
     check_class = Exporter
     meta = check_class._meta
-    fields = [(field, dir(field) for field in meta)]
+    exp_objects = Exporter.objects.all()
+    exp_object = exp_objects[0]
+    meta = exp_object._meta
+    fields = [(field, dir(field)) for field in meta.get_fields()]
+    foreign = fields[3]
+    only_foreign = set(foreign[1]).difference(set(fields[0][1]), set(fields[1][1]))
+    only_pk = set(fields[0][1]).difference(set(foreign[1]), set(fields[1][1]))
+    results = [(attr, getattr(foreign[0], attr)) for attr in only_foreign]
+    # ond = foreign[0].on_delete
+    #tr = Exporter.objects.get(pk=30).country__russian_name
+    # only_dir = [dir(field) for field in meta.get_fields()]
     context = {
+        'obj': exp_object,
+        'meta': meta,
         'fields': fields,
+        'fk': foreign[0],
+        'only_fk': only_foreign,
+        'only_pk': only_pk,
+        'res': results,
+     #   'tr': tr,
+        #'ond': ond
     }
     return render(request, 'main/test.html', context)
 
