@@ -126,6 +126,8 @@ def handbook(request):
             else:
                 # В противном случае просто обращаемся к значению нужного поля
                 needed_data = getattr(obj, field[1])
+                if not needed_data:
+                    needed_data = ''
             attrs.append(needed_data)
         handbook_data.append(attrs)
 
@@ -159,7 +161,7 @@ class ShowGtdView(LoginRequiredMixin, ListView):
     template_name = 'main/show_gtd.html'
     login_url = reverse_lazy('main:login')
     context_object_name = 'gtds'
-    paginate_by = 20
+    paginate_by = 40
 
     def get_queryset(self):
         return GtdMain.objects.all()
@@ -297,7 +299,7 @@ def upload_gtd(request):
                 )
                 if gtdmain_created:
                     add_gtdmain.total_goods_number = get_gtdmain["total_goods_number"]
-                    add_gtdmain.exporter = Exporter.objects.get(name=exporter_info['name'])
+                    add_gtdmain.exporter = Exporter.objects.filter(name=exporter_info['name'])[0]
                     add_gtdmain.importer = Importer.objects.get(name=importer_info['name'])
                     add_gtdmain.trading_country = Country.objects.get(code=get_gtdmain["trading_country"])
                     add_gtdmain.total_cost = get_gtdmain["total_cost"]

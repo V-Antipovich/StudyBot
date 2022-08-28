@@ -12,15 +12,9 @@ class GtdFileForm(forms.Form):
 
 
 class UploadGtdfilesForm(forms.Form):
-    comment = forms.CharField(max_length=255)
+    comment = forms.CharField(max_length=255, required=False)
     document = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}), validators=[FileExtensionValidator(allowed_extensions=['xml'])])
 
-"""
-class SuperuserAddUserForm(forms.ModelForm):
-    class Meta:
-        model = RegUser
-        fields = ('username', 'first_name', 'last_name', 'groups', 'email', 'password')
-"""
 
 # TODO: Вернуться потом, когда будет работа над юзерами
 # class RegisterUserForm(forms.ModelForm):
