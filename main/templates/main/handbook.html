@@ -1,12 +1,18 @@
 {% extends 'layout/base.html' %}
 {% load bootstrap4 %}
+{% load static %}
 
 {% block title %}Тестируем справочники{% endblock %}
+
+{% block extra_scripts %}
+    <script defer src="{% static 'main/js/jquery.tablesorter.js' %}"></script>
+    <script defer type="text/javascript" src="{% static 'main/js/sort_table.js' %}" ></script>
+{% endblock %}
 
 {% block content %}
     <h2>Справочник - {{ handbook_name }}</h2>
     <hr>
-    <div>
+
     <div class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                    aria-expanded="false">Выберите справочник</div>
         <div class="dropdown-menu">
@@ -16,11 +22,11 @@
             {% endfor %}
         </div>
     <hr>
-    <table class="table">
+    <table class="table" id="gtd_tables">
     <thead>
         <tr>
             {% for name in verbose_names %}
-                <th>{{ name }}</th>
+                <th >{{ name }}</th>
             {% endfor %}
         </tr>
     </thead>

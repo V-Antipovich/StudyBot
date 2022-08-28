@@ -1,28 +1,63 @@
 {% extends "layout/base.html" %}
 {% load bootstrap4 %}
+{% load static %}
 {% block title %}ГТД{% endblock %}
 
+{% block extra_scripts %}
+    <script defer src="{% static 'main/js/jquery.tablesorter.js' %}"></script>
+    <script defer type="text/javascript" src="{% static 'main/js/sort_table.js' %}" ></script>
+{% endblock %}
+
 {% block content %}
-    {% for gtd in gtds %}
-        <div>Номер ГТД: {{ gtd.gtdId }}</div>
-        <div>Таможня: {{ gtd.customs_house.house_name }}</div>
-        <div>Дата: {{ gtd.date }}</div>
-        <div>Всего товаров: {{ gtd.total_goods_number }}</div>
-        <div>Экспортер: {{ gtd.exporter.name }}</div>
-        <div>Импортер: {{ gtd.importer.name }}</div>
-        <div>Торгующая страна: {{ gtd.trading_country.russian_name }}</div>
-        <div>Общая стоимость: {{ gtd.total_cost }}</div>
-        <div>Валюта: {{ gtd.currency.name }}</div>
-        <div>Общая стоимость по счёту: {{ gtd.total_invoice_amount }} </div>
-        <div>Характер сделки. Код - {{ gtd.deal_type.code }}; Характер - {{ gtd.deal_type.deal_type }} </div>
-        {% if gtd.gtd_file %}
-            {% url 'main:show_gtd_file' filename=gtd.gtd_file.document as file_url %}
-            <div>Документ ГТД: <a href={{ file_url }} >Посмотреть</a> / <a href={{ file_url }} download >Скачать</a> </div>
-        {% endif %}
-        {% url 'main:groups_per_gtd' pk=gtd.pk as groups_url %}
-        <div><a href={{ groups_url }}>Посмотреть группы товаров этой ГТД</a> </div>
-        <hr>
-    {% endfor %}
+    <h2>Таможенные декларации</h2>
+    <h5>Щелкните по цифре в колонке "Число групп товаров", чтобы перейти к группам ГТД</h5>
+    <table class="table" size="90%" id="gtd_tables">
+        <thead>
+            <tr>
+                <th>Номер ГТД</th>
+                <th>Таможенный отдел</th>
+                <th>Дата</th>
+                <th>Порядковый номер</th>
+                <th>Количество групп товаров</th>
+                <th>Экспортер</th>
+                <th>Импортер</th>
+                <th>Торгующая страна</th>
+                <th>Общая стоимость</th>
+                <th>Валюта</th>
+                <th>Общая стоимость по счёту</th>
+                <th>Курс валюты</th>
+                <th>Характер сделки</th>
+                <th>xml-файл ГТД</th>
+            </tr>
+        </thead>
+
+    <tbody>
+        {% for gtd in gtds %}
+            <tr>
+                <td>{{ gtd.gtdId }}</td>
+                <td>{{ gtd.customs_house.house_name }}</td>
+                <td>{{ gtd.date }}</td>
+                <td>{{ gtd.order_num }}</td>
+                {% url 'main:groups_per_gtd' pk=gtd.pk as groups_url %}
+                <td><a href={{ groups_url }}>{{ gtd.total_goods_number }}</a></td>
+                <td>{{ gtd.exporter.name }}</td>
+                <td>{{ gtd.importer.name }}</td>
+                <td>{{ gtd.trading_country.russian_name }}</td>
+                <td>{{ gtd.total_cost }}</td>
+                <td>{{ gtd.currency.name }}</td>
+                <td>{{ gtd.total_invoice_amount }}</td>
+                <td>{{ gtd.currency_rate }}</td>
+                <td>{{ gtd.deal_type.code }}</td>
+                {% if gtd.gtd_file %}
+                    {% url 'main:show_gtd_file' filename=gtd.gtd_file.document as file_url %}
+                    <td>Документ ГТД: <a href={{ file_url }} >Посмотреть</a> / <a href={{ file_url }} download >Скачать</a> </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+        <!--
+        <div> </div> -->
     <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}

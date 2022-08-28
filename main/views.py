@@ -16,6 +16,7 @@ import os
 from .utilities import parse_gtd, get_tnved_name
 from .models import RegUser
 from customs_declarations_database.settings import MEDIA_ROOT
+from django_sorting_bootstrap.views import SimpleChangeList
 
 
 # Вспомогательные функции контроля доступа
@@ -147,29 +148,8 @@ def index(request):
 # TODO: убрать после того, как станет не нужен
 # Контроллер для тестовой странички
 def test_view(request):
-    check_class = Exporter
-    meta = check_class._meta
-    exp_objects = Exporter.objects.all()
-    exp_object = exp_objects[0]
-    meta = exp_object._meta
-    fields = [(field, dir(field)) for field in meta.get_fields()]
-    foreign = fields[3]
-    only_foreign = set(foreign[1]).difference(set(fields[0][1]), set(fields[1][1]))
-    only_pk = set(fields[0][1]).difference(set(foreign[1]), set(fields[1][1]))
-    results = [(attr, getattr(foreign[0], attr)) for attr in only_foreign]
-    # ond = foreign[0].on_delete
-    #tr = Exporter.objects.get(pk=30).country__russian_name
-    # only_dir = [dir(field) for field in meta.get_fields()]
     context = {
-        'obj': exp_object,
-        'meta': meta,
-        'fields': fields,
-        'fk': foreign[0],
-        'only_fk': only_foreign,
-        'only_pk': only_pk,
-        'res': results,
-     #   'tr': tr,
-        #'ond': ond
+
     }
     return render(request, 'main/test.html', context)
 
@@ -179,7 +159,7 @@ class ShowGtdView(LoginRequiredMixin, ListView):
     template_name = 'main/show_gtd.html'
     login_url = reverse_lazy('main:login')
     context_object_name = 'gtds'
-    paginate_by = 6
+    paginate_by = 20
 
     def get_queryset(self):
         return GtdMain.objects.all()
@@ -189,7 +169,7 @@ class ShowGtdView(LoginRequiredMixin, ListView):
 class ShowGtdGroups(ListView):
     template_name = 'main/groups_per_gtd.html'
     context_object_name = 'groups'
-    paginate_by = 4
+    paginate_by = 20
 
     def get_queryset(self, *args, **kwargs):
         return GtdGroup.objects.filter(gtd=self.kwargs.get('pk'))
@@ -199,7 +179,7 @@ class ShowGtdGroups(ListView):
 class ShowGtdGoodsInGroup(ListView):
     template_name = 'main/goods_per_group.html'
     context_object_name = 'goods'
-    paginate_by = 4
+    paginate_by = 20
 
     def get_queryset(self, *args, **kwargs):
         return GtdGood.objects.filter(gtd=self.kwargs.get('gtd'), group=self.kwargs.get('group_pk'))
@@ -209,7 +189,7 @@ class ShowGtdGoodsInGroup(ListView):
 class ShowGtdDocumentsInGroup(ListView):
     template_name = 'main/documents_per_group.html'
     context_object_name = 'documents'
-    paginate_by = 5
+    paginate_by = 20
 
     def get_queryset(self, *args, **kwargs):
         return GtdDocument.objects.filter(gtd=self.kwargs.get('gtd'), group=self.kwargs.get('group_pk'))
@@ -343,6 +323,8 @@ def upload_gtd(request):
 
                     add_gtdgroup, gtdgroup_created = GtdGroup.objects.get_or_create(
                         gtd=add_gtdmain,
+                        name=group['name'],
+                        description=group['desc'],
                         tn_ved=add_tnved,
                         number=group["number"],
                         gross_weight=group['gross_weight'],

@@ -135,8 +135,10 @@ class DealType(models.Model):
 # Группы товаров в ГТД
 class GtdGroup(models.Model):
     gtd = models.ForeignKey('GtdMain', on_delete=models.PROTECT, verbose_name='id ГТД', related_name="+")
+    name = models.CharField(verbose_name='Название', max_length=255, null=True, blank=True)
+    description = models.TextField(verbose_name='Описание', null=True, blank=True)
     tn_ved = models.ForeignKey('TnVed', on_delete=models.PROTECT,
-                               verbose_name='id кода товарной группы ТН ВЭД', related_name="+") #TODO: потом вернуть на protect
+                               verbose_name='id кода товарной группы ТН ВЭД', related_name="+")
     number = models.IntegerField(verbose_name='Номер товарной группы')
     gross_weight = models.FloatField(verbose_name='Масса брутто')
     net_weight = models.FloatField(verbose_name='Масса нетто')

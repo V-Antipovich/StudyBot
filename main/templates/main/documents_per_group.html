@@ -1,11 +1,39 @@
 {% extends "layout/base.html" %}
 {% load bootstrap4 %}
+{% load static %}
 {% block title %}Документы группы{% endblock %}
+{% block extra_scripts %}
+    <script defer src="{% static 'main/js/jquery.tablesorter.js' %}"></script>
+    <script defer type="text/javascript" src="{% static 'main/js/sort_table.js' %}" ></script>
+{% endblock %}
 {% block content %}
-    {% for document in documents %}
-        {{ document }}
-        <hr>
-    {% endfor %}
+    <h2>Документы ГТД {{ documents.0.gtd.gtdId }} группы {{ documents.0.group.number }}</h2>
+    <h5><a href="{% url 'main:show_gtd' %}">К списку ГТД</a> </h5>
+    <h5><a href="{% url 'main:groups_per_gtd' pk=documents.0.gtd.pk %}">К списку групп ГТД</a> </h5>
+    <table class="table" id="gtd_tables">
+        <thead>
+            <tr>
+                <th>Документ</th>
+                <th>Тип документа</th>
+                <th>Номер</th>
+                <th>Дата</th>
+                <th>Дата начала действия</th>
+                <th>Дата окончания действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for document in documents %}
+                <tr>
+                    <td>{{ document.document.name }}</td>
+                    <td>{{ document.document.doc_type.code }}</td>
+                    <td>{{ document.document.number }}</td>
+                    <td>{{ document.document.date }}</td>
+                    <td>{{ document.document.begin_date }}</td>
+                    <td>{{ document.document.expire_date }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}

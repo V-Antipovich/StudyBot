@@ -7,15 +7,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
     <title>{% block title %}{% endblock %} - База таможенных деклараций</title>
     {% bootstrap_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'main/style.css' %}">
-    {% bootstrap_javascript jquery='slim' %}
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/style.css' %}">
+    {% bootstrap_javascript jquery='True' %}
+    {% block extra_scripts %}{% endblock %}
+    <!--<script type="text/javascript"></script> -->
 </head>
 <body class="container-fluid">
     <header class="mb-4">
         <h3 class="display-5 text-center">База таможенных деклараций</h3>
     </header>
     <div class="row">
-        <ul class="col nav justify-content-end border">
+        <ul class= "col nav justify-content-center"> <!-- col nav justify-content-end border-->
             {% if user.is_authenticated %}
             <li class="nav-link dropdown">
                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
@@ -23,7 +25,7 @@
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href="{% url 'main:upload_gtd' %}">Добавить ГТД</a>
                     <a class="dropdown-item" href="{% url 'main:show_gtd' %}">ГТД</a>
-                    <a class="dropdown-item" href="#">Инвойсы</a>
+                    <a class="dropdown-item" href="#">Замещающий текст (?Инвойсы?)</a>
                     <a class="dropdown-item" href="#">Прочее</a>
                 </div>
             </li>

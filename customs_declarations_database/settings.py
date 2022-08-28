@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'bootstrap4',
     'django_cleanup',
     'django_extensions',
+    'django_sorting_bootstrap',
 ]
 
 MIDDLEWARE = [

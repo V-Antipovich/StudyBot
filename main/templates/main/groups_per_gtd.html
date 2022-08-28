@@ -1,25 +1,63 @@
 {% extends "layout/base.html" %}
 {% load bootstrap4 %}
+{% load static %}
 {% block title %}Группы{% endblock %}
+{% block extra_scripts %}
+    <script defer src="{% static 'main/js/jquery.tablesorter.js' %}"></script>
+    <script defer type="text/javascript" src="{% static 'main/js/sort_table.js' %}" ></script>
+{% endblock %}
 {% block content %}
-    {% for group in groups %}
-        <div>Номер ГТД: {{ group.gtd.gtdId }}</div>
-        <div>Товарная группа. Код - {{ group.tn_ved.code }}, расшифровка - {{ group.tn_ved.subposition }}</div>
-        <div>Номер группы: {{ group.number }}</div>
-        <div>Масса брутто: {{ group.gross_weight }}</div>
-        <div>Масса нетто: {{ group.net_weight }}</div>
-        <div>Страна: {{ group.country.russian_name }}</div>
-        <div>Таможенная процедура: {{ group.procedure.code }} - {{ group.procedure.name }}</div>
-        <div>Предыдущая таможенная процедура: {{ group.procedure.code }} - {{ group.procedure.name }}</div>
-        <div>Таможенная стоимость: {{ group.customs_cost }} </div>
-        <div>НДС: Ставка - {{ group.ndc_percent }}, сумма - {{ group.ndc }}</div>
-        <div>Пошлина: Ставка - {{ group.fee_percent }}, сумма - {{ group.fee }}</div>
-        {% url 'main:goods_per_group' gtd=group.gtd.pk group_pk=group.pk as goods_url %}
-        <div><a href={{ goods_url }} >Посмотреть товары в группе</a> </div>
-        {% url 'main:documents_per_group' gtd=group.gtd.pk group_pk=group.pk as documents_url %}
-        <div><a href={{ documents_url }}>Посмотреть документы группы</a> </div>
-        <hr>
-    {% endfor %}
+    <h2>Группы ГТД {{ groups.0.gtd.gtdId }}</h2>
+    <h5>Щелкните по номеру товарной группы, чтобы посмотреть документы группы </h5>
+    <h5>Щелкните по названию группы, чтобы посмотреть товары</h5>
+    <h5><a href="{% url 'main:show_gtd' %}">К списку ГТД</a> </h5>
+    <table class="table" id="gtd_tables">
+        <thead>
+            <tr>
+                <th>Номер товарной группы</th>
+                <th>Название</th>
+                <th>Описание</th>
+                <th>Код группы по ТН ВЭД</th>
+                <th>Масса брутто</th>
+                <th>Масса нетто</th>
+                <th>Страна происхождения</th>
+                <th>Код заявляемой таможенной процедуры</th>
+                <th>Код предыдущей процедуры</th>
+                <th>Таможенная стоимость</th>
+                <th>Сумма пошлины</th>
+                <th>Ставка пошлины, %</th>
+                <th>Сумма НДС</th>
+                <th>Ставка НДС, %</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for group in groups %}
+                <tr>
+                    <td>
+                        {% url 'main:documents_per_group' gtd=group.gtd.pk group_pk=group.pk as documents_url %}
+                        <a href="{{ documents_url }}">{{ group.number }}</a>
+                    </td>
+                    <td>
+                        {% url 'main:goods_per_group' gtd=group.gtd.pk group_pk=group.pk as goods_url %}
+                        <a href="{{ goods_url }}">{{ group.name }}</a>
+                    </td>
+                    <td>{{ group.description }}</td>
+                    <td>{{ group.tn_ved.code }}</td>
+                    <td>{{ group.gross_weight }}</td>
+                    <td>{{ group.net_weight }}</td>
+                    <td>{{ group.country.russian_name }}</td>
+                    <td>{{ group.procedure.code }}</td>
+                    <td>{{ group.prev_procedure.code }}</td>
+                    <td>{{ group.customs_cost }}</td>
+                    <td>{{ group.fee }}</td>
+                    <td>{{ group.fee_percent }}</td>
+                    <td>{{ group.ndc }}</td>
+                    <td>{{ group.ndc_percent }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
     <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}

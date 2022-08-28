@@ -288,6 +288,8 @@ def parse_gtd(filename):
                 gtd_goods.append(gtd_good)
 
         gtd_group = {
+            'name': group_name,
+            'desc': group_description,
             'tn_ved': TN_VED,
             'number': group_number,
             'gross_weight': gross_weight,
