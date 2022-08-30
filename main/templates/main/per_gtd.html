@@ -1,0 +1,104 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+{% load bootstrap5 %}
+
+{% block title %}ГТД {{ gtd.gtdId }}{% endblock %}
+
+{% block content %}
+<div class="container mt-2">
+        <h3 class="mb-3">ГТД {{ gtd.gtdId }}</h3>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#gtdmain">Главная</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#gtdgroups"> Разделы ГТД ({{ gtd.total_goods_number }})</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="gtdmain">
+                <div class="row border g-0 rounded shadow-sm">
+                    <div class="col p-4">
+                        <h3>Главная</h3>
+                        <div>Таможенные отдел:{{ gtd.customs_house.house_name }}</div>
+                        <div>Дата: {{ gtd.date|date:"d.m.Y" }}</div>
+                        <div>Экспортер: {{ gtd.exporter.name }}</div>
+                        <div>Импортер: {{ gtd.importer.name }}</div>
+                        <div>Торгующая страна: {{ gtd.trading_country.russian_name }}</div>
+                        <div>Общая стоимость: {{ gtd.total_cost }}</div>
+                        <div>Валюта: {{ gtd.currency.short_name }}</div>
+                        <div>Общая стоимость по счёту: {{ gtd.total_invoice_amount }}</div>
+                        <div>Курс валюты {{ gtd.currency_rate }}</div>
+                        {% if gtd.gtd_file %}
+                            {% url 'main:show_gtd_file' filename=gtd.gtd_file.document as file_url %}
+                            <div>Документ ГТД: <a href={{ file_url }} >Посмотреть</a> / <a download href={{ file_url }}>Скачать</a> </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="gtdgroups">
+                <div class="row border g-0 rounded shadow-sm">
+                    <div class="col p-4">
+                        <h3>Разделы ГТД</h3>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>№ Товарной группы</th>
+                                    <th>Таможенная стоимость</th>
+                                    <th>ТН ВЭД</th>
+                                    <th>Масса брутто</th>
+                                    <th>Масса нетто</th>
+                                    <th>Страна</th>
+                                    <th>Сумма пошлины</th>
+                                    <th>% пошлины</th>
+                                    <th>Сумма НДС</th>
+                                    <th>% НДС</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for group in groups %}
+                                    <tr>
+                                        <td><a href="{% url 'main:per_gtd' pk=gtd.pk %}?group={{ group.pk }}">{{ group.number }}</a></td>
+                                        <td>{{ group.customs_cost }}</td>
+                                        <td>{{ group.tn_ved.code }}</td>
+                                        <td>{{ group.gross_weight }}</td>
+                                        <td>{{ group.net_weight }}</td>
+                                        <td>{{ group.country.russian_name }}</td>
+                                        <td>{{ group.fee }}</td>
+                                        <td>{{ group.fee_percent }}</td>
+                                        <td>{{ group.ndc }}</td>
+                                        <td>{{ group.ndc_percent }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% if are_goods_shown %}
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Артикул</th>
+                                        <th>Количество</th>
+                                        <th>Производитель (Завод)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for good in goods %}
+                                        <tr>
+                                            <td>{{ good.good.marking }}</td>
+                                            <td>{{ good.quantity }} {{ good.qualifier.russian_symbol }}</td>
+                                            <td>{{ good.manufacturer.manufacturer }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            </div>
+    </div>
+ <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script> -->
+
+{% endblock %}

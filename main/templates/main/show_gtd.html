@@ -1,5 +1,5 @@
 {% extends "layout/base.html" %}
-{% load bootstrap4 %}
+{% load bootstrap5 %}
 {% load static %}
 {% block title %}ГТД{% endblock %}
 
@@ -17,8 +17,6 @@
                 <th>Номер ГТД</th>
                 <th>Таможенный отдел</th>
                 <th>Дата</th>
-                <th>Порядковый номер</th>
-                <th>Количество групп товаров</th>
                 <th>Экспортер</th>
                 <th>Импортер</th>
                 <th>Торгующая страна</th>
@@ -26,7 +24,6 @@
                 <th>Валюта</th>
                 <th>Общая стоимость по счёту</th>
                 <th>Курс валюты</th>
-                <th>Характер сделки</th>
                 <th>xml-файл ГТД</th>
             </tr>
         </thead>
@@ -34,23 +31,19 @@
     <tbody>
         {% for gtd in gtds %}
             <tr>
-                <td>{{ gtd.gtdId }}</td>
+                <td><a href="{% url 'main:per_gtd' pk=gtd.pk %}">{{ gtd.gtdId }}</a></td>
                 <td>{{ gtd.customs_house.house_name }}</td>
-                <td>{{ gtd.date }}</td>
-                <td>{{ gtd.order_num }}</td>
-                {% url 'main:groups_per_gtd' pk=gtd.pk as groups_url %}
-                <td><a href={{ groups_url }}>{{ gtd.total_goods_number }}</a></td>
+                <td>{{ gtd.date|date:"d.m.Y" }}</td>
                 <td>{{ gtd.exporter.name }}</td>
                 <td>{{ gtd.importer.name }}</td>
                 <td>{{ gtd.trading_country.russian_name }}</td>
                 <td>{{ gtd.total_cost }}</td>
-                <td>{{ gtd.currency.name }}</td>
+                <td>{{ gtd.currency.short_name }}</td>
                 <td>{{ gtd.total_invoice_amount }}</td>
                 <td>{{ gtd.currency_rate }}</td>
-                <td>{{ gtd.deal_type.code }}</td>
                 {% if gtd.gtd_file %}
                     {% url 'main:show_gtd_file' filename=gtd.gtd_file.document as file_url %}
-                    <td>Документ ГТД: <a href={{ file_url }} >Посмотреть</a> / <a href={{ file_url }} download >Скачать</a> </td>
+                    <td>Документ ГТД: <a href={{ file_url }} >Посмотреть</a> / <a download href={{ file_url }}>Скачать</a> </td>
                 {% endif %}
             </tr>
         {% endfor %}
@@ -61,17 +54,17 @@
     <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo; first</a>
-            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            <a href="?page=1">&laquo; В начало</a>
+            <a href="?page={{ page_obj.previous_page_number }}">На предыдущую</a>
         {% endif %}
 
         <span class="current">
-            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
         </span>
 
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">next</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            <a href="?page={{ page_obj.next_page_number }}">На следующую</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">В конец &raquo;</a>
         {% endif %}
         </span>
     </div>

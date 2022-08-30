@@ -216,6 +216,8 @@ def parse_gtd(filename):
             doc_date = raw_doc.find('PrDocumentDate')
             if doc_date:
                 doc_date = doc_date.text
+            else:
+                doc_date = None
 
             # Дата начала действия
             attempt = raw_doc.find('DocumentBeginActionsDate')
@@ -257,7 +259,9 @@ def parse_gtd(filename):
                 if attempt:
                     good_marking = attempt.text
                 else:
-                    good_marking = raw_good_info.find('GoodsModel').text
+                    good_marking = raw_good_info.find('GoodsModel')
+                    if good_marking:
+                        good_marking = good_marking.text
                 # Торговый знак
                 trade_mark = raw_good_info.find('TradeMark')
                 if trade_mark:
@@ -271,8 +275,16 @@ def parse_gtd(filename):
                 if manufacturer:
                     manufacturer = manufacturer.text
                 raw_quantity = raw_good_info.find('GoodsGroupQuantity')
-                quantity = raw_quantity.find('GoodsQuantity').text
-                qualifier_code = raw_quantity.find('MeasureUnitQualifierCode').text
+                if raw_quantity:
+                    quantity = raw_quantity.find('GoodsQuantity')
+                    if quantity:
+                        quantity = quantity.text
+                    qualifier_code = raw_quantity.find('MeasureUnitQualifierCode')
+                    if qualifier_code:
+                        qualifier_code = qualifier_code.text
+                else:
+                    quantity = None
+                    qualifier_code = None
                 gtd_good = {
                     'good': {
                         'marking': good_marking,

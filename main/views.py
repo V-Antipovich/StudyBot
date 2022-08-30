@@ -23,8 +23,13 @@ from django_sorting_bootstrap.views import SimpleChangeList
 def superuser_check(user):
     return user.is_superuser
 
-# TODO: сортировка в каждой колонке таблицы (это видимо Js)
 
+# TODO: сортировка в каждой колонке таблицы (это видимо Js)
+# TODO: стрелочки сортировки
+# TODO: фильтрация хотя бы по главному столбцу таблиц
+
+# TODO: справочник документов пока вынести в блок документов - Это не справочник!
+# TODO: позже? распределить документы по категориям
 
 def handbook(request):
     choice = request.GET.get('choice', 'default')
@@ -45,7 +50,7 @@ def handbook(request):
         'goods_marks': (GoodsMark, 'Торговые марки'),  # Содержит обращение к другим моделям
         'manufacturers': (Manufacturer, 'Производители (заводы)'),
         'qualifiers': (MeasureQualifier, 'Единицы измерения'),
-        'documents': (Document, 'Документы'),  # Содержит обращение к другим моделям
+#        'documents': (Document, 'Документы'),  # Содержит обращение к другим моделям
         'doc_types': (DocumentType, 'Классификатор типов документов'),
     }
 
@@ -59,7 +64,7 @@ def handbook(request):
         'country_id': (Country, 'russian_name', 2),
         'goodsmark_id': (GoodsMark, 'goodsmark', 1),
         'trademark_id': (TradeMark, 'trademark', 1),
-        'doc_type_id': (DocumentType, 'code', 1),
+      #  'doc_type_id': (DocumentType, 'code', 1),
     }
     # По умолчанию на странице справочников будет открыт справочник товаров
     if choice == 'default':
@@ -121,8 +126,15 @@ def handbook(request):
         # Для каждого атрибута пройдемся по его полям
         for field in fields_system_data:
             if field[0]:
+                needed_pk = getattr(obj, field[1])
+                needed_raw_obj = field[2].filter(pk=needed_pk)
+                if needed_raw_obj.exists():
+                    needed_data = getattr(needed_raw_obj[0], field[3])
+                else:
+                    needed_data = ''
                 # Если поле внешнего ключа, обращаемся к связанной модели и получаем данные оттуда
-                needed_data = getattr(field[2].get(pk=getattr(obj, field[1])), field[3])
+                # Временная заглушка
+                #needed_data = getattr(field[2].filter(pk=getattr(obj, field[1]))[0], field[3])
             else:
                 # В противном случае просто обращаемся к значению нужного поля
                 needed_data = getattr(obj, field[1])
@@ -156,37 +168,73 @@ def test_view(request):
     return render(request, 'main/test.html', context)
 
 
+# TODO: для всех страниц с пагинацией - добавить возможность выбора по сколько пагинировать
+# TODO: все английские вставки (page, comment, file) переименовать
+# TODO: в персональной странице ГТД уже выводить дополнительные поля, которые надо убрать в табличном виде
+# TODO: описание товаров никому не нужно.
+# TODO: Выводить код валюты, а не название
 # Список всех ГТД
 class ShowGtdView(LoginRequiredMixin, ListView):
+    model = GtdMain
     template_name = 'main/show_gtd.html'
     login_url = reverse_lazy('main:login')
     context_object_name = 'gtds'
     paginate_by = 40
 
+"""
     def get_queryset(self):
+        context = super(ShowGtdView, self).get_queryset()
+        # raw = GtdMain.objects.all()
+        #final = []
+        #for row in raw:
+         #   final.append({'pk': row.pk, 'customs_house': row.customs_house, 'date': row.date })
         return GtdMain.objects.all()
+"""
 
 
-# Список групп выбранной ГТД
-class ShowGtdGroups(ListView):
-    template_name = 'main/groups_per_gtd.html'
-    context_object_name = 'groups'
-    paginate_by = 20
+class GtdDetailView(DetailView):
+    model = GtdMain
+    template_name = 'main/per_gtd.html'
+    context_object_name = 'gtd'
 
-    def get_queryset(self, *args, **kwargs):
-        return GtdGroup.objects.filter(gtd=self.kwargs.get('pk'))
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        groups = GtdGroup.objects.filter(gtd_id=self.kwargs.get('pk'))
+        context['groups'] = groups
+        """goods = {}
+        for group in groups:
+            group_goods = GtdGood.objects.filter(group=group.pk)
+            goods[group.pk] = group_goods
+        context['goods'] = goods"""
+        open_goods = self.request.GET.get('group')
+        context['are_goods_shown'] = open_goods
+        if open_goods:
+            context['goods'] = GtdGood.objects.filter(gtd_id=self.kwargs.get('pk'), group=open_goods)
+        return context
 
 
-# Список товаров в выбранной группе ГТД
-class ShowGtdGoodsInGroup(ListView):
-    template_name = 'main/goods_per_group.html'
-    context_object_name = 'goods'
-    paginate_by = 20
+# # Список групп выбранной ГТД
+# class ShowGtdGroups(ListView):
+#     template_name = 'main/groups_per_gtd.html'
+#     context_object_name = 'groups'
+#     paginate_by = 20
+#
+#     def get_queryset(self, *args, **kwargs):
+#         return GtdGroup.objects.filter(gtd=self.kwargs.get('pk'))
+#
+#
+# # Список товаров в выбранной группе ГТД
+# class ShowGtdGoodsInGroup(ListView):
+#     template_name = 'main/goods_per_group.html'
+#     context_object_name = 'goods'
+#     paginate_by = 20
+#
+#     def get_queryset(self, *args, **kwargs):
+#         return GtdGood.objects.filter(gtd=self.kwargs.get('gtd'), group=self.kwargs.get('group_pk'))
 
-    def get_queryset(self, *args, **kwargs):
-        return GtdGood.objects.filter(gtd=self.kwargs.get('gtd'), group=self.kwargs.get('group_pk'))
 
-
+# TODO: коды типов документов не нужны
+# TODO: наследовать от другого класса - Нужна возможность редактировать и удалять ГТД - соответствующие кнопки в списке
 # Список документов в выбранной группе ГТД
 class ShowGtdDocumentsInGroup(ListView):
     template_name = 'main/documents_per_group.html'
@@ -194,7 +242,17 @@ class ShowGtdDocumentsInGroup(ListView):
     paginate_by = 20
 
     def get_queryset(self, *args, **kwargs):
-        return GtdDocument.objects.filter(gtd=self.kwargs.get('gtd'), group=self.kwargs.get('group_pk'))
+        queryset = GtdDocument.objects.filter(gtd=self.kwargs.get('gtd'), group=self.kwargs.get('group_pk'))
+        final_queryset = []
+        for row in queryset:
+            obj = []
+            for item in row:
+                if item:
+                    obj.append(item)
+                else:
+                    obj.append('')
+            final_queryset.append(obj)
+        return final_queryset
 
 
 # Вывод xml-файла выбранной ГТД
@@ -226,6 +284,13 @@ class RegisterDoneView(TemplateView):
 
 
 # Загрузка файлов ГТД в формате .xml
+# TODO: когда попадается ГТД с тем же номером, спрашивать: перезаписывать ли/пропускать/переходить к нужной ГТД?
+# TODO: перед загрузкой добавить в форму кнопочку ^ - при попадании той же самой ГТД, что делать
+# TODO: сделать лог по итогу - сколько файлов заменено, сколько пропущено
+# TODO: после успешной загрузки перекидывать на персональную страницу этой ГТД, а не на общий список
+# TODO: далекое будущее - многопользовательские коллизии - нужно проверять по полю кто последний трогал документ, если не ты, то предупреждаем
+# TODO: далекое будущее - статус черновик/проведен
+
 @login_required(login_url='/accounts/login/')
 def upload_gtd(request):
     if request.method == 'POST':
@@ -424,6 +489,8 @@ def upload_gtd(request):
             return render(request, 'main/error.html')
 
     else:
+        # TODO: drag'n'drop
+        # TODO: + подредачить модель - кто добавил/последний касался этой ГТД
         form = UploadGtdfilesForm()
         context = {'form': form}
         return render(request, 'main/upload_gtd.html', context)

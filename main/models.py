@@ -182,7 +182,7 @@ class Procedure(models.Model):
 
 # Товары - Справочник
 class Good(models.Model):
-    marking = models.CharField(max_length=50, verbose_name='Артикул')
+    marking = models.CharField(max_length=50, verbose_name='Артикул', null=True, blank=True)
     name = models.TextField(verbose_name='Товар')
     goodsmark = models.ForeignKey('GoodsMark', on_delete=models.PROTECT, verbose_name='id торговой марки',
                                   related_name="+", null=True, blank=True)
@@ -272,7 +272,7 @@ class Document(models.Model):
 
 
 # TODO: Добавить модель типов документов
-# Тип документов - справочник
+# Тип документов
 class DocumentType(models.Model):
     code = models.CharField(max_length=8, verbose_name='Код типа документа')
     name = models.TextField(verbose_name='Название документа')

@@ -1,8 +1,8 @@
 {% extends 'layout/base.html' %}
-{% load bootstrap4 %}
+{% load bootstrap5 %}
 {% load static %}
 
-{% block title %}Тестируем справочники{% endblock %}
+{% block title %}Справочники{% endblock %}
 
 {% block extra_scripts %}
     <script defer src="{% static 'main/js/jquery.tablesorter.js' %}"></script>
@@ -13,15 +13,6 @@
     <h2>Справочник - {{ handbook_name }}</h2>
     <hr>
 
-    <div class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                   aria-expanded="false">Выберите справочник</div>
-        <div class="dropdown-menu">
-            {% for handbook in avaliable_handbooks %}
-                {% url 'main:handbook' as choose_handbook_url %}
-                <a class="dropdown-item" href="{{ choose_handbook_url }}?choice={{ handbook.0 }}">{{ handbook.1.1 }}</a>
-            {% endfor %}
-        </div>
-    <hr>
     <table class="table" id="gtd_tables">
     <thead>
         <tr>
