@@ -45,6 +45,8 @@ class GtdMain(models.Model):
                                   on_delete=models.PROTECT, related_name="+", null=True, blank=True)
     gtd_file = models.ForeignKey('UploadGtdFile', verbose_name='id xml-документа гтд',
                                  on_delete=models.PROTECT, related_name="+", null=True, blank=True)
+    last_edited = models.ForeignKey('RegUser', verbose_name='Пользователь, последний внесший изменения',
+                                    related_name='+', null=True, blank=True, on_delete=models.PROTECT)
 
     class Meta:
         verbose_name = 'Грузовая таможенная декларация'
@@ -299,7 +301,8 @@ class UploadGtd(models.Model):
     description = models.CharField(max_length=255, blank=True, verbose_name='Краткий комментарий')
     uploaded_at = models.DateTimeField(auto_now_add=True)
     files_num = models.IntegerField(verbose_name='Количество прикрепленных файлов', null=True, blank=True)
-    # Надо чтобы в таблице с главной инфой ГТД было еще поле со ссылкой на файл xml
+    who_uploaded = models.ForeignKey('RegUser', blank=True, null=True, on_delete=models.PROTECT,
+                                     related_name='+', verbose_name='Пользователь, загрузивший файл(ы)')
 
     class Meta:
         verbose_name = 'Загруженная ГТД'

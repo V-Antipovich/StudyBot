@@ -24,7 +24,7 @@ def superuser_check(user):
     return user.is_superuser
 
 
-# TODO: сортировка в каждой колонке таблицы (это видимо Js)
+# TODO: сортировка в каждой колонке таблицы (это видимо Js) - НЕ РАБОТАЕТ
 # TODO: стрелочки сортировки
 # TODO: фильтрация хотя бы по главному столбцу таблиц
 
@@ -69,7 +69,6 @@ def handbook(request):
     # По умолчанию на странице справочников будет открыт справочник товаров
     if choice == 'default':
         choice = 'goods'
-    # TODO: Может быть, всё вот это - получение презентабельного поля связанной модели - обернуть во внешнюю функцию?
     # По параметру ссылки получаем название и модель справочника
     get_handbook = avaliable_handbooks[choice]
     handbook_name = get_handbook[1]
@@ -169,10 +168,7 @@ def test_view(request):
 
 
 # TODO: для всех страниц с пагинацией - добавить возможность выбора по сколько пагинировать
-# TODO: все английские вставки (page, comment, file) переименовать
 # TODO: в персональной странице ГТД уже выводить дополнительные поля, которые надо убрать в табличном виде
-# TODO: описание товаров никому не нужно.
-# TODO: Выводить код валюты, а не название
 # Список всех ГТД
 class ShowGtdView(LoginRequiredMixin, ListView):
     model = GtdMain
@@ -233,7 +229,6 @@ class GtdDetailView(DetailView):
 #         return GtdGood.objects.filter(gtd=self.kwargs.get('gtd'), group=self.kwargs.get('group_pk'))
 
 
-# TODO: коды типов документов не нужны
 # TODO: наследовать от другого класса - Нужна возможность редактировать и удалять ГТД - соответствующие кнопки в списке
 # Список документов в выбранной группе ГТД
 class ShowGtdDocumentsInGroup(ListView):
@@ -268,8 +263,6 @@ class CDDLogin(LoginView):
 
 class CDDLogout(LogoutView, LoginRequiredMixin):
     template_name = 'main/logout.html'
-
-#  TODO: хендлеры справочников
 
 # TODO: потом вернемся, при работе с пользователями
 # class RegisterUserView(CreateView):
@@ -373,6 +366,7 @@ def upload_gtd(request):
                     add_gtdmain.currency_rate = get_gtdmain["currency_rate"]
                     add_gtdmain.deal_type = DealType.objects.get(code=get_gtdmain["deal_type"])
                     add_gtdmain.gtd_file = gtd
+                    add_gtdmain.last_edited = request.user
                     add_gtdmain.save()
 
                 # Теперь в цикле надо пройтись по группам ГТД.
@@ -475,22 +469,12 @@ def upload_gtd(request):
                             group=add_gtdgroup,
                             document=add_document,
                         )
-            # context = {
-            #     "one": request.POST,
-            #     "two": request.FILES,
-            #     'three': uploaded_gtd.files_num,
-            #     'four': file_objects,
-            #     'five': request.user
-            # }
-            # # TODO: Заглушка, потребуется переадресация на другую страницу
-            # return render(request, 'main/test.html', context)
             return redirect('main:show_gtd')
         else:
             return render(request, 'main/error.html')
 
     else:
         # TODO: drag'n'drop
-        # TODO: + подредачить модель - кто добавил/последний касался этой ГТД
         form = UploadGtdfilesForm()
         context = {'form': form}
         return render(request, 'main/upload_gtd.html', context)
