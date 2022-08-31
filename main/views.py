@@ -24,10 +24,6 @@ def superuser_check(user):
     return user.is_superuser
 
 
-# TODO: сортировка в каждой колонке таблицы (это видимо Js) - НЕ РАБОТАЕТ
-# TODO: стрелочки сортировки
-# TODO: фильтрация хотя бы по главному столбцу таблиц
-
 # TODO: справочник документов пока вынести в блок документов - Это не справочник!
 # TODO: позже? распределить документы по категориям
 
@@ -167,7 +163,6 @@ def test_view(request):
     return render(request, 'main/test.html', context)
 
 
-# TODO: для всех страниц с пагинацией - добавить возможность выбора по сколько пагинировать
 # TODO: в персональной странице ГТД уже выводить дополнительные поля, которые надо убрать в табличном виде
 # Список всех ГТД
 class ShowGtdView(LoginRequiredMixin, ListView):
@@ -175,17 +170,7 @@ class ShowGtdView(LoginRequiredMixin, ListView):
     template_name = 'main/show_gtd.html'
     login_url = reverse_lazy('main:login')
     context_object_name = 'gtds'
-    paginate_by = 40
-
-"""
-    def get_queryset(self):
-        context = super(ShowGtdView, self).get_queryset()
-        # raw = GtdMain.objects.all()
-        #final = []
-        #for row in raw:
-         #   final.append({'pk': row.pk, 'customs_house': row.customs_house, 'date': row.date })
-        return GtdMain.objects.all()
-"""
+#    paginate_by = 40
 
 
 class GtdDetailView(DetailView):
@@ -206,27 +191,8 @@ class GtdDetailView(DetailView):
         context['are_goods_shown'] = open_goods
         if open_goods:
             context['goods'] = GtdGood.objects.filter(gtd_id=self.kwargs.get('pk'), group=open_goods)
+            context['number'] = GtdGroup.objects.filter(pk=open_goods)[0].number
         return context
-
-
-# # Список групп выбранной ГТД
-# class ShowGtdGroups(ListView):
-#     template_name = 'main/groups_per_gtd.html'
-#     context_object_name = 'groups'
-#     paginate_by = 20
-#
-#     def get_queryset(self, *args, **kwargs):
-#         return GtdGroup.objects.filter(gtd=self.kwargs.get('pk'))
-#
-#
-# # Список товаров в выбранной группе ГТД
-# class ShowGtdGoodsInGroup(ListView):
-#     template_name = 'main/goods_per_group.html'
-#     context_object_name = 'goods'
-#     paginate_by = 20
-#
-#     def get_queryset(self, *args, **kwargs):
-#         return GtdGood.objects.filter(gtd=self.kwargs.get('gtd'), group=self.kwargs.get('group_pk'))
 
 
 # TODO: наследовать от другого класса - Нужна возможность редактировать и удалять ГТД - соответствующие кнопки в списке

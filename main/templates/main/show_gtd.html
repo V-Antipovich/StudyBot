@@ -3,9 +3,11 @@
 {% load static %}
 {% block title %}ГТД{% endblock %}
 
-{% block extra_scripts %}
-    <script defer src="{% static 'main/js/jquery.tablesorter.js' %}"></script>
-    <script defer type="text/javascript" src="{% static 'main/js/sort_table.js' %}" ></script>
+{% block extra_links %}
+    <link rel="stylesheet" href="{% static 'main/css/jquery.dataTables.min.css' %}" type="text/css">
+    <script type="text/javascript" src="{% static 'main/js/jquery-3.6.1.js' %}"></script>
+    <script type="text/javascript" src="{% static 'main/js/jquery.dataTables.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'main/js/use_datatable.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -49,21 +51,4 @@
         {% endfor %}
     </tbody>
     </table>
-    <div class="pagination">
-    <span class="step-links">
-        {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo; В начало</a>
-            <a href="?page={{ page_obj.previous_page_number }}">На предыдущую</a>
-        {% endif %}
-
-        <span class="current">
-            Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
-        </span>
-
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">На следующую</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">В конец &raquo;</a>
-        {% endif %}
-        </span>
-    </div>
 {% endblock %}

@@ -4,9 +4,11 @@
 
 {% block title %}Справочники{% endblock %}
 
-{% block extra_scripts %}
-    <script defer src="{% static 'main/js/jquery.tablesorter.js' %}"></script>
-    <script defer type="text/javascript" src="{% static 'main/js/sort_table.js' %}" ></script>
+{% block extra_links %}
+    <link rel="stylesheet" href="{% static 'main/css/jquery.dataTables.min.css' %}" type="text/css">
+    <script type="text/javascript" src="{% static 'main/js/jquery-3.6.1.js' %}"></script>
+    <script type="text/javascript" src="{% static 'main/js/jquery.dataTables.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'main/js/use_datatable.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -31,5 +33,4 @@
         {% endfor %}
     </tbody>
     </table>
-
 {% endblock %}
