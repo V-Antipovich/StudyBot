@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, DeleteView
 from django.http import FileResponse, HttpResponse
 from .forms import UploadGtdfilesForm #, RegisterUserForm
 from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType, Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType, UploadGtdFile
@@ -164,6 +164,7 @@ def test_view(request):
 
 
 # TODO: в персональной странице ГТД уже выводить дополнительные поля, которые надо убрать в табличном виде
+# TODO: Нужна возможность редактировать и удалять ГТД - соответствующие кнопки в списке и в личных страницах
 # Список всех ГТД
 class ShowGtdView(LoginRequiredMixin, ListView):
     model = GtdMain
@@ -195,25 +196,31 @@ class GtdDetailView(DetailView):
         return context
 
 
-# TODO: наследовать от другого класса - Нужна возможность редактировать и удалять ГТД - соответствующие кнопки в списке
-# Список документов в выбранной группе ГТД
-class ShowGtdDocumentsInGroup(ListView):
-    template_name = 'main/documents_per_group.html'
-    context_object_name = 'documents'
-    paginate_by = 20
+class GtdDeleteView(DeleteView):
+    model = GtdMain
+    template_name = 'main/delete_gtd.html'
+    success_url = reverse_lazy('main:show_gtd')
+    context_object_name = 'gtd'
 
-    def get_queryset(self, *args, **kwargs):
-        queryset = GtdDocument.objects.filter(gtd=self.kwargs.get('gtd'), group=self.kwargs.get('group_pk'))
-        final_queryset = []
-        for row in queryset:
-            obj = []
-            for item in row:
-                if item:
-                    obj.append(item)
-                else:
-                    obj.append('')
-            final_queryset.append(obj)
-        return final_queryset
+
+# Список документов в выбранной группе ГТД
+# class ShowGtdDocumentsInGroup(ListView):
+#     template_name = 'main/documents_per_group.html'
+#     context_object_name = 'documents'
+#     paginate_by = 20
+#
+#     def get_queryset(self, *args, **kwargs):
+#         queryset = GtdDocument.objects.filter(gtd=self.kwargs.get('gtd'), group=self.kwargs.get('group_pk'))
+#         final_queryset = []
+#         for row in queryset:
+#             obj = []
+#             for item in row:
+#                 if item:
+#                     obj.append(item)
+#                 else:
+#                     obj.append('')
+#             final_queryset.append(obj)
+#         return final_queryset
 
 
 # Вывод xml-файла выбранной ГТД

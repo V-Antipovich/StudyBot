@@ -45,8 +45,10 @@ class GtdMain(models.Model):
                                   on_delete=models.PROTECT, related_name="+", null=True, blank=True)
     gtd_file = models.ForeignKey('UploadGtdFile', verbose_name='id xml-документа гтд',
                                  on_delete=models.PROTECT, related_name="+", null=True, blank=True)
-    last_edited = models.ForeignKey('RegUser', verbose_name='Пользователь, последний внесший изменения',
+    last_edited_user = models.ForeignKey('RegUser', verbose_name='Пользователь, последний внесший изменения',
                                     related_name='+', null=True, blank=True, on_delete=models.PROTECT)
+    last_edited_time = models.DateTimeField(verbose_name='Дата и время добавления/последнего редактирования',
+                                            null=True, blank=True, auto_now=True)
 
     class Meta:
         verbose_name = 'Грузовая таможенная декларация'
@@ -136,7 +138,7 @@ class DealType(models.Model):
 
 # Группы товаров в ГТД
 class GtdGroup(models.Model):
-    gtd = models.ForeignKey('GtdMain', on_delete=models.PROTECT, verbose_name='id ГТД', related_name="+")
+    gtd = models.ForeignKey('GtdMain', on_delete=models.CASCADE, verbose_name='id ГТД', related_name="+")
     name = models.CharField(verbose_name='Название', max_length=255, null=True, blank=True)
     description = models.TextField(verbose_name='Описание', null=True, blank=True)
     tn_ved = models.ForeignKey('TnVed', on_delete=models.PROTECT,
@@ -239,9 +241,9 @@ class MeasureQualifier(models.Model):
 
 # Товары из ГТД
 class GtdGood(models.Model):
-    gtd = models.ForeignKey('GtdMain', on_delete=models.PROTECT,
+    gtd = models.ForeignKey('GtdMain', on_delete=models.CASCADE,
                             verbose_name='id ГТД', related_name="+")
-    group = models.ForeignKey('GtdGroup', on_delete=models.PROTECT,
+    group = models.ForeignKey('GtdGroup', on_delete=models.CASCADE,
                               verbose_name='id группы товаров', related_name="+")
     good = models.ForeignKey('Good', on_delete=models.PROTECT,
                              verbose_name='id товара', related_name="+", null=True, blank=True)
@@ -286,9 +288,9 @@ class DocumentType(models.Model):
 
 # Документы группы в гтд
 class GtdDocument(models.Model):
-    gtd = models.ForeignKey('GtdMain', on_delete=models.PROTECT, verbose_name='id ГТД', related_name="+")
-    group = models.ForeignKey('GtdGroup', on_delete=models.PROTECT, verbose_name='id группы товаров', related_name="+")
-    document = models.ForeignKey('Document', on_delete=models.PROTECT, verbose_name='id документа', related_name="+")
+    gtd = models.ForeignKey('GtdMain', on_delete=models.CASCADE, verbose_name='id ГТД', related_name="+")
+    group = models.ForeignKey('GtdGroup', on_delete=models.CASCADE, verbose_name='id группы товаров', related_name="+")
+    document = models.ForeignKey('Document', on_delete=models.CASCADE, verbose_name='id документа', related_name="+")
 
     class Meta:
         verbose_name = 'Документ в ГТД'

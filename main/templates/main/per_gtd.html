@@ -45,6 +45,20 @@
                             {% url 'main:show_gtd_file' filename=gtd.gtd_file.document as file_url %}
                             <div>Документ ГТД: <a href={{ file_url }} >Посмотреть</a> / <a download href={{ file_url }}>Скачать</a> </div>
                         {% endif %}
+                        <hr>
+                        <div class="mt-4">
+                            <a class="btn btn-outline-warning" href="#">Отредактировать</a>
+                            <a class="btn btn-outline-danger" href="{% url 'main:delete_gtd' pk=gtd.pk %}">Удалить</a>
+                        </div>
+                    <!--
+                        <div class="row">
+                            <div class="dropdown mt-4">
+                            <button class="btn btn-outline-danger">
+                                <a href="#"Удалить ГТД</a>
+                            </button>
+                        </div>
+                        </div> -->
+
                     </div>
                 </div>
             </div>
