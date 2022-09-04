@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="added interactive tables with sorting and filter; cleaned up some views, deleted some templates">
-      <change afterPath="$PROJECT_DIR$/main/templates/main/delete_gtd.html" afterDir="false" />
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="added Delete view for Gtd with cascade delete of gtdgroups, gtdgoods and gtddocuments">
+      <change afterPath="$PROJECT_DIR$/main/templates/main/profile.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/templates/main/update_gtd.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/main/js/jquery.dataTables.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/main/js/use_datatable.js" beforeDir="false" afterPath="$PROJECT_DIR$/main/static/main/js/use_datatable.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/documents_per_group.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main/templates/main/per_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/per_gtd.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/register_user.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/register_user.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/templates/main/show_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/show_gtd.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/test.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/test.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
@@ -48,8 +49,8 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "D:/Programming/Python/Django/customs_declarations_database/main/static/main/css",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+    "last_opened_file_path": "D:/Programming/Python/Django/2/back_only/bboard",
+    "settings.editor.selected.configurable": "preferences.lookFeel"
   },
   "keyToStringList": {
     "ChangesTree.GroupingKeys": [
@@ -66,7 +67,29 @@
       <recent name="D:\Programming\Python\Django\customs_declarations_database\main\static\main" />
     </key>
   </component>
-  <component name="RunManager" selected="Django Server.customs_declarations_database">
+  <component name="RunManager" selected="Python.models">
+    <configuration name="models" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="customs_declarations_database" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/main" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main/models.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="views" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="customs_declarations_database" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -114,10 +137,12 @@
     </configuration>
     <list>
       <item itemvalue="Django Server.customs_declarations_database" />
+      <item itemvalue="Python.models" />
       <item itemvalue="Python.views" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.models" />
         <item itemvalue="Python.views" />
       </list>
     </recent_temporary>
@@ -135,7 +160,7 @@
       <workItem from="1660372815670" duration="914000" />
       <workItem from="1660373810951" duration="24936000" />
       <workItem from="1660492731548" duration="208048000" />
-      <workItem from="1661505029582" duration="86045000" />
+      <workItem from="1661505029582" duration="118841000" />
     </task>
     <task id="LOCAL-00001" summary="restored most files after fixing models of exporters and importers">
       <created>1660373120746</created>
@@ -263,11 +288,29 @@
       <option name="project" value="LOCAL" />
       <updated>1661928844722</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="added Delete view for Gtd with cascade delete of gtdgroups, gtdgoods and gtddocuments">
+      <created>1661949556054</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1661949556054</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+        <option value="Space.CommitStatus" />
+      </list>
+    </option>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -297,7 +340,8 @@
     <MESSAGE value="moved to bootstrap5, replaced handbooks choice, removed documents, changed horizontal menu, remarkably changed gtd Detailed view" />
     <MESSAGE value="lost tablesorting; fully fixed base templates; added user FK in GtdMain" />
     <MESSAGE value="added interactive tables with sorting and filter; cleaned up some views, deleted some templates" />
-    <option name="LAST_COMMIT_MESSAGE" value="added interactive tables with sorting and filter; cleaned up some views, deleted some templates" />
+    <MESSAGE value="added Delete view for Gtd with cascade delete of gtdgroups, gtdgoods and gtddocuments" />
+    <option name="LAST_COMMIT_MESSAGE" value="added Delete view for Gtd with cascade delete of gtdgroups, gtdgoods and gtddocuments" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />

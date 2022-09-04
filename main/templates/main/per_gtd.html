@@ -47,7 +47,7 @@
                         {% endif %}
                         <hr>
                         <div class="mt-4">
-                            <a class="btn btn-outline-warning" href="#">Отредактировать</a>
+                            <a class="btn btn-outline-warning" href="{% url 'main:update_gtd' pk=gtd.pk %}">Отредактировать</a>
                             <a class="btn btn-outline-danger" href="{% url 'main:delete_gtd' pk=gtd.pk %}">Удалить</a>
                         </div>
                     <!--

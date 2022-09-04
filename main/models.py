@@ -11,9 +11,8 @@ class RegUser(AbstractUser):
     email = models.EmailField(verbose_name='Электронная почта', unique=True)
     done_registration = models.BooleanField(verbose_name='Завершил регистрацию?', default=False)
 
-    class Meta:
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
+    class Meta(AbstractUser.Meta):
+        pass
 
     def save(self, *args, **kwargs):
         self.is_active = False
@@ -66,6 +65,9 @@ class CustomsHouse(models.Model):
         verbose_name = 'Таможенный отдел'
         verbose_name_plural = 'Таможенные отделы'
 
+    def __str__(self):
+        return self.house_name
+
 
 # Экспортеры - Справочник
 class Exporter(models.Model):
@@ -83,6 +85,9 @@ class Exporter(models.Model):
         verbose_name = 'Экспортер'
         verbose_name_plural = 'Экспортеры'
         unique_together = ('name', 'postal_code', 'city', 'street_house')
+
+    def __str__(self):
+        return self.name
 
 
 # Импортеры - Справочник
@@ -103,6 +108,9 @@ class Importer(models.Model):
         verbose_name = 'Импортер'
         verbose_name_plural = 'Импортеры'
 
+    def __str__(self):
+        return self.name
+
 
 # Государства - Справочник
 class Country(models.Model):
@@ -113,6 +121,9 @@ class Country(models.Model):
     class Meta:
         verbose_name = 'Страна'
         verbose_name_plural = 'Страны'
+
+    def __str__(self):
+        return self.russian_name
 
 
 # Валюты - Справочник
@@ -125,6 +136,9 @@ class Currency(models.Model):
         verbose_name = 'Валюта'
         verbose_name_plural = 'Валюты'
 
+    def __str__(self):
+        return self.short_name
+
 
 # Характер сделки - Справочник
 class DealType(models.Model):
@@ -134,6 +148,9 @@ class DealType(models.Model):
     class Meta:
         verbose_name = 'Характер сделки'
         verbose_name_plural = 'Классификатор характера сделки'
+
+    def __str__(self):
+        return self.code
 
 
 # Группы товаров в ГТД

@@ -3,13 +3,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
 from django.db import IntegrityError
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import CreateView, DeleteView
-from django.http import FileResponse, HttpResponse
-from .forms import UploadGtdfilesForm #, RegisterUserForm
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.http import FileResponse, HttpResponse, HttpResponseRedirect
+from .forms import UploadGtdfilesForm, GtdUpdateForm, RegisterUserForm
 from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType, Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType, UploadGtdFile
 from django.views.generic.edit import FormView
 import os
@@ -22,6 +22,13 @@ from django_sorting_bootstrap.views import SimpleChangeList
 # Вспомогательные функции контроля доступа
 def superuser_check(user):
     return user.is_superuser
+
+
+class RegisterUserView(CreateView):
+    model = RegUser
+    template_name = 'main/register_user.html'
+    form_class = RegisterUserForm
+    success_url = reverse_lazy('main:show_gtd')
 
 
 # TODO: справочник документов пока вынести в блок документов - Это не справочник!
@@ -158,7 +165,7 @@ def index(request):
 # Контроллер для тестовой странички
 def test_view(request):
     context = {
-
+        'req': request.META #.get('HTTP_REFERER')
     }
     return render(request, 'main/test.html', context)
 
@@ -174,6 +181,7 @@ class ShowGtdView(LoginRequiredMixin, ListView):
 #    paginate_by = 40
 
 
+# Персональная страница ГТД
 class GtdDetailView(DetailView):
     model = GtdMain
     template_name = 'main/per_gtd.html'
@@ -183,11 +191,6 @@ class GtdDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         groups = GtdGroup.objects.filter(gtd_id=self.kwargs.get('pk'))
         context['groups'] = groups
-        """goods = {}
-        for group in groups:
-            group_goods = GtdGood.objects.filter(group=group.pk)
-            goods[group.pk] = group_goods
-        context['goods'] = goods"""
         open_goods = self.request.GET.get('group')
         context['are_goods_shown'] = open_goods
         if open_goods:
@@ -196,6 +199,21 @@ class GtdDetailView(DetailView):
         return context
 
 
+# TODO: нужно, чтобы при загрузке формы автоматически был выставлен юзернейм, и чтоб без возможности изменения
+# Страница редактирования ГТД
+class GtdUpdateView(UpdateView):
+    template_name = 'main/update_gtd.html'
+    context_object_name = 'gtd'
+    model = GtdMain
+    form_class = GtdUpdateForm
+
+    def get_success_url(self):
+        return reverse('main:per_gtd', kwargs={'pk': self.object.pk})
+
+    # def get_form_kwargs(self):
+
+
+# Страница удаления ГТД
 class GtdDeleteView(DeleteView):
     model = GtdMain
     template_name = 'main/delete_gtd.html'
@@ -231,7 +249,11 @@ def show_gtd_file(request, filename):
 
 class CDDLogin(LoginView):
     template_name = 'main/login.html'
-    next_page = 'main:index'
+
+
+@login_required
+def profile(request):
+    return render(request, 'main/profile.html')
 
 
 class CDDLogout(LogoutView, LoginRequiredMixin):
