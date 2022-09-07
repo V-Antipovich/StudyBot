@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import index, upload_gtd, ShowGtdView, test_view, show_gtd_file, CDDLogin, CDDLogout, RegisterDoneView, handbook, GtdDetailView, GtdUpdateView, GtdDeleteView, RegisterUserView, profile
+from .views import index, upload_gtd, ShowGtdView, test_view, show_gtd_file, CDDLogin, CDDLogout, RegisterDoneView, handbook, GtdDetailView, update_view, GtdDeleteView, RegisterUserView, profile
 
 
 app_name = 'main'
@@ -11,7 +11,7 @@ urlpatterns = [
     path('accounts/register', RegisterUserView.as_view(), name='register'),
     path('accounts/login/', CDDLogin.as_view(), name='login'),
     path('accounts/logout/', CDDLogout.as_view(), name='logout'),
-    path('documents/update_gtd/<int:pk>', GtdUpdateView.as_view(), name='update_gtd'),
+    path('documents/update_gtd/<int:pk>', update_view, name='update_gtd'),
     path('documents/delete_gtd/<int:pk>', GtdDeleteView.as_view(), name='delete_gtd'),
     path('documents/show_gtd/file/<path:filename>', show_gtd_file, name='show_gtd_file'),
     path('documents/show_gtd/<int:pk>', GtdDetailView.as_view(), name='per_gtd'),

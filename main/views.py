@@ -9,6 +9,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.http import FileResponse, HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from .forms import UploadGtdfilesForm, GtdUpdateForm, RegisterUserForm
 from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType, Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType, UploadGtdFile
 from django.views.generic.edit import FormView
@@ -171,8 +172,8 @@ def test_view(request):
 
 
 # TODO: в персональной странице ГТД уже выводить дополнительные поля, которые надо убрать в табличном виде
-# TODO: Нужна возможность редактировать и удалять ГТД - соответствующие кнопки в списке и в личных страницах
 # Список всех ГТД
+# TODO: дубликаты в таблице!
 class ShowGtdView(LoginRequiredMixin, ListView):
     model = GtdMain
     template_name = 'main/show_gtd.html'
@@ -201,16 +202,31 @@ class GtdDetailView(DetailView):
 
 # TODO: нужно, чтобы при загрузке формы автоматически был выставлен юзернейм, и чтоб без возможности изменения
 # Страница редактирования ГТД
-class GtdUpdateView(UpdateView):
-    template_name = 'main/update_gtd.html'
-    context_object_name = 'gtd'
-    model = GtdMain
-    form_class = GtdUpdateForm
-
-    def get_success_url(self):
-        return reverse('main:per_gtd', kwargs={'pk': self.object.pk})
-
+# class GtdUpdateView(UpdateView):
+#     template_name = 'main/update_gtd.html'
+#     context_object_name = 'gtd'
+#     model = GtdMain
+#     form_class = GtdUpdateForm
+#
+#     def get_success_url(self):
+#         return reverse('main:per_gtd', kwargs={'pk': self.object.pk})
     # def get_form_kwargs(self):
+def update_view(request, pk):
+    obj = get_object_or_404(GtdMain, pk=pk)
+    if request.method == 'POST':
+        obj.last_edited_user = request.user
+        form = GtdUpdateForm(request.POST, instance=obj)
+        if form.is_valid():
+            # form.last_edited_user = request.user.pk
+            form.save()
+            return redirect('main:show_gtd')
+    else:
+        form = GtdUpdateForm(instance=obj)
+        context = {
+            'form': form,
+            'gtd': obj,
+        }
+        return render(request, 'main/update_gtd.html', context)
 
 
 # Страница удаления ГТД
@@ -465,8 +481,8 @@ def upload_gtd(request):
                             document=add_document,
                         )
             return redirect('main:show_gtd')
-        else:
-            return render(request, 'main/error.html')
+        # else:
+        #     return render(request, 'main/error.html')
 
     else:
         # TODO: drag'n'drop

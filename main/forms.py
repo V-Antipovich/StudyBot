@@ -17,13 +17,12 @@ class UploadGtdfilesForm(forms.Form):
 
 
 class GtdUpdateForm(forms.ModelForm):
-    # last_edited_user = forms.ModelChoiceField()
 
     class Meta:
         model = GtdMain
         fields = ('gtdId', 'customs_house', 'total_goods_number', 'exporter',
                   'importer', 'trading_country', 'currency', 'total_invoice_amount', 'currency_rate',
-                  'deal_type', 'last_edited_user',)
+                  'deal_type',)# 'last_edited_user',)
         labels = {
             'customs_house': 'Таможенный отдел',
             'exporter': 'Экспортер',
@@ -32,7 +31,9 @@ class GtdUpdateForm(forms.ModelForm):
             'currency': 'Валюта',
             'deal_type': 'Характер сделки'
         }
-        widgets = {'last_edited_user': forms.HiddenInput()}
+        # widgets = {
+        #     'last_edited_user': forms.HiddenInput()
+        # }
 
 
 # TODO: Вернуться потом к написанию нормальной формы для регистрации, когда будет работа над юзерами

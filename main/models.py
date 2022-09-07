@@ -7,15 +7,16 @@ from django.template.defaultfilters import slugify
 
 # Роли реализованы в виде групп (уже существующей структуры)
 # Пользователи базы
+# TODO: в будущее - надо переделать модель юзеров, а то проблемы с паролями и входом
+# Или проблема не в модели?
 class RegUser(AbstractUser):
     email = models.EmailField(verbose_name='Электронная почта', unique=True)
-    done_registration = models.BooleanField(verbose_name='Завершил регистрацию?', default=False)
 
     class Meta(AbstractUser.Meta):
         pass
 
     def save(self, *args, **kwargs):
-        self.is_active = False
+        self.is_active = True
         return super(RegUser, self).save(*args, **kwargs)
 
 
