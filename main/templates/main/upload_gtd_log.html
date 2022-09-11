@@ -1,0 +1,39 @@
+{% extends 'layout/base.html' %}
+
+{% load static %}
+
+{% load bootstrap5 %}
+
+{% block title %}
+    Успешно загружены файлы
+{% endblock %}
+
+{% block content %}
+    <h3>Загружены файлы</h3>
+    <div>Отправлено на вход: {{ all }}</div>
+
+    <div>Пропущено: {{ skipped }}</div>
+        {% if skipped %}
+            {% for gtd in log.skip %}
+                <li><a href="{% url 'main:per_gtd' pk=gtd.pk %}">{{ gtd.gtdId }}</a></li>
+
+            {% endfor %}
+        {% endif %}
+    <div>Обновленные: {{ updated }}</div>
+    {% if updated %}
+        {% for gtd in log.update %}
+            <li>
+                <a href="{% url 'main:per_gtd' pk=gtd.pk %}">{{ gtd.gtdId }}</a>
+            </li>
+        {% endfor %}
+    {% endif %}
+    <div>Новые: {{ new }}</div>
+
+    {% if new %}
+        {% for gtd in log.new %}
+            <li>
+                <a href="{% url 'main:per_gtd' pk=gtd.pk %}">{{ gtd.gtdId }}</a>
+            </li>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

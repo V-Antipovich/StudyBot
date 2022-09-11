@@ -182,6 +182,7 @@ class ShowGtdView(LoginRequiredMixin, ListView):
 #    paginate_by = 40
 
 
+# TODO: возможность редактировать товар
 # Персональная страница ГТД
 class GtdDetailView(DetailView):
     model = GtdMain
@@ -200,7 +201,6 @@ class GtdDetailView(DetailView):
         return context
 
 
-# TODO: нужно, чтобы при загрузке формы автоматически был выставлен юзернейм, и чтоб без возможности изменения
 # Страница редактирования ГТД
 # class GtdUpdateView(UpdateView):
 #     template_name = 'main/update_gtd.html'
@@ -211,7 +211,7 @@ class GtdDetailView(DetailView):
 #     def get_success_url(self):
 #         return reverse('main:per_gtd', kwargs={'pk': self.object.pk})
     # def get_form_kwargs(self):
-def update_view(request, pk):
+def update_gtd(request, pk):
     obj = get_object_or_404(GtdMain, pk=pk)
     if request.method == 'POST':
         obj.last_edited_user = request.user
@@ -219,7 +219,8 @@ def update_view(request, pk):
         if form.is_valid():
             # form.last_edited_user = request.user.pk
             form.save()
-            return redirect('main:show_gtd')
+            # return redirect('main:show_gtd')
+            return redirect('main:per_gtd', pk=pk)
     else:
         form = GtdUpdateForm(instance=obj)
         context = {
@@ -288,10 +289,6 @@ class RegisterDoneView(TemplateView):
 
 
 # Загрузка файлов ГТД в формате .xml
-# TODO: когда попадается ГТД с тем же номером, спрашивать: перезаписывать ли/пропускать/переходить к нужной ГТД?
-# TODO: перед загрузкой добавить в форму кнопочку ^ - при попадании той же самой ГТД, что делать
-# TODO: сделать лог по итогу - сколько файлов заменено, сколько пропущено
-# TODO: после успешной загрузки перекидывать на персональную страницу этой ГТД, а не на общий список
 # TODO: далекое будущее - многопользовательские коллизии - нужно проверять по полю кто последний трогал документ, если не ты, то предупреждаем
 # TODO: далекое будущее - статус черновик/проведен
 
@@ -300,8 +297,10 @@ def upload_gtd(request):
     if request.method == 'POST':
         form = UploadGtdfilesForm(request.POST, request.FILES)
         if form.is_valid():
-            # TODO: проверка качества контента
-            # TODO: Более подробно указывать возможные ошибки на страницах ошибки
+            on_duplicate = request.POST['on_duplicate']
+            # TODO: (Позже) проверка качества контента
+            # TODO: (Позже) Более подробно указывать возможные ошибки на страницах ошибки
+
             uploaded_gtd = UploadGtd(
                 description=request.POST['comment']
             )
@@ -319,18 +318,35 @@ def upload_gtd(request):
             uploaded_gtd.files_num = len(file_objects)
             uploaded_gtd.save()
 
+            all_files = len(files)
+            log = {
+                'skip': [],
+                'new': [],
+                'update': [],
+            }
             for gtd in file_objects:
+
                 last_file = gtd.document
 
                 path = os.path.join(MEDIA_ROOT, str(last_file))
                 # Получили словарь с распарсенной гтд
                 get_gtdmain, get_gtdgroups = parse_gtd(path)
-
-                # Работа с GtdMain - основная инфа в шапке ГТД
+                # Сначала проверим, надо ли вообще добавлять ГТД, если таковая имеется.
+                obj = GtdMain.objects.filter(gtdId=get_gtdmain['gtdId'])
+                if obj.exists():
+                    if on_duplicate == 'skip':
+                        log['skip'].append(obj[0]) #get_gtdmain['gtdId'])
+                        continue
+                    else:
+                        where_to_put = 'update'
+                        # log[where_to_put].append(get_gtdmain['gtdId'])
+                else:
+                    where_to_put = 'new'
+                    # Работа с GtdMain - основная инфа в шапке ГТД
 
                 # Обновим справочник экспортеров если требуется
                 exporter_info = get_gtdmain["exporter"]
-                add_exporter, exp_created = Exporter.objects.get_or_create(
+                add_exporter, exp_created = Exporter.objects.update_or_create(
                     name=exporter_info["name"],
                     postal_code=exporter_info["postal_code"],
                     country=Country.objects.get(code=exporter_info["country"]),
@@ -340,10 +356,9 @@ def upload_gtd(request):
                     region=exporter_info['region']
                 )
 
-
                 # Обновим справочник импортеров
                 importer_info = get_gtdmain["importer"]
-                add_importer, imp_created = Importer.objects.get_or_create(
+                add_importer, imp_created = Importer.objects.update_or_create(
                     name=importer_info["name"],
                     inn=importer_info["inn"],
                     ogrn=importer_info["orgn"],
@@ -358,9 +373,7 @@ def upload_gtd(request):
                     add_importer.save()
 
                 # Добавим непосредственно главную инфу гтд
-                """if not GtdMain.objects.filter(gtdId=get_gtdmain["gtdId"]).exists():
-                    GtdMain = ()"""
-                add_gtdmain, gtdmain_created = GtdMain.objects.get_or_create(
+                add_gtdmain, gtdmain_created = GtdMain.objects.update_or_create(
                     gtdId=get_gtdmain["gtdId"],
                     customs_house=CustomsHouse.objects.get(house_num=get_gtdmain["customs_house"]),
                     date=get_gtdmain["date"],
@@ -379,6 +392,7 @@ def upload_gtd(request):
                     add_gtdmain.gtd_file = gtd
                     add_gtdmain.last_edited = request.user
                     add_gtdmain.save()
+                log[where_to_put].append(add_gtdmain)  # get_gtdmain['gtdId'])
 
                 # Теперь в цикле надо пройтись по группам ГТД.
                 # gtd_id = GtdMain.objects.get(gtdId=get_gtdmain["gtdId"])
@@ -386,14 +400,14 @@ def upload_gtd(request):
                     # Заносим группу, если такой ещё не было
 
                     # Проверяем ТН ВЭД
-                    add_tnved, tnved_created = TnVed.objects.get_or_create(
+                    add_tnved, tnved_created = TnVed.objects.update_or_create(
                         code=group["tn_ved"]
                     )
                     if tnved_created:
                         add_tnved.subposition = get_tnved_name(str(group["tn_ved"]))
                         add_tnved.save()
 
-                    add_gtdgroup, gtdgroup_created = GtdGroup.objects.get_or_create(
+                    add_gtdgroup, gtdgroup_created = GtdGroup.objects.update_or_create(
                         gtd=add_gtdmain,
                         name=group['name'],
                         description=group['desc'],
@@ -419,7 +433,7 @@ def upload_gtd(request):
                         # Обновляем справочник товарных знаков
                         try_trademark = good_itself['trademark']
                         if try_trademark:
-                            add_trademark, trademark_created = TradeMark.objects.get_or_create(
+                            add_trademark, trademark_created = TradeMark.objects.update_or_create(
                                 trademark=try_trademark
                             )
                         else:
@@ -428,14 +442,14 @@ def upload_gtd(request):
                         # Обновляем справочник торговых марок
                         try_goodsmark = good_itself['brand']
                         if try_goodsmark:
-                            add_goodsmark, goodsmark_created = GoodsMark.objects.get_or_create(
+                            add_goodsmark, goodsmark_created = GoodsMark.objects.update_or_create(
                                 goodsmark=try_goodsmark
                             )
                         else:
                             add_goodsmark = None
 
                         # Обновляем таблицу товаров
-                        add_good, good_created = Good.objects.get_or_create(
+                        add_good, good_created = Good.objects.update_or_create(
                             marking=good_itself['marking'],
                             name=good_itself['name'],
                             trademark=add_trademark,
@@ -445,14 +459,14 @@ def upload_gtd(request):
                         # Обновляем справочник производителей (заводов)
                         try_manufacturer = gtd_good['manufacturer']
                         if try_manufacturer:
-                            add_manufacturer, manufacturer_created = Manufacturer.objects.get_or_create(
+                            add_manufacturer, manufacturer_created = Manufacturer.objects.update_or_create(
                                 manufacturer=gtd_good['manufacturer']
                             )
                         else:
                             add_manufacturer = None
 
                         # Добавляем Товар ГТД
-                        add_gtdgood, gtdgood_created = GtdGood.objects.get_or_create(
+                        add_gtdgood, gtdgood_created = GtdGood.objects.update_or_create(
                             gtd=add_gtdmain,
                             group=add_gtdgroup,
                             good_num=gtd_good['good_num'],
@@ -467,7 +481,7 @@ def upload_gtd(request):
                     gtd_documents = group['documents']
 
                     for gtd_document in gtd_documents:
-                        add_document, document_created = Document.objects.get_or_create(
+                        add_document, document_created = Document.objects.update_or_create(
                             name=gtd_document['name'],
                             doc_type=DocumentType.objects.get(code=gtd_document['doc_type']),
                             number=gtd_document['number'],
@@ -475,12 +489,22 @@ def upload_gtd(request):
                             begin_date=gtd_document['begin_date'],
                             expire_date=gtd_document['expire_date']
                         )
-                        add_gtddocument, gtddocument_created = GtdDocument.objects.get_or_create(
+                        add_gtddocument, gtddocument_created = GtdDocument.objects.update_or_create(
                             gtd=add_gtdmain,
                             group=add_gtdgroup,
                             document=add_document,
                         )
-            return redirect('main:show_gtd')
+            skipped = len(log['skip'])
+            updated = len(log['update'])
+            new = len(log['new'])
+            context = {
+                'log': log,
+                'skipped': skipped,
+                'updated': updated,
+                'new': new,
+                'all': skipped + updated + new,
+            }
+            return render(request, 'main/upload_gtd_log.html', context)
         # else:
         #     return render(request, 'main/error.html')
 

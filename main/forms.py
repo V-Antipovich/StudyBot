@@ -3,7 +3,7 @@ from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 
-from .models import UploadGtd, RegUser, GtdMain, Exporter, Importer, CustomsHouse
+from .models import UploadGtd, RegUser, GtdMain, Exporter, Importer, CustomsHouse, GtdGood
 # from .apps import user_registered
 
 
@@ -12,8 +12,12 @@ class GtdFileForm(forms.Form):
 
 
 class UploadGtdfilesForm(forms.Form):
-    comment = forms.CharField(max_length=255, required=False)
-    document = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}), validators=[FileExtensionValidator(allowed_extensions=['xml'])])
+    comment = forms.CharField(max_length=255, required=False, label='Комментарий (если требуется)')
+    document = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}),
+                               validators=[FileExtensionValidator(allowed_extensions=['xml'])], label='Документы')
+    on_duplicate = forms.ChoiceField(choices=(('skip', 'Пропускать'), ('update', 'Обновлять')),
+                                     label='Если среди загружаемых ГТД встретятся '
+                                               'объекты с номерами, уже присутствующими в базе:')
 
 
 class GtdUpdateForm(forms.ModelForm):
@@ -22,14 +26,14 @@ class GtdUpdateForm(forms.ModelForm):
         model = GtdMain
         fields = ('gtdId', 'customs_house', 'total_goods_number', 'exporter',
                   'importer', 'trading_country', 'currency', 'total_invoice_amount', 'currency_rate',
-                  'deal_type',)# 'last_edited_user',)
+                  'deal_type',)  # 'last_edited_user',)
         labels = {
             'customs_house': 'Таможенный отдел',
             'exporter': 'Экспортер',
             'importer': 'Импортер',
             'trading_country': 'Торгующая страна',
             'currency': 'Валюта',
-            'deal_type': 'Характер сделки'
+            'deal_type': 'Характер сделки',
         }
         # widgets = {
         #     'last_edited_user': forms.HiddenInput()

@@ -22,7 +22,7 @@ class RegUser(AbstractUser):
 
 # Главная инфа гтд (1 на весь документ)
 class GtdMain(models.Model):
-    gtdId = models.CharField(max_length=23, verbose_name='Номер гтд')
+    gtdId = models.CharField(max_length=23, verbose_name='Номер гтд', unique=True)
     customs_house = models.ForeignKey('CustomsHouse', on_delete=models.PROTECT,
                                       verbose_name='id таможенного отделения', related_name="+", null=True, blank=True)
     date = models.DateField(verbose_name='Дата', null=True, blank=True)
@@ -215,6 +215,12 @@ class Good(models.Model):
         verbose_name = 'Товар'
         verbose_name_plural = 'Товары'
 
+    def __str__(self):
+        if self.marking:
+            return self.marking
+        else:
+            return 'Артикул'
+
 
 # Товарный знак - Справочник
 class TradeMark(models.Model):
@@ -242,6 +248,9 @@ class Manufacturer(models.Model):
         verbose_name = 'Производитель'
         verbose_name_plural = 'Производители'
 
+    def __str__(self):
+        return self.manufacturer
+
 
 # Единицы измерения - Справочник
 class MeasureQualifier(models.Model):
@@ -255,6 +264,9 @@ class MeasureQualifier(models.Model):
     class Meta:
         verbose_name = 'Единица измерения'
         verbose_name_plural = 'Единицы измерения'
+
+    def __str__(self):
+        return self.russian_symbol
 
 
 # Товары из ГТД
@@ -271,6 +283,8 @@ class GtdGood(models.Model):
                                   related_name="+", verbose_name='id единицы измерения', null=True, blank=True)
     manufacturer = models.ForeignKey('Manufacturer', on_delete=models.PROTECT,
                                      related_name="+", verbose_name='id производителя', null=True, blank=True)
+    last_edited_user = models.ForeignKey('RegUser', on_delete=models.PROTECT, related_name='+',
+                                         verbose_name='Пользователь, последний внесший изменения', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Товар в ГТД'
