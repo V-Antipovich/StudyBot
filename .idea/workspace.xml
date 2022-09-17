@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="update gtd view made as function, changing user id who last touched">
-      <change afterPath="$PROJECT_DIR$/main/templates/main/upload_gtd_log.html" afterDir="false" />
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="added log after uploading gtd files">
+      <change afterPath="$PROJECT_DIR$/main/templates/main/update_gtd_good.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/templates/main/update_gtd_group.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/templates/main/per_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/per_gtd.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/show_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/show_gtd.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/test.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/test.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
@@ -40,25 +39,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "D:/Programming/Python/Django/customs_declarations_database",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Programming/Python/Django/customs_declarations_database&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   },
-  "keyToStringList": {
-    "ChangesTree.GroupingKeys": [
+  &quot;keyToStringList&quot;: {
+    &quot;ChangesTree.GroupingKeys&quot;: [
     ],
-    "DatabaseDriversLRU": [
-      "azure",
-      "mysql"
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;azure&quot;,
+      &quot;mysql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Programming\Python\Django\customs_declarations_database\main\static\main\css" />
@@ -116,6 +115,7 @@
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="DJANGO_SETTINGS_MODULE" value="customs_declarations_database.settings" />
       </envs>
       <option name="SDK_HOME" value="D:\Programming\Python\Django\customs_declarations_database\env\Scripts\python.exe" />
       <option name="WORKING_DIRECTORY" value="" />
@@ -161,7 +161,12 @@
       <workItem from="1661505029582" duration="120636000" />
       <workItem from="1662369239245" duration="2963000" />
       <workItem from="1662444658760" duration="9591000" />
-      <workItem from="1662877160746" duration="16267000" />
+      <workItem from="1662877160746" duration="19238000" />
+      <workItem from="1663045134111" duration="225000" />
+      <workItem from="1663051654884" duration="950000" />
+      <workItem from="1663156757108" duration="257000" />
+      <workItem from="1663428665097" duration="1358000" />
+      <workItem from="1663435126019" duration="3139000" />
     </task>
     <task id="LOCAL-00001" summary="restored most files after fixing models of exporters and importers">
       <created>1660373120746</created>
@@ -324,7 +329,14 @@
       <option name="project" value="LOCAL" />
       <updated>1662551144372</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="added log after uploading gtd files">
+      <created>1662922285017</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1662922285017</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -372,7 +384,8 @@
     <MESSAGE value="added Delete view for Gtd with cascade delete of gtdgroups, gtdgoods and gtddocuments" />
     <MESSAGE value="added UpdateView for gtds, preparation for changing user model" />
     <MESSAGE value="update gtd view made as function, changing user id who last touched" />
-    <option name="LAST_COMMIT_MESSAGE" value="update gtd view made as function, changing user id who last touched" />
+    <MESSAGE value="added log after uploading gtd files" />
+    <option name="LAST_COMMIT_MESSAGE" value="added log after uploading gtd files" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />

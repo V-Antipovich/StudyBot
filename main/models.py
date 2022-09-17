@@ -181,6 +181,9 @@ class GtdGroup(models.Model):
         verbose_name_plural = 'Группы товаров в ГТД'
         unique_together = ('gtd', 'number')
 
+    def __str__(self):
+        return str(self.number)
+
 
 # Классификатор товаров ТН ВЭД - Справочник
 class TnVed(models.Model):
@@ -216,10 +219,7 @@ class Good(models.Model):
         verbose_name_plural = 'Товары'
 
     def __str__(self):
-        if self.marking:
-            return self.marking
-        else:
-            return 'Артикул'
+        return str(self.marking)
 
 
 # Товарный знак - Справочник
@@ -249,7 +249,7 @@ class Manufacturer(models.Model):
         verbose_name_plural = 'Производители'
 
     def __str__(self):
-        return self.manufacturer
+        return str(self.manufacturer)
 
 
 # Единицы измерения - Справочник
@@ -266,7 +266,7 @@ class MeasureQualifier(models.Model):
         verbose_name_plural = 'Единицы измерения'
 
     def __str__(self):
-        return self.russian_symbol
+        return str(self.russian_code)
 
 
 # Товары из ГТД

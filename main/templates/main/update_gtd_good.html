@@ -1,0 +1,13 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% load bootstrap5 %}
+
+{% block title %}Редактировать товар{% endblock %}
+{% block content %}
+    <h3>Редактировать товар {{ good.good_num }} группы {{ good.gtd.gtdId }}/{{ good.group.number }}</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Сохранить">
+    </form>
+{% endblock %}

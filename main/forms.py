@@ -3,7 +3,7 @@ from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 
-from .models import UploadGtd, RegUser, GtdMain, Exporter, Importer, CustomsHouse, GtdGood
+from .models import UploadGtd, RegUser, GtdMain, Exporter, Importer, CustomsHouse, GtdGood, GtdGroup
 # from .apps import user_registered
 
 
@@ -26,7 +26,7 @@ class GtdUpdateForm(forms.ModelForm):
         model = GtdMain
         fields = ('gtdId', 'customs_house', 'total_goods_number', 'exporter',
                   'importer', 'trading_country', 'currency', 'total_invoice_amount', 'currency_rate',
-                  'deal_type',)  # 'last_edited_user',)
+                  'deal_type',)
         labels = {
             'customs_house': 'Таможенный отдел',
             'exporter': 'Экспортер',
@@ -35,10 +35,28 @@ class GtdUpdateForm(forms.ModelForm):
             'currency': 'Валюта',
             'deal_type': 'Характер сделки',
         }
-        # widgets = {
-        #     'last_edited_user': forms.HiddenInput()
-        # }
 
+#
+# class GtdGroupUpdateForm(forms.ModelForm):
+#
+#     class Meta:
+#         model = GtdGroup
+#         fields = '__all__'
+
+
+class GtdGoodUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = GtdGood
+        # fields = '__all__'
+        exclude = ('gtd', 'good_num', 'last_edited_user',)
+        labels = {
+            #'good_num': 'Номер товара',
+            'good': 'Товар',
+            'group': 'Группа товаров',
+            'qualifier': 'Единица измерения',
+            'manufacturer': 'Производитель',
+        }
 
 # TODO: Вернуться потом к написанию нормальной формы для регистрации, когда будет работа над юзерами
 # TODO: прямо сейчас сесть писать нормальную рабочую форму для регистрации.

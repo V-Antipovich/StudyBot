@@ -30,6 +30,7 @@
                         <h3>Главная</h3>
                         <div>Таможенные отдел:{{ gtd.customs_house.house_name }}</div>
                         <div>Дата: {{ gtd.date|date:"d.m.Y" }}</div>
+                        <div>Всего товаров (групп): {{ gtd.total_goods_number }}</div>
                         <div>Экспортер: {{ gtd.exporter.name }}</div>
                         <div>Импортер: {{ gtd.importer.name }}</div>
                         <div>Торгующая страна: {{ gtd.trading_country.russian_name }}</div>
@@ -37,6 +38,7 @@
                         <div>Валюта: {{ gtd.currency.short_name }}</div>
                         <div>Общая стоимость по счёту: {{ gtd.total_invoice_amount }}</div>
                         <div>Курс валюты {{ gtd.currency_rate }}</div>
+                        <div>Код характера сделки: {{ gtd.deal_type.code }}</div>
                         <hr>
                         {% if gtd.last_edited %}
                         <div>Последний добавил/редактировал: {{ gtd.last_edited.username }}</div>
@@ -79,6 +81,7 @@
                                     <th>% пошлины</th>
                                     <th>Сумма НДС</th>
                                     <th>% НДС</th>
+                                    <th>Редактировать</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -94,6 +97,13 @@
                                         <td>{{ group.fee_percent }}</td>
                                         <td>{{ group.ndc }}</td>
                                         <td>{{ group.ndc_percent }}</td>
+                                        <td>
+                                            <a href="#" class="btn btn-outline-warning">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                                                </svg>
+                                            </a>
+                                        </td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -117,7 +127,7 @@
                                             <td>{{ good.quantity }} {{ good.qualifier.russian_symbol }}</td>
                                             <td>{{ good.manufacturer.manufacturer }}</td>
                                             <td>
-                                                <a href="#" class="btn btn-outline-warning">
+                                                <a href="{% url 'main:update_gtd_good' pk=good.pk %}" class="btn btn-outline-warning">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
                                                         <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
                                                     </svg>

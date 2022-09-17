@@ -10,7 +10,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.http import FileResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from .forms import UploadGtdfilesForm, GtdUpdateForm, RegisterUserForm
+from .forms import UploadGtdfilesForm, GtdUpdateForm, RegisterUserForm, GtdGoodUpdateForm, GtdGroupUpdateForm
 from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType, Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType, UploadGtdFile
 from django.views.generic.edit import FormView
 import os
@@ -173,7 +173,6 @@ def test_view(request):
 
 # TODO: в персональной странице ГТД уже выводить дополнительные поля, которые надо убрать в табличном виде
 # Список всех ГТД
-# TODO: дубликаты в таблице!
 class ShowGtdView(LoginRequiredMixin, ListView):
     model = GtdMain
     template_name = 'main/show_gtd.html'
@@ -182,7 +181,6 @@ class ShowGtdView(LoginRequiredMixin, ListView):
 #    paginate_by = 40
 
 
-# TODO: возможность редактировать товар
 # Персональная страница ГТД
 class GtdDetailView(DetailView):
     model = GtdMain
@@ -201,25 +199,14 @@ class GtdDetailView(DetailView):
         return context
 
 
-# Страница редактирования ГТД
-# class GtdUpdateView(UpdateView):
-#     template_name = 'main/update_gtd.html'
-#     context_object_name = 'gtd'
-#     model = GtdMain
-#     form_class = GtdUpdateForm
-#
-#     def get_success_url(self):
-#         return reverse('main:per_gtd', kwargs={'pk': self.object.pk})
-    # def get_form_kwargs(self):
+# Редактировать шапку ГТД
 def update_gtd(request, pk):
     obj = get_object_or_404(GtdMain, pk=pk)
     if request.method == 'POST':
         obj.last_edited_user = request.user
         form = GtdUpdateForm(request.POST, instance=obj)
         if form.is_valid():
-            # form.last_edited_user = request.user.pk
             form.save()
-            # return redirect('main:show_gtd')
             return redirect('main:per_gtd', pk=pk)
     else:
         form = GtdUpdateForm(instance=obj)
@@ -228,6 +215,36 @@ def update_gtd(request, pk):
             'gtd': obj,
         }
         return render(request, 'main/update_gtd.html', context)
+
+#
+# def update_gtd_group(request, pk):
+#     obj = get_object_or_404(GtdGroup, pk=pk)
+#     if request.method == 'POST':
+#         ...
+#     else:
+#         form = GtdGroupUpdateForm(instance=obj)
+#         context = {
+#             'form': form,
+#             'group': obj,
+#         }
+#         return render(request, 'main/')
+
+# Редактировать товар из группы ГТД
+def update_gtd_good(request, pk):
+    obj = get_object_or_404(GtdGood, pk=pk)
+    if request.method == 'POST':
+        obj.last_edited_user = request.user
+        form = GtdGoodUpdateForm(request.POST, instance=obj)
+        if form.is_valid():
+            form.save()
+            return redirect('main:per_gtd', pk=obj.gtd.pk)
+    else:
+        form = GtdGoodUpdateForm(instance=obj)
+        context = {
+            'form': form,
+            'good': obj,
+        }
+        return render(request, 'main/update_gtd_good.html', context)
 
 
 # Страница удаления ГТД
