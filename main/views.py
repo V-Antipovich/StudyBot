@@ -216,18 +216,23 @@ def update_gtd(request, pk):
         }
         return render(request, 'main/update_gtd.html', context)
 
-#
-# def update_gtd_group(request, pk):
-#     obj = get_object_or_404(GtdGroup, pk=pk)
-#     if request.method == 'POST':
-#         ...
-#     else:
-#         form = GtdGroupUpdateForm(instance=obj)
-#         context = {
-#             'form': form,
-#             'group': obj,
-#         }
-#         return render(request, 'main/')
+
+def update_gtd_group(request, pk):
+    obj = get_object_or_404(GtdGroup, pk=pk)
+    if request.method == 'POST':
+        obj.last_edited_user = request.user
+        form = GtdGroupUpdateForm(request.POST, instance=obj)
+        if form.is_valid():
+            form.save()
+            return redirect('main:per_gtd', pk=obj.gtd.pk)
+    else:
+        form = GtdGroupUpdateForm(instance=obj)
+        context = {
+            'form': form,
+            'group': obj,
+        }
+        return render(request, 'main/update_gtd_group.html', context)
+
 
 # Редактировать товар из группы ГТД
 def update_gtd_good(request, pk):

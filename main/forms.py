@@ -36,12 +36,13 @@ class GtdUpdateForm(forms.ModelForm):
             'deal_type': 'Характер сделки',
         }
 
-#
-# class GtdGroupUpdateForm(forms.ModelForm):
-#
-#     class Meta:
-#         model = GtdGroup
-#         fields = '__all__'
+
+class GtdGroupUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = GtdGroup
+        exclude = ('gtd', 'last_edited_user',)
+        # fields = '__all__'
 
 
 class GtdGoodUpdateForm(forms.ModelForm):

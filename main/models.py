@@ -175,6 +175,8 @@ class GtdGroup(models.Model):
     ndc = models.FloatField(verbose_name='Сумма НДС')
     fee_percent = models.FloatField(verbose_name='Процентная ставка пошлины')
     ndc_percent = models.FloatField(verbose_name='Процентная ставка НДС')
+    last_edited_user = models.ForeignKey('RegUser', on_delete=models.PROTECT, related_name='+', null=True, blank=True,
+                                         verbose_name='Пользователь, последний вносивший изменения')
 
     class Meta:
         verbose_name = 'Группа товаров в ГТД'
@@ -194,6 +196,9 @@ class TnVed(models.Model):
         verbose_name = 'ТН ВЭД'
         verbose_name_plural = verbose_name
 
+    def __str__(self):
+        return str(self.code)
+
 
 # Таможенные процедуры - Справочник
 class Procedure(models.Model):
@@ -203,6 +208,9 @@ class Procedure(models.Model):
     class Meta:
         verbose_name = 'Вид таможенной процедуры'
         verbose_name_plural = 'Классификатор видов таможенных процедур'
+
+    def __str__(self):
+        return str(self.code)
 
 
 # Товары - Справочник
