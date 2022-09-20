@@ -54,7 +54,6 @@ def handbook(request):
         'goods_marks': (GoodsMark, 'Торговые марки'),  # Содержит обращение к другим моделям
         'manufacturers': (Manufacturer, 'Производители (заводы)'),
         'qualifiers': (MeasureQualifier, 'Единицы измерения'),
-#        'documents': (Document, 'Документы'),  # Содержит обращение к другим моделям
         'doc_types': (DocumentType, 'Классификатор типов документов'),
     }
 
@@ -171,7 +170,11 @@ def test_view(request):
     return render(request, 'main/test.html', context)
 
 
+# TODO: ломается верстка при масштабировании
+
+# TODO: хлебные крошки например "документы/ГТД/<номер гтд>"
 # TODO: в персональной странице ГТД уже выводить дополнительные поля, которые надо убрать в табличном виде
+# TODO: пагинатор на бэке, иначе долго загружается
 # Список всех ГТД
 class ShowGtdView(LoginRequiredMixin, ListView):
     model = GtdMain
@@ -179,6 +182,23 @@ class ShowGtdView(LoginRequiredMixin, ListView):
     login_url = reverse_lazy('main:login')
     context_object_name = 'gtds'
 #    paginate_by = 40
+
+
+# TODO: форматирование чисел: пробелы между тысячами
+# TODO: не выводить кол-во групп
+
+# TODO: динамический подсчет: total_cost - сумма всех стоимостей групп
+# TODO: динамический подсчет: total_invoice_amount - total_cost/currency_rate
+# TODO: не должно перекидывать в шапку при открытии групп товаров
+# TODO: при раскрытии товаров группы не надо выводить <gtdId>/<group>
+
+# TODO: Пагинация товаров не нужна (отключи умную таблицу оттуда)
+# TODO: (потом) возможность добавлять группы и товары
+
+# TODO: Баг: в любой группе почему-то один и тот же товар
+
+# TODO: new tab при открытии "посмотреть" xml-документа
+# TODO: по умолчанию пусть будет раскрыт список товаров первой группы.
 
 
 # Персональная страница ГТД
@@ -198,6 +218,12 @@ class GtdDetailView(DetailView):
             context['number'] = GtdGroup.objects.filter(pk=open_goods)[0].number
         return context
 
+
+# TODO: Желательно сделать, чтобы форма визуально оставалась похожа на страницу сайта (что-то вроде переключения режима Readonly/edit)
+# TODO: поля формы Уже, чем значения
+# TODO: сохранить/отменить изменения
+# TODO: отделять заголовки от их значений в отображении (<b></b>)
+# TODO: (ПОТОМ) позиционирование списка - например, чтобы значения находились на одном уровне
 
 # Редактировать шапку ГТД
 def update_gtd(request, pk):
@@ -234,6 +260,8 @@ def update_gtd_group(request, pk):
         return render(request, 'main/update_gtd_group.html', context)
 
 
+# TODO: Артикул - обязательное поле
+# TODO: редактирование по клику? По прямому обращению к полям?
 # Редактировать товар из группы ГТД
 def update_gtd_good(request, pk):
     obj = get_object_or_404(GtdGood, pk=pk)
@@ -252,6 +280,7 @@ def update_gtd_good(request, pk):
         return render(request, 'main/update_gtd_good.html', context)
 
 
+# TODO: Удаление через модальное окно + кнопка отмены
 # Страница удаления ГТД
 class GtdDeleteView(DeleteView):
     model = GtdMain
@@ -259,6 +288,9 @@ class GtdDeleteView(DeleteView):
     success_url = reverse_lazy('main:show_gtd')
     context_object_name = 'gtd'
 
+
+# TODO: ТН ВЭД: доп колонка-флажок, показывающий, относится ли товар к нужной категории (по экосбору)
+# TODO: отчет по эко сбору: вывод таблицы за данный период
 
 # Список документов в выбранной группе ГТД
 # class ShowGtdDocumentsInGroup(ListView):

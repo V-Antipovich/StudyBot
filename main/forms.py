@@ -42,7 +42,6 @@ class GtdGroupUpdateForm(forms.ModelForm):
     class Meta:
         model = GtdGroup
         exclude = ('gtd', 'last_edited_user',)
-        # fields = '__all__'
 
 
 class GtdGoodUpdateForm(forms.ModelForm):
@@ -52,7 +51,6 @@ class GtdGoodUpdateForm(forms.ModelForm):
         # fields = '__all__'
         exclude = ('gtd', 'good_num', 'last_edited_user',)
         labels = {
-            #'good_num': 'Номер товара',
             'good': 'Товар',
             'group': 'Группа товаров',
             'qualifier': 'Единица измерения',

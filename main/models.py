@@ -187,10 +187,14 @@ class GtdGroup(models.Model):
         return str(self.number)
 
 
+# TODO: пересобрать таблицу ТН ВЭДу
 # Классификатор товаров ТН ВЭД - Справочник
 class TnVed(models.Model):
     code = models.CharField(max_length=18, verbose_name='Номер группы')
     subposition = models.TextField(verbose_name='Подсубпозиция', null=True, blank=True)
+    has_environmental_fee = models.BooleanField(verbose_name='Облагается ли экологическим сбором?',
+                                                null=True, blank=True)
+    recycling_standart = models.FloatField(verbose_name='Норма утилизации', null=True, blank=True)
 
     class Meta:
         verbose_name = 'ТН ВЭД'
@@ -215,7 +219,7 @@ class Procedure(models.Model):
 
 # Товары - Справочник
 class Good(models.Model):
-    marking = models.CharField(max_length=50, verbose_name='Артикул', null=True, blank=True)
+    marking = models.CharField(max_length=50, verbose_name='Артикул')
     name = models.TextField(verbose_name='Товар')
     goodsmark = models.ForeignKey('GoodsMark', on_delete=models.PROTECT, verbose_name='id торговой марки',
                                   related_name="+", null=True, blank=True)
