@@ -2,7 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="corrected some info in changes.md">
+      <change afterPath="$PROJECT_DIR$/main/static/main/css/datepicker.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/static/main/js/datepicker.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/static/main/js/use_datepicker.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/templates/main/ecological_fee.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/test.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/test.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,8 +25,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
-        <option value="JavaScript File" />
         <option value="HTML File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -39,7 +48,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "D:/Programming/Python/Yandex Lyceum",
+    "last_opened_file_path": "D:/Programming/Python/Django/customs_declarations extra staff",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   },
   "keyToStringList": {
@@ -162,7 +171,9 @@
       <workItem from="1663156757108" duration="257000" />
       <workItem from="1663428665097" duration="1358000" />
       <workItem from="1663435126019" duration="12293000" />
-      <workItem from="1663573385115" duration="15126000" />
+      <workItem from="1663573385115" duration="23921000" />
+      <workItem from="1664083801766" duration="37000" />
+      <workItem from="1664427187713" duration="14317000" />
     </task>
     <task id="LOCAL-00001" summary="restored most files after fixing models of exporters and importers">
       <created>1660373120746</created>
@@ -367,7 +378,14 @@
       <option name="project" value="LOCAL" />
       <updated>1663659751679</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="corrected some info in changes.md">
+      <created>1663703491170</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1663703491170</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

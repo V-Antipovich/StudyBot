@@ -1,3 +1,5 @@
+import time
+
 from django import forms
 from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
@@ -56,6 +58,32 @@ class GtdGoodUpdateForm(forms.ModelForm):
             'qualifier': 'Единица измерения',
             'manufacturer': 'Производитель',
         }
+
+
+class CalendarDate(forms.Form):
+    start_date = forms.DateField(label='Начало диапазона',
+                                 widget=forms.DateInput(attrs={'type': 'date',
+                                                             'class': 'form-control',
+                                                             'placeholder': 'Начало диапазона'}))
+    end_date = forms.DateField(label='Окончание',
+                               widget=forms.DateInput(attrs={'type': 'date',
+                                                             'class': 'form-control',
+                                                             'placeholder': 'Конец диапазона'}))
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get('start_date')
+        end_date = cleaned_data.get('end_date')
+
+        if start_date > end_date:
+            raise ValidationError('Неправильный диапазон дат')
+    
+
+def validate_date_range(start, end):
+    start = time.strptime(start, '%Y-%m-%d')
+    end = time.strptime(end, '%Y-%m-%d')
+    if start >= end:
+        raise ValidationError('Вы не можете выбрать такой диапазон дат')
 
 # TODO: Вернуться потом к написанию нормальной формы для регистрации, когда будет работа над юзерами
 # TODO: прямо сейчас сесть писать нормальную рабочую форму для регистрации.

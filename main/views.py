@@ -10,14 +10,17 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.http import FileResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from .forms import UploadGtdfilesForm, GtdUpdateForm, RegisterUserForm, GtdGoodUpdateForm, GtdGroupUpdateForm
-from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType, Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType, UploadGtdFile
+from .forms import UploadGtdfilesForm, GtdUpdateForm, RegisterUserForm, GtdGoodUpdateForm, GtdGroupUpdateForm, CalendarDate
+from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType,\
+    Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType, UploadGtdFile
 from django.views.generic.edit import FormView
 import os
 from .utilities import parse_gtd, get_tnved_name
 from .models import RegUser
 from customs_declarations_database.settings import MEDIA_ROOT
 from django_sorting_bootstrap.views import SimpleChangeList
+
+from datetime import timedelta, date
 
 
 # Вспомогательные функции контроля доступа
@@ -289,27 +292,33 @@ class GtdDeleteView(DeleteView):
     context_object_name = 'gtd'
 
 
-# TODO: ТН ВЭД: доп колонка-флажок, показывающий, относится ли товар к нужной категории (по экосбору)
 # TODO: отчет по эко сбору: вывод таблицы за данный период
-
-# Список документов в выбранной группе ГТД
-# class ShowGtdDocumentsInGroup(ListView):
-#     template_name = 'main/documents_per_group.html'
-#     context_object_name = 'documents'
-#     paginate_by = 20
-#
-#     def get_queryset(self, *args, **kwargs):
-#         queryset = GtdDocument.objects.filter(gtd=self.kwargs.get('gtd'), group=self.kwargs.get('group_pk'))
-#         final_queryset = []
-#         for row in queryset:
-#             obj = []
-#             for item in row:
-#                 if item:
-#                     obj.append(item)
-#                 else:
-#                     obj.append('')
-#             final_queryset.append(obj)
-#         return final_queryset
+# Подготовка к работе с диапазоном дат
+# TODO: потом заменить на класс построения отчета
+def try_date(request):
+    if request.method == 'GET':
+        form = CalendarDate()
+        context = {
+            'form': form,
+            'message': ''
+        }
+        return render(request, 'main/ecological_fee.html', context)
+    else:
+        form = CalendarDate(request.POST)
+        if form.is_valid():
+            delta = form.end_date - form.start_date
+            context = {
+                'req': request.POST,
+                'delta': delta
+            }
+            return render(request, 'main/test.html', context)
+        else:
+            form = CalendarDate()
+            context = {
+                'form': form,
+                'message': 'Некорректный диапазон. Попробуйте ещё раз.'
+            }
+            return render(request, 'main/ecological_fee.html', context)
 
 
 # Вывод xml-файла выбранной ГТД
@@ -461,11 +470,12 @@ def upload_gtd(request):
                         add_tnved.subposition = get_tnved_name(str(group["tn_ved"]))
                         add_tnved.save()
 
+
                     add_gtdgroup, gtdgroup_created = GtdGroup.objects.update_or_create(
                         gtd=add_gtdmain,
                         name=group['name'],
                         description=group['desc'],
-                        tn_ved=add_tnved,
+                        tn_ved=TnVed.objects.filter(code=str(group['tn_ved']))[0],
                         number=group["number"],
                         gross_weight=group['gross_weight'],
                         net_weight=group['net_weight'],
