@@ -10,9 +10,11 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.http import FileResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from .forms import UploadGtdfilesForm, GtdUpdateForm, RegisterUserForm, GtdGoodUpdateForm, GtdGroupUpdateForm, CalendarDate
+from .forms import UploadGtdfilesForm, GtdUpdateForm, RegisterUserForm, GtdGoodUpdateForm, GtdGroupUpdateForm,\
+    CalendarDate
 from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType,\
-    Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType, UploadGtdFile
+    Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType,\
+    UploadGtdFile
 from django.views.generic.edit import FormView
 import os
 from .utilities import parse_gtd, get_tnved_name
@@ -185,8 +187,16 @@ class ShowGtdView(LoginRequiredMixin, ListView):
     template_name = 'main/show_gtd.html'
     login_url = reverse_lazy('main:login')
     context_object_name = 'gtds'
-    # paginate_by = 40
-    # def pag
+    # paginate_by = 10
+
+    def get_paginate_by(self, queryset):
+        try:
+            self.paginate_by = int(self.request.GET.get('paginate_by', 10))
+        except ValueError:
+            logger.error('Some stupid person use not int for paginate_by')
+            # pass # TODO: сделать что-то с заглушкой
+        return self.paginate_by
+    # TODO: какая-то дичь с перемещением по page на странице (в низу)
 
 
 # TODO: форматирование чисел: пробелы между тысячами

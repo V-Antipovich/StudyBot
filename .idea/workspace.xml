@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="added columns for tn_ved, prepared for ecological fee reports">
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/customs_declarations_database/Constant.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/templates/main/ecological_fee_build.html" afterDir="false" />
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="unfinished eco reports - data in list form (not as calendar)">
+      <change afterPath="$PROJECT_DIR$/antipovich_diagrams.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/first_code.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/customs_declarations_database/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/customs_declarations_database/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/layout/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/layout/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/ecological_fee.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/ecological_fee_range.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/utilities.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/show_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/show_gtd.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -179,7 +172,7 @@
       <workItem from="1664083801766" duration="37000" />
       <workItem from="1664427187713" duration="38691000" />
       <workItem from="1665300835435" duration="35795000" />
-      <workItem from="1665723445139" duration="1759000" />
+      <workItem from="1665723445139" duration="10985000" />
     </task>
     <task id="LOCAL-00001" summary="restored most files after fixing models of exporters and importers">
       <created>1660373120746</created>
@@ -398,7 +391,14 @@
       <option name="project" value="LOCAL" />
       <updated>1664771761315</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="unfinished eco reports - data in list form (not as calendar)">
+      <created>1665726332914</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1665726332914</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -427,7 +427,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="GtdMain works properly!" />
     <MESSAGE value="everything's broken, but i need a backup" />
     <MESSAGE value="fixed parsing" />
     <MESSAGE value="fixed parsing, added online searching for Tn Ved" />
@@ -452,7 +451,8 @@
     <MESSAGE value="changed user_scripts and application;&#10;added columns to TnVed model as preparation for building statistics" />
     <MESSAGE value="corrected some info in changes.md" />
     <MESSAGE value="added columns for tn_ved, prepared for ecological fee reports" />
-    <option name="LAST_COMMIT_MESSAGE" value="added columns for tn_ved, prepared for ecological fee reports" />
+    <MESSAGE value="unfinished eco reports - data in list form (not as calendar)" />
+    <option name="LAST_COMMIT_MESSAGE" value="unfinished eco reports - data in list form (not as calendar)" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />

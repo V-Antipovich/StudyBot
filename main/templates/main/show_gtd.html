@@ -4,15 +4,24 @@
 {% block title %}ГТД{% endblock %}
 
 {% block extra_links %}
-    <link rel="stylesheet" href="{% static 'main/css/jquery.dataTables.min.css' %}" type="text/css">
-    <script type="text/javascript" src="{% static 'main/js/jquery-3.6.1.js' %}"></script>
-    <script type="text/javascript" src="{% static 'main/js/jquery.dataTables.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'main/js/use_datatable.js' %}"></script>
+{#    <link rel="stylesheet" href="{% static 'main/css/jquery.dataTables.min.css' %}" type="text/css">#}
+{#    <script type="text/javascript" src="{% static 'main/js/jquery-3.6.1.js' %}"></script>#}
+{#    <script type="text/javascript" src="{% static 'main/js/jquery.dataTables.min.js' %}"></script>#}
+{#    <script type="text/javascript" src="{% static 'main/js/use_datatable.js' %}"></script>#}
 {% endblock %}
 
 {% block content %}
     <h2>Таможенные декларации</h2>
     <h5>Щелкните по цифре в колонке "Число групп товаров", чтобы перейти к группам ГТД</h5>
+    <form method="get">
+        <select id="input-limit" name="paginate_by" class="form-control">
+            <option value="10" {# selected="selected" #}>10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+  <button type="submit">Paginate by</button>
+    </form>
     <table class="table" size="90%" id="gtd_tables">
         <thead>
             <tr>
@@ -71,4 +80,19 @@
         {% endfor %}
     </tbody>
     </table>
+    <div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; В начало</a>
+            <a href="?page={{ page_obj.previous_page_number }}">На предыдущую</a>
+        {% endif %}
+        <span class="current">
+            Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
+        </span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">На следующую</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">В конец &raquo;</a>
+        {% endif %}
+        </span>
+    </div>
 {% endblock %}
