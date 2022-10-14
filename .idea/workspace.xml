@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="corrected some info in changes.md">
-      <change afterPath="$PROJECT_DIR$/main/static/main/css/datepicker.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/static/main/js/datepicker.min.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/static/main/js/use_datepicker.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/templates/main/ecological_fee.html" afterDir="false" />
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="added columns for tn_ved, prepared for ecological fee reports">
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/customs_declarations_database/Constant.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/templates/main/ecological_fee_build.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/customs_declarations_database/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/customs_declarations_database/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/test.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/test.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/layout/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/layout/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/ecological_fee.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/ecological_fee_range.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/utilities.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -24,9 +26,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="HTML File" />
         <option value="JavaScript File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -41,25 +43,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "D:/Programming/Python/Django/customs_declarations extra staff",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;database.data.extractors.current.export.id&quot;: &quot;Comma-separated (CSV)_id&quot;,
+    &quot;database.data.extractors.current.id&quot;: &quot;Comma-separated (CSV)_id&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Vitalii/Documents/School/10-11 Лицей НИУ ВШЭ/11 класс/Информатика/Программирование/работка от 10.10&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   },
-  "keyToStringList": {
-    "ChangesTree.GroupingKeys": [
+  &quot;keyToStringList&quot;: {
+    &quot;ChangesTree.GroupingKeys&quot;: [
     ],
-    "DatabaseDriversLRU": [
-      "azure",
-      "mysql"
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;azure&quot;,
+      &quot;mysql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Programming\Python\Django\customs_declarations_database\OLD_APPLICATIONS" />
@@ -173,7 +177,9 @@
       <workItem from="1663435126019" duration="12293000" />
       <workItem from="1663573385115" duration="23921000" />
       <workItem from="1664083801766" duration="37000" />
-      <workItem from="1664427187713" duration="14317000" />
+      <workItem from="1664427187713" duration="38691000" />
+      <workItem from="1665300835435" duration="35795000" />
+      <workItem from="1665723445139" duration="1759000" />
     </task>
     <task id="LOCAL-00001" summary="restored most files after fixing models of exporters and importers">
       <created>1660373120746</created>
@@ -385,7 +391,14 @@
       <option name="project" value="LOCAL" />
       <updated>1663703491170</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="added columns for tn_ved, prepared for ecological fee reports">
+      <created>1664771761315</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1664771761315</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -414,7 +427,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="restored most files after fixing models of exporters and importers" />
     <MESSAGE value="GtdMain works properly!" />
     <MESSAGE value="everything's broken, but i need a backup" />
     <MESSAGE value="fixed parsing" />
@@ -439,7 +451,8 @@
     <MESSAGE value="made information in user-scripts and script-changes more up to date, according to the progress of the project" />
     <MESSAGE value="changed user_scripts and application;&#10;added columns to TnVed model as preparation for building statistics" />
     <MESSAGE value="corrected some info in changes.md" />
-    <option name="LAST_COMMIT_MESSAGE" value="corrected some info in changes.md" />
+    <MESSAGE value="added columns for tn_ved, prepared for ecological fee reports" />
+    <option name="LAST_COMMIT_MESSAGE" value="added columns for tn_ved, prepared for ecological fee reports" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />

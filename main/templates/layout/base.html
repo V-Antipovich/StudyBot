@@ -28,8 +28,12 @@
                 <li><a href="#" class="dropdown-item">Замещающий текст</a> </li>
             </ul>
 
-            <a class="btn btn-outline-primary" type="button" id="reports" href="#">Отчёты</a>
-
+            <button class="btn btn-outline-primary dropdown-toggle" type="button" id="reports"
+            data-bs-toggle="dropdown">Отчёты</button>
+            <ul class="dropdown-menu" aria-labelledby="documents-dropdown">
+                <li><a href="#" class="dropdown-item">Замещающий текст (статистические отчеты</a></li>
+                <li><a href="{% url 'main:eco_fee' %}" class="dropdown-item">Экологический сбор</a> </li>
+            </ul>
             <button class="btn btn-outline-primary dropdown-toggle" type="button"
                     id="handbooks-dropdown" data-bs-toggle="dropdown">
                 Справочники

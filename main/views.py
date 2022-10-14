@@ -18,9 +18,10 @@ import os
 from .utilities import parse_gtd, get_tnved_name
 from .models import RegUser
 from customs_declarations_database.settings import MEDIA_ROOT
+from customs_declarations_database.Constant import under
 from django_sorting_bootstrap.views import SimpleChangeList
 
-from datetime import timedelta, date
+from datetime import datetime
 
 
 # Вспомогательные функции контроля доступа
@@ -184,7 +185,8 @@ class ShowGtdView(LoginRequiredMixin, ListView):
     template_name = 'main/show_gtd.html'
     login_url = reverse_lazy('main:login')
     context_object_name = 'gtds'
-#    paginate_by = 40
+    # paginate_by = 40
+    # def pag
 
 
 # TODO: форматирование чисел: пробелы между тысячами
@@ -221,12 +223,12 @@ class GtdDetailView(DetailView):
             context['number'] = GtdGroup.objects.filter(pk=open_goods)[0].number
         return context
 
-
 # TODO: Желательно сделать, чтобы форма визуально оставалась похожа на страницу сайта (что-то вроде переключения режима Readonly/edit)
 # TODO: поля формы Уже, чем значения
 # TODO: сохранить/отменить изменения
 # TODO: отделять заголовки от их значений в отображении (<b></b>)
 # TODO: (ПОТОМ) позиционирование списка - например, чтобы значения находились на одном уровне
+
 
 # Редактировать шапку ГТД
 def update_gtd(request, pk):
@@ -295,30 +297,91 @@ class GtdDeleteView(DeleteView):
 # TODO: отчет по эко сбору: вывод таблицы за данный период
 # Подготовка к работе с диапазоном дат
 # TODO: потом заменить на класс построения отчета
-def try_date(request):
+def eco_fee(request):
     if request.method == 'GET':
         form = CalendarDate()
         context = {
             'form': form,
             'message': ''
         }
-        return render(request, 'main/ecological_fee.html', context)
+        return render(request, 'main/ecological_fee_range.html', context)
     else:
         form = CalendarDate(request.POST)
         if form.is_valid():
-            delta = form.end_date - form.start_date
+            start = datetime.strptime(form.data['start_date'], "%Y-%m-%d")
+            end = datetime.strptime(form.data['end_date'], "%Y-%m-%d")
+            gtds_range = GtdMain.objects.filter(date__range=[start, end])
+            # Плохой алгоритм сбора групп
+
+            # eco = {}
+            # extended_eco = {}
+            by_gtd = {}
+
+            # таблица относительно ГТД
+            for gtd in gtds_range:
+                gtdId = gtd.gtdId
+
+                groups = GtdGroup.objects.filter(gtd_id=gtd.pk, tn_ved__has_environmental_fee=True)
+                if groups.count() > 0:
+                    for group in groups:
+                        tn_ved = group.tn_ved
+                        code = group.tn_ved.code
+                        rate = tn_ved.collection_rate
+                        standart = tn_ved.recycling_standart
+                        weight = group.net_weight
+                        if gtdId in by_gtd:
+                            if code in by_gtd[gtdId]:
+                                by_gtd[gtdId][code][2] += weight
+                                by_gtd[gtdId][code][-1] += rate*standart*weight/1000
+                            else:
+                                by_gtd[gtdId][code] = [rate, standart, weight, rate * standart * weight / 1000]
+                        else:
+                            by_gtd[gtdId] = {}
+                            by_gtd[gtdId][code] = [rate, standart, weight, rate*standart*weight/1000]
+
+            by_tnved = {}  # TODO: вместо этого для каждого кода ТН ВЭД будет два элемента в словаре: total и expanded, то есть в один словарь будет добавляться всё: в total суммируется, в expanded отдельно
+            for gtdId in by_gtd:
+                for code in by_gtd[gtdId]:
+                    row = by_gtd[gtdId][code]
+                    if code in by_tnved: # Вариант, когда такой ТН ВЭД есть
+                        if gtdId in by_tnved[code]: # Такая ГТД уже есть в списке под ТН ВЭД
+                            by_tnved[code]['expanded'][gtdId][2] += row[2]
+                            by_tnved[code]['expanded'][gtdId][3] += row[3]
+                        else: # Еще такой ГТД нет
+                            # by_tnved[code]['expanded'] = {}
+                            by_tnved[code]['expanded'][gtdId] = row
+                        by_tnved[code]['total'][2] += row[2]
+                        by_tnved[code]['total'][3] += row[3]
+                        # if gtdId in by_tnved[code]:
+                        #     by_tnved[code][gtdId][2] += row[2]
+                        #     by_tnved[code][gtdId][3] += row[3]
+                        # else:
+                        #     by_tnved[code][gtdId] = by_tnved_total[code][gtdId] = row
+
+                    else: # Такого ТН ВЭД нет
+                        by_tnved[code] = {}
+                        by_tnved[code]['total'] = row
+                        by_tnved[code]['expanded'] = {}
+                        by_tnved[code]['expanded'][gtdId] = row
+                        # by_tnved[code][gtdId] = row
+
+            # TODO: Не гтд раскрываются в ТН ВЭД, а в вершине дерева ТН ВЭД, внутри которых по несколько гтд
+            # ( а масса и сумма остаются на своих же местах)
+            # TODO: в нераскрытом виде дерева "ТН ВЭД" - "Общая сумма по всем ГТД"
+            # TODO: отчет в xlsx без ГТД, только суммарно по всем ГТД
             context = {
                 'req': request.POST,
-                'delta': delta
+                'by_tnved': by_tnved,
             }
-            return render(request, 'main/test.html', context)
+            # return render(request, 'main/test.html', context)
+            return render(request, 'main/ecological_fee_build.html', context)
         else:
             form = CalendarDate()
             context = {
                 'form': form,
-                'message': 'Некорректный диапазон. Попробуйте ещё раз.'
+                'message': 'Некорректный диапазон. Попробуйте ещё раз.',
             }
-            return render(request, 'main/ecological_fee.html', context)
+            return render(request, 'main/ecological_fee_range.html', context)
 
 
 # Вывод xml-файла выбранной ГТД
@@ -354,6 +417,7 @@ class RegisterDoneView(TemplateView):
 # Загрузка файлов ГТД в формате .xml
 # TODO: далекое будущее - многопользовательские коллизии - нужно проверять по полю кто последний трогал документ, если не ты, то предупреждаем
 # TODO: далекое будущее - статус черновик/проведен
+
 
 @login_required(login_url='/accounts/login/')
 def upload_gtd(request):
@@ -463,14 +527,38 @@ def upload_gtd(request):
                     # Заносим группу, если такой ещё не было
 
                     # Проверяем ТН ВЭД
-                    add_tnved, tnved_created = TnVed.objects.update_or_create(
-                        code=group["tn_ved"]
-                    )
-                    if tnved_created:
-                        add_tnved.subposition = get_tnved_name(str(group["tn_ved"]))
+                    code = group["tn_ved"]
+                    if code[0] == '0':
+                        code = code[1:]
+                    tn_ved = TnVed.objects.filter(code=code)
+
+                    # add_tnved, tnved_created = TnVed.objects.update_or_create(
+                    #     code=group["tn_ved"]
+                    # )
+                    if len(tn_ved) == 0:
+                        code = group["tn_ved"]
+                        met = False
+                        rec_standart = None
+                        col_rate = None
+                        for item in under:
+                            if met:
+                                break
+                            for c in item:
+                                if code.find(c) == 0:
+                                    met = True
+                                    vals = under[item]
+                                    rec_standart = vals[0]
+                                    col_rate = vals[1]
+                                    break
+                        add_tnved = TnVed.objects.create(
+                            code=code,
+                            subposition=get_tnved_name(code),
+                            has_environmental_fee=met,
+                            recycling_standart=rec_standart,
+                            collection_rate=col_rate,
+                        )
+                        # add_tnved.subposition = get_tnved_name(str(group["tn_ved"]))
                         add_tnved.save()
-
-
                     add_gtdgroup, gtdgroup_created = GtdGroup.objects.update_or_create(
                         gtd=add_gtdmain,
                         name=group['name'],

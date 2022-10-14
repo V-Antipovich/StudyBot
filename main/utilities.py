@@ -327,6 +327,7 @@ def get_tnved_name(code):
     response = requests.get(url)
     soup = Bs(response.text, 'html.parser')
     name = soup.find('ul', {'class': 'tnved'})
+    # TODO: видимо, тут какая-то фигня творится
     if name:
         final_name = name.find('li').text[len(code)+5:]
     else:

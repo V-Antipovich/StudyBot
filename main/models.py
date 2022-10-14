@@ -8,6 +8,9 @@ from django.template.defaultfilters import slugify
 # Роли реализованы в виде групп (уже существующей структуры)
 # Пользователи базы
 # TODO: в будущее - надо переделать модель юзеров, а то проблемы с паролями и входом
+
+# TODO: подумать, может, надо дропнуть базу, потому что достали проблемы с FK
+# SET FOREIGN_KEY_CHECKS = 0; SET FOREIGN_KEY_CHECKS = 1;
 # Или проблема не в модели?
 class RegUser(AbstractUser):
     email = models.EmailField(verbose_name='Электронная почта', unique=True)
@@ -187,13 +190,12 @@ class GtdGroup(models.Model):
         return str(self.number)
 
 
-# TODO: пересобрать таблицу ТН ВЭДу
 # Классификатор товаров ТН ВЭД - Справочник
 class TnVed(models.Model):
     code = models.CharField(max_length=18, verbose_name='Номер группы')
     subposition = models.TextField(verbose_name='Подсубпозиция', null=True, blank=True)
     has_environmental_fee = models.BooleanField(verbose_name='Облагается ли экологическим сбором?',
-                                                null=True, blank=True)
+                                                null=True, blank=True, default=False)
     recycling_standart = models.FloatField(verbose_name='Норма утилизации', null=True, blank=True, max_length=255)
     collection_rate = models.FloatField(verbose_name='Ставка сбора', null=True, blank=True, max_length=255)
 
@@ -201,6 +203,7 @@ class TnVed(models.Model):
         verbose_name = 'ТН ВЭД'
         verbose_name_plural = verbose_name
 
+# TODO: нормальный алгоритм для сохранения только уникальных
     def __str__(self):
         return str(self.code)
 

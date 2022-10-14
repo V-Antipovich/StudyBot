@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import index, upload_gtd, ShowGtdView, test_view, show_gtd_file, CDDLogin, CDDLogout, RegisterDoneView, \
     handbook, GtdDetailView, update_gtd, GtdDeleteView, RegisterUserView, profile, update_gtd_good, update_gtd_group,\
-    try_date
+    eco_fee
 
 
 app_name = 'main'
@@ -13,7 +13,7 @@ urlpatterns = [
     path('accounts/register', RegisterUserView.as_view(), name='register'),
     path('accounts/login/', CDDLogin.as_view(), name='login'),
     path('accounts/logout/', CDDLogout.as_view(), name='logout'),
-    path('try_date', try_date, name='try_date'),
+    path('eco_fee', eco_fee, name='eco_fee'),
     path('documents/update_gtd_group/<int:pk>', update_gtd_group, name='update_gtd_group'),
     path('documents/update_gtd_good/<int:pk>', update_gtd_good, name='update_gtd_good'),
     path('documents/update_gtd/<int:pk>', update_gtd, name='update_gtd'),

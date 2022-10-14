@@ -1,0 +1,58 @@
+{% extends 'layout/base.html' %}
+{% load bootstrap5 %}
+{% load static %}
+
+{% block title %}Отчет по экологическому сбору{% endblock %}
+
+{% block extra_links %}
+    <style>
+    .second_kin {
+        margin-left: 20px;
+    }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    <div class="container m-1">
+{#    <div>{{ by_gtd }}</div>#}
+{#        <div>{{ by_tnved }}</div>#}
+        {% for k, v in by_tnved.items %}
+            <div>{{ k }}</div>
+            <div>{{ v }}</div>
+        {% endfor %}
+{#    {% for item in eco_dict %}#}
+{#        <details>#}
+{#            <summary>{{ item.0.gtdId }}</summary>#}
+{#            {% for group in item.1 %}#}
+{#                <details class="second_kin">#}
+{#                    <summary>{{ group.0 }}</summary>#}
+{#                    <table class="second_kin">#}
+{#                        <thead>#}
+{#                            <tr>#}
+{#                                <th>Код ТН ВЭД</th>#}
+{#                                <th>Расшифровка</th>#}
+{#                                <th>Масса нетто, кг</th>#}
+{#                                <th>Ставка, р за тонну</th>#}
+{#                                <th>Норматив утилизации</th>#}
+{#                                <th>Итого</th>#}
+{#                            </tr>#}
+{#                        </thead>#}
+{#                        <tbody>#}
+{#                            <tr>#}
+{#                                <td>{{ group.1 }}</td>#}
+{#                                <td>{{ group.2 }}</td>#}
+{#                                <td>{{ group.3 }}</td>#}
+{#                                <td>{{ group.4 }}</td>#}
+{#                                <td>{{ group.5 }}</td>#}
+{#                                <td>{{ group.6 }}</td>#}
+{#                            </tr>#}
+{#                        </tbody>#}
+{#                    </table>#}
+{#                </details>#}
+{#            {% endfor %}#}
+{#        </details>#}
+{#    {% endfor %}#}
+    </div>
+<!--    <script src="{% static 'main/js/eco.js' %}"></script> -->
+{% endblock %}
