@@ -1,0 +1,43 @@
+.second_kin {
+            margin-left: 20px;
+        }
+table {
+width: 750px;
+border-collapse: collapse;
+margin:50px auto;
+}
+th {
+    background: #3498db;
+    color: white;
+    font-weight: bold;
+    }
+
+td, th {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+    align-items: center;
+    /*vertical-align: center;*/
+    font-size: 18px;
+    }
+
+.labels tr td {
+    font-weight: bold;
+    color: #000000;
+}
+
+.label tr td label {
+    display: block;
+}
+
+[data-toggle="toggle"] {
+    display: none;
+    /*display: table-row;*/
+}
+.hide {
+    display: none;
+}
+h3 {
+    text-align: center;
+    align-items: center;
+}

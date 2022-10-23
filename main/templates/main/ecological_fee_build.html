@@ -1,31 +1,25 @@
 {% extends 'layout/base.html' %}
 {% load bootstrap5 %}
 {% load static %}
+{% load filtertags %}
 
 {% block title %}Отчет по экологическому сбору{% endblock %}
 
 {% block extra_links %}
-    <style>
-    .second_kin {
-        margin-left: 20px;
-    }
-    </style>
+    <link rel="stylesheet" href="{% static 'main/css/eco.css' %}">
+    <script src="{% static 'main/js/jquery-3.6.1.js' %}"></script>
+    <script src="{% static 'main/js/expand_tables.js' %}"></script>
 {% endblock %}
 
 {% block content %}
-
+    <h3>Отчёт по экологическому сбору: {{ start|date:"d.m.Y" }} - {{ end|date:"d.m.Y" }}</h3>
     <div class="container m-1">
-    {{ total }}
-{#    <hr>#}
-{#    {{ expanded }}#}
 
-{#    {% for group in all %}#}
-{#        <div>{{ group.gtd.gtdId }} - {{ group.number }} - {{ group.tn_ved }}</div>#}
-{#    {% endfor %}#}
-    <table>
+        <table>
         <thead>
             <tr>
                 <th>Код ТН ВЭД</th>
+                <th>ГТД</th>
                 <th>Ставка за тонну</th>
                 <th>Норматив утилизации</th>
                 <th>Масса нетто</th>
@@ -34,65 +28,35 @@
         </thead>
         <tbody>
             {% for k, v in total.items %}
-                <tr>
-                    <td>{{ k }}</td>
-                    <td>{{ v.0 }}</td>
-                    <td>{{ v.1 }}</td>
-                    <td>{{ v.2 }}</td>
-                    <td>{{ v.3 }}</td>
-                </tr>
+                <tbody class="labels">
+                    <tr>
+                        <td>
+                            <label for="{{ k }}">{{ k }}</label>
+					        <input type="checkbox" checked="checked" name="{{ k }}" id="{{ k }}" data-toggle="toggle">
+                        </td>
+                        <td></td>
+                        <td>{{ v.0|floatformat:0 }}</td>
+                        <td>{{ v.1|floatformat:0 }}</td>
+                        <td>{{ v.2|floatformat:2 }}</td>
+                        <td>{{ v.3|floatformat:4 }}</td>
+                    </tr>
+                </tbody>
+                <tbody class="hide">
+                    {% with expanded|another_dict:k as exp %}
+                        {% for ke, ve in exp.items %}
+                            <tr>
+                                <td></td>
+                                <td>{{ ke }}</td>
+                                <td></td>
+                                <td></td>
+                                <td>{{ ve.2|floatformat:2 }}</td>
+                                <td>{{ ve.3|floatformat:4 }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endwith %}
+                </tbody>
             {% endfor %}
         </tbody>
-{#        <tbody>#}
-{#            {% for k, v in by_tnved.items %}#}
-{#                <tr>#}
-{#                    <td>{{  }}</td>#}
-{#                </tr>#}
-{#            {% endfor %}#}
-{#        </tbody>#}
-
     </table>
-{#    <div>{{ by_gtd }}</div>#}
-{#        <div>{{ by_tnved }}</div>#}
-
-
-{#        {% for k, v in by_tnved.items %}#}
-{#            <div>{{ k }}</div>#}
-{#            <div>{{ v }}</div>#}
-{#        {% endfor %}#}
-
-{#    {% for item in eco_dict %}#}
-{#        <details>#}
-{#            <summary>{{ item.0.gtdId }}</summary>#}
-{#            {% for group in item.1 %}#}
-{#                <details class="second_kin">#}
-{#                    <summary>{{ group.0 }}</summary>#}
-{#                    <table class="second_kin">#}
-{#                        <thead>#}
-{#                            <tr>#}
-{#                                <th>Код ТН ВЭД</th>#}
-{#                                <th>Расшифровка</th>#}
-{#                                <th>Масса нетто, кг</th>#}
-{#                                <th>Ставка, р за тонну</th>#}
-{#                                <th>Норматив утилизации</th>#}
-{#                                <th>Итого</th>#}
-{#                            </tr>#}
-{#                        </thead>#}
-{#                        <tbody>#}
-{#                            <tr>#}
-{#                                <td>{{ group.1 }}</td>#}
-{#                                <td>{{ group.2 }}</td>#}
-{#                                <td>{{ group.3 }}</td>#}
-{#                                <td>{{ group.4 }}</td>#}
-{#                                <td>{{ group.5 }}</td>#}
-{#                                <td>{{ group.6 }}</td>#}
-{#                            </tr>#}
-{#                        </tbody>#}
-{#                    </table>#}
-{#                </details>#}
-{#            {% endfor %}#}
-{#        </details>#}
-{#    {% endfor %}#}
     </div>
-<!--    <script src="{% static 'main/js/eco.js' %}"></script> -->
 {% endblock %}

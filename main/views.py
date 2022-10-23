@@ -341,7 +341,8 @@ def eco_fee(request):
                     if gtdId in by_tnved['expanded'][tn_ved]:
                         by_tnved['expanded'][tn_ved][gtdId][2] += weight
                         by_tnved['expanded'][tn_ved][gtdId][3] += row[3]
-                    else:
+                    else: # TODO: форматирование таблиц: посередине текст, равное число нулей
+                        # TODO: excel-табличка
                         by_tnved['expanded'][tn_ved][gtdId] = row
                     by_tnved['total'][tn_ved][2] += weight
                     by_tnved['total'][tn_ved][3] += row[3]
@@ -358,6 +359,8 @@ def eco_fee(request):
             # TODO: отчет в xlsx без ГТД, только суммарно по всем ГТД
             context = {
                 'req': request.POST,
+                'start': start,
+                'end': end,
                 'total': by_tnved['total'],
                 'expanded': by_tnved['expanded'],
             }
