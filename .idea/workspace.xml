@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="unfinished eco reports - data in list form (not as calendar)">
-      <change afterPath="$PROJECT_DIR$/antipovich_diagrams.pdf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/first_code.md" afterDir="false" />
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="preparations for first code show">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/show_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/show_gtd.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/ecological_fee_build.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/ecological_fee_build.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -45,7 +43,7 @@
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;database.data.extractors.current.export.id&quot;: &quot;Comma-separated (CSV)_id&quot;,
     &quot;database.data.extractors.current.id&quot;: &quot;Comma-separated (CSV)_id&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Vitalii/Documents/School/10-11 Лицей НИУ ВШЭ/11 класс/Информатика/Программирование/работка от 10.10&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Vitalii/Documents/School/10-11 Лицей НИУ ВШЭ/11 класс/Информатика/Программирование/исполнители&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   },
   &quot;keyToStringList&quot;: {
@@ -172,7 +170,10 @@
       <workItem from="1664083801766" duration="37000" />
       <workItem from="1664427187713" duration="38691000" />
       <workItem from="1665300835435" duration="35795000" />
-      <workItem from="1665723445139" duration="10985000" />
+      <workItem from="1665723445139" duration="11896000" />
+      <workItem from="1666000106377" duration="338000" />
+      <workItem from="1666358018325" duration="1002000" />
+      <workItem from="1666449211333" duration="9760000" />
     </task>
     <task id="LOCAL-00001" summary="restored most files after fixing models of exporters and importers">
       <created>1660373120746</created>
@@ -398,7 +399,14 @@
       <option name="project" value="LOCAL" />
       <updated>1665726332914</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="preparations for first code show">
+      <created>1665768572896</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1665768572896</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -427,7 +435,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="everything's broken, but i need a backup" />
     <MESSAGE value="fixed parsing" />
     <MESSAGE value="fixed parsing, added online searching for Tn Ved" />
     <MESSAGE value="can upload many files" />
@@ -452,7 +459,8 @@
     <MESSAGE value="corrected some info in changes.md" />
     <MESSAGE value="added columns for tn_ved, prepared for ecological fee reports" />
     <MESSAGE value="unfinished eco reports - data in list form (not as calendar)" />
-    <option name="LAST_COMMIT_MESSAGE" value="unfinished eco reports - data in list form (not as calendar)" />
+    <MESSAGE value="preparations for first code show" />
+    <option name="LAST_COMMIT_MESSAGE" value="preparations for first code show" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />

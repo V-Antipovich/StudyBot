@@ -325,55 +325,32 @@ def eco_fee(request):
 
             # eco = {}
             # extended_eco = {}
-            by_gtd = {}
+            # by_gtd = {}
+            all_groups = GtdGroup.objects.filter(gtd_id__in=gtds_range, tn_ved__has_environmental_fee=True)
 
-            # таблица относительно ГТД
-            for gtd in gtds_range:
-                gtdId = gtd.gtdId
+            by_tnved = {'expanded': {}, 'total': {}}
+            for group in all_groups:
+                gtdId = group.gtd.gtdId
+                tn_ved = group.tn_ved.code
+                rate = group.tn_ved.collection_rate
+                standart = group.tn_ved.recycling_standart
+                weight = group.net_weight
+                row = [rate, standart, weight, rate*weight*standart/1000]
 
-                groups = GtdGroup.objects.filter(gtd_id=gtd.pk, tn_ved__has_environmental_fee=True)
-                if groups.count() > 0:
-                    for group in groups:
-                        tn_ved = group.tn_ved
-                        code = group.tn_ved.code
-                        rate = tn_ved.collection_rate
-                        standart = tn_ved.recycling_standart
-                        weight = group.net_weight
-                        if gtdId in by_gtd:
-                            if code in by_gtd[gtdId]:
-                                by_gtd[gtdId][code][2] += weight
-                                by_gtd[gtdId][code][-1] += rate*standart*weight/1000
-                            else:
-                                by_gtd[gtdId][code] = [rate, standart, weight, rate * standart * weight / 1000]
-                        else:
-                            by_gtd[gtdId] = {}
-                            by_gtd[gtdId][code] = [rate, standart, weight, rate*standart*weight/1000]
+                if tn_ved in by_tnved:
+                    if gtdId in by_tnved['expanded'][tn_ved]:
+                        by_tnved['expanded'][tn_ved][gtdId][2] += weight
+                        by_tnved['expanded'][tn_ved][gtdId][3] += row[3]
+                    else:
+                        by_tnved['expanded'][tn_ved][gtdId] = row
+                    by_tnved['total'][tn_ved][2] += weight
+                    by_tnved['total'][tn_ved][3] += row[3]
+                else:
+                    # by_tnved['total'][tn_ved] = {}
+                    by_tnved['expanded'][tn_ved] = {}
 
-            by_tnved = {}  # TODO: вместо этого для каждого кода ТН ВЭД будет два элемента в словаре: total и expanded, то есть в один словарь будет добавляться всё: в total суммируется, в expanded отдельно
-            for gtdId in by_gtd:
-                for code in by_gtd[gtdId]:
-                    row = by_gtd[gtdId][code]
-                    if code in by_tnved: # Вариант, когда такой ТН ВЭД есть
-                        if gtdId in by_tnved[code]: # Такая ГТД уже есть в списке под ТН ВЭД
-                            by_tnved[code]['expanded'][gtdId][2] += row[2]
-                            by_tnved[code]['expanded'][gtdId][3] += row[3]
-                        else: # Еще такой ГТД нет
-                            # by_tnved[code]['expanded'] = {}
-                            by_tnved[code]['expanded'][gtdId] = row
-                        by_tnved[code]['total'][2] += row[2]
-                        by_tnved[code]['total'][3] += row[3]
-                        # if gtdId in by_tnved[code]:
-                        #     by_tnved[code][gtdId][2] += row[2]
-                        #     by_tnved[code][gtdId][3] += row[3]
-                        # else:
-                        #     by_tnved[code][gtdId] = by_tnved_total[code][gtdId] = row
-
-                    else: # Такого ТН ВЭД нет
-                        by_tnved[code] = {}
-                        by_tnved[code]['total'] = row
-                        by_tnved[code]['expanded'] = {}
-                        by_tnved[code]['expanded'][gtdId] = row
-                        # by_tnved[code][gtdId] = row
+                    by_tnved['expanded'][tn_ved][gtdId] = row
+                    by_tnved['total'][tn_ved] = row
 
             # TODO: Не гтд раскрываются в ТН ВЭД, а в вершине дерева ТН ВЭД, внутри которых по несколько гтд
             # ( а масса и сумма остаются на своих же местах)
@@ -381,7 +358,8 @@ def eco_fee(request):
             # TODO: отчет в xlsx без ГТД, только суммарно по всем ГТД
             context = {
                 'req': request.POST,
-                'by_tnved': by_tnved,
+                'total': by_tnved['total'],
+                'expanded': by_tnved['expanded'],
             }
             # return render(request, 'main/test.html', context)
             return render(request, 'main/ecological_fee_build.html', context)

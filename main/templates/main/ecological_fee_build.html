@@ -15,12 +15,52 @@
 {% block content %}
 
     <div class="container m-1">
+    {{ total }}
+{#    <hr>#}
+{#    {{ expanded }}#}
+
+{#    {% for group in all %}#}
+{#        <div>{{ group.gtd.gtdId }} - {{ group.number }} - {{ group.tn_ved }}</div>#}
+{#    {% endfor %}#}
+    <table>
+        <thead>
+            <tr>
+                <th>Код ТН ВЭД</th>
+                <th>Ставка за тонну</th>
+                <th>Норматив утилизации</th>
+                <th>Масса нетто</th>
+                <th>Итого</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for k, v in total.items %}
+                <tr>
+                    <td>{{ k }}</td>
+                    <td>{{ v.0 }}</td>
+                    <td>{{ v.1 }}</td>
+                    <td>{{ v.2 }}</td>
+                    <td>{{ v.3 }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+{#        <tbody>#}
+{#            {% for k, v in by_tnved.items %}#}
+{#                <tr>#}
+{#                    <td>{{  }}</td>#}
+{#                </tr>#}
+{#            {% endfor %}#}
+{#        </tbody>#}
+
+    </table>
 {#    <div>{{ by_gtd }}</div>#}
 {#        <div>{{ by_tnved }}</div>#}
-        {% for k, v in by_tnved.items %}
-            <div>{{ k }}</div>
-            <div>{{ v }}</div>
-        {% endfor %}
+
+
+{#        {% for k, v in by_tnved.items %}#}
+{#            <div>{{ k }}</div>#}
+{#            <div>{{ v }}</div>#}
+{#        {% endfor %}#}
+
 {#    {% for item in eco_dict %}#}
 {#        <details>#}
 {#            <summary>{{ item.0.gtdId }}</summary>#}
