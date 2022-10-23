@@ -14,7 +14,6 @@ from pathlib import Path
 import os
 from .config import db_host, db_port, db_user, db_name, db_password
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -45,6 +44,7 @@ INSTALLED_APPS = [
     'django_cleanup',
     'django_extensions',
     'django_sorting_bootstrap',
+    'xlsxwriter',
 ]
 
 MIDDLEWARE = [

@@ -23,6 +23,8 @@ from customs_declarations_database.settings import MEDIA_ROOT
 from customs_declarations_database.Constant import under
 from django_sorting_bootstrap.views import SimpleChangeList
 
+from io import BytesIO as IO
+import xlsxwriter
 from datetime import datetime
 
 
@@ -353,12 +355,13 @@ def eco_fee(request):
                     by_tnved['expanded'][tn_ved][gtdId] = row
                     by_tnved['total'][tn_ved] = row
 
+            # application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+
             # TODO: Не гтд раскрываются в ТН ВЭД, а в вершине дерева ТН ВЭД, внутри которых по несколько гтд
             # ( а масса и сумма остаются на своих же местах)
             # TODO: в нераскрытом виде дерева "ТН ВЭД" - "Общая сумма по всем ГТД"
             # TODO: отчет в xlsx без ГТД, только суммарно по всем ГТД
             context = {
-                'req': request.POST,
                 'start': start,
                 'end': end,
                 'total': by_tnved['total'],
@@ -373,6 +376,17 @@ def eco_fee(request):
                 'message': 'Некорректный диапазон. Попробуйте ещё раз.',
             }
             return render(request, 'main/ecological_fee_range.html', context)
+
+
+def generate_eco_xlsx(request): # TODO: взять данные для таблички
+    excel_file = IO()
+    workbook = xlsxwriter.Workbook(excel_file, {'in_memory': True})
+    worksheet = workbook.add_worksheet()
+    worksheet.write('A1', 'zsfjnfgdn')
+    workbook.close()
+    excel_file.seek(0)
+    return HttpResponse(excel_file.read(), charset='utf-8',
+                            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
 
 # Вывод xml-файла выбранной ГТД
