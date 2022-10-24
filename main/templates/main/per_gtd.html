@@ -59,10 +59,35 @@
                             <div class="mt-lg-1">
                                 {% if gtd.exported_to_wms %}
                                     Экспортирован в WMS
+                                    <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#wmsModal">
+                                        Экспорт в WMS
+                                    </button>
+                                    <div class="modal fade" id="wmsModal" tabindex="-1" role="dialog" aria-labelledby="wmsModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="wmsModalLabel">Эта ГТД уже была экспортирована</h5>
+                                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Нажмите ОК, если вы всё равно хотите сгенерировать xml по этой ГТД
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Назад</button>
+                                                    <a href="{% url 'main:to_wms' pk=gtd.pk %}"><button type="button" class="btn btn-primary">OK</button></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 {% else %}
                                     Экспорт в WMS не был выполнен
+                                    <a class="btn btn-outline-info" href="{% url 'main:to_wms' pk=gtd.pk %}">Экспорт в WMS</a>
                                 {% endif %}
-                                <a class="btn btn-outline-info" href="{% url 'main:to_wms' pk=gtd.pk %}">Экспорт в WMS</a>
+
+
                             </div>
                             <div class="mt-lg-1">
                                 {% if gtd.exported_to_erp %}
