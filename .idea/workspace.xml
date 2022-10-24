@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="wms export (no modal window)">
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="WMS export with modal window">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/per_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/per_gtd.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -175,7 +175,7 @@
       <workItem from="1666000106377" duration="338000" />
       <workItem from="1666358018325" duration="1002000" />
       <workItem from="1666449211333" duration="26997000" />
-      <workItem from="1666533425559" duration="33196000" />
+      <workItem from="1666533425559" duration="33306000" />
     </task>
     <task id="LOCAL-00001" summary="restored most files after fixing models of exporters and importers">
       <created>1660373120746</created>
@@ -436,7 +436,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666642310121</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="WMS export with modal window">
+      <created>1666645246947</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1666645246947</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -465,7 +472,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Lists of gtd attributes" />
     <MESSAGE value="Login and logout views" />
     <MESSAGE value="raw dynamic handbooks with raw foreign key fields and no sorting." />
     <MESSAGE value="dynamic handbooks, FK fields get values from joined tables" />
@@ -490,7 +496,8 @@
     <MESSAGE value="expanded eco table (with no xlsx file)" />
     <MESSAGE value="added xlsx files download for eco fee" />
     <MESSAGE value="wms export (no modal window)" />
-    <option name="LAST_COMMIT_MESSAGE" value="wms export (no modal window)" />
+    <MESSAGE value="WMS export with modal window" />
+    <option name="LAST_COMMIT_MESSAGE" value="WMS export with modal window" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />

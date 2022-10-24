@@ -400,7 +400,7 @@ def to_wms(request, pk):
 
             gtd.exported_to_wms = True
             gtd.save()
-            return redirect('main:per_gtd', pk=pk) # TODO: модальное окно bootstrap если уже имела место выгрузка
+            return redirect('main:per_gtd', pk=pk)
 
     else:
         form = WmsExportComment()
