@@ -86,8 +86,6 @@ def validate_date_range(start, end):
         raise ValidationError('Вы не можете выбрать такой диапазон дат')
 
 
-# TODO: Вернуться потом к написанию нормальной формы для регистрации, когда будет работа над юзерами
-# TODO: прямо сейчас сесть писать нормальную рабочую форму для регистрации.
 # class TestRegForm(forms.ModelForm):
 #     password = forms.CharField(label='Пароль', widget=forms.PasswordInput)
 #     password2 = forms.CharField(label='Повторите пароль', widget=forms.PasswordInput)

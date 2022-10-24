@@ -1,5 +1,4 @@
 from django.apps import AppConfig
-# TODO: Разобраться с этим потом
 #from django.dispatch import Signal
 #from utilities import send_activation_email
 #

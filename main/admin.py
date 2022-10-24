@@ -29,5 +29,3 @@ admin.site.register(GtdGood)
 admin.site.register(DocumentType)
 admin.site.register(UploadGtdFile)
 admin.site.register(MeasureQualifier)
-
-# TODO: нужен какой-то Inline для UploadGtd вместе с UploadGtdFile

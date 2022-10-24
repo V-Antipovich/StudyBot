@@ -21,18 +21,20 @@ from .utilities import parse_gtd, get_tnved_name
 from .models import RegUser
 from customs_declarations_database.settings import MEDIA_ROOT
 from customs_declarations_database.Constant import under
-from django_sorting_bootstrap.views import SimpleChangeList
-
-from io import BytesIO as IO
 import xlsxwriter
+import mimetypes
 from datetime import datetime
 
+import xml.etree.ElementTree as ET
 
+
+# TODO: all todo in extra staff
 # Вспомогательные функции контроля доступа
 def superuser_check(user):
     return user.is_superuser
 
 
+# Представление регистрации пользователя
 class RegisterUserView(CreateView):
     model = RegUser
     template_name = 'main/register_user.html'
@@ -40,9 +42,7 @@ class RegisterUserView(CreateView):
     success_url = reverse_lazy('main:show_gtd')
 
 
-# TODO: справочник документов пока вынести в блок документов - Это не справочник!
-# TODO: позже? распределить документы по категориям
-
+# Представление обработки справочников
 def handbook(request):
     choice = request.GET.get('choice', 'default')
 
@@ -163,13 +163,11 @@ def handbook(request):
     return render(request, 'main/handbook.html', context)
 
 
-# TODO: нужен контроллер для добавления пользователей администратором (+ письмо активации)
 # Начальная страница
 def index(request):
     return render(request, 'main/index.html')
 
 
-# TODO: убрать после того, как станет не нужен
 # Контроллер для тестовой странички
 def test_view(request):
     context = {
@@ -178,11 +176,6 @@ def test_view(request):
     return render(request, 'main/test.html', context)
 
 
-# TODO: ломается верстка при масштабировании
-
-# TODO: хлебные крошки например "документы/ГТД/<номер гтд>"
-# TODO: в персональной странице ГТД уже выводить дополнительные поля, которые надо убрать в табличном виде
-# TODO: пагинатор на бэке, иначе долго загружается
 # Список всех ГТД
 class ShowGtdView(LoginRequiredMixin, ListView):
     model = GtdMain
@@ -198,27 +191,10 @@ class ShowGtdView(LoginRequiredMixin, ListView):
             logger.error('Some stupid person use not int for paginate_by')
             # pass # TODO: сделать что-то с заглушкой
         return self.paginate_by
-    # TODO: какая-то дичь с перемещением по page на странице (в низу)
 
 
-# TODO: форматирование чисел: пробелы между тысячами
-# TODO: не выводить кол-во групп
 
-# TODO: динамический подсчет: total_cost - сумма всех стоимостей групп
-# TODO: динамический подсчет: total_invoice_amount - total_cost/currency_rate
-# TODO: не должно перекидывать в шапку при открытии групп товаров
-# TODO: при раскрытии товаров группы не надо выводить <gtdId>/<group>
-
-# TODO: Пагинация товаров не нужна (отключи умную таблицу оттуда)
-# TODO: (потом) возможность добавлять группы и товары
-
-# TODO: Баг: в любой группе почему-то один и тот же товар
-
-# TODO: new tab при открытии "посмотреть" xml-документа
-# TODO: по умолчанию пусть будет раскрыт список товаров первой группы.
-
-
-# Персональная страница ГТД
+# Представление персональной страницы ГТД
 class GtdDetailView(DetailView):
     model = GtdMain
     template_name = 'main/per_gtd.html'
@@ -235,14 +211,8 @@ class GtdDetailView(DetailView):
             context['number'] = GtdGroup.objects.filter(pk=open_goods)[0].number
         return context
 
-# TODO: Желательно сделать, чтобы форма визуально оставалась похожа на страницу сайта (что-то вроде переключения режима Readonly/edit)
-# TODO: поля формы Уже, чем значения
-# TODO: сохранить/отменить изменения
-# TODO: отделять заголовки от их значений в отображении (<b></b>)
-# TODO: (ПОТОМ) позиционирование списка - например, чтобы значения находились на одном уровне
 
-
-# Редактировать шапку ГТД
+# Представление редактирования шапки ГТД
 def update_gtd(request, pk):
     obj = get_object_or_404(GtdMain, pk=pk)
     if request.method == 'POST':
@@ -260,6 +230,7 @@ def update_gtd(request, pk):
         return render(request, 'main/update_gtd.html', context)
 
 
+# Функция для редактирования группы товаров
 def update_gtd_group(request, pk):
     obj = get_object_or_404(GtdGroup, pk=pk)
     if request.method == 'POST':
@@ -277,8 +248,7 @@ def update_gtd_group(request, pk):
         return render(request, 'main/update_gtd_group.html', context)
 
 
-# TODO: Артикул - обязательное поле
-# TODO: редактирование по клику? По прямому обращению к полям?
+
 # Редактировать товар из группы ГТД
 def update_gtd_good(request, pk):
     obj = get_object_or_404(GtdGood, pk=pk)
@@ -297,7 +267,6 @@ def update_gtd_good(request, pk):
         return render(request, 'main/update_gtd_good.html', context)
 
 
-# TODO: Удаление через модальное окно + кнопка отмены
 # Страница удаления ГТД
 class GtdDeleteView(DeleteView):
     model = GtdMain
@@ -306,9 +275,7 @@ class GtdDeleteView(DeleteView):
     context_object_name = 'gtd'
 
 
-# TODO: отчет по эко сбору: вывод таблицы за данный период
-# Подготовка к работе с диапазоном дат
-# TODO: потом заменить на класс построения отчета
+# Экологический сбор: выбор периода, сбор данных о ГТД из этого периода, содержащих ТН ВЭД, подлежащие эко сбору
 def eco_fee(request):
     if request.method == 'GET':
         form = CalendarDate()
@@ -323,11 +290,7 @@ def eco_fee(request):
             start = datetime.strptime(form.data['start_date'], "%Y-%m-%d")
             end = datetime.strptime(form.data['end_date'], "%Y-%m-%d")
             gtds_range = GtdMain.objects.filter(date__range=[start, end])
-            # Плохой алгоритм сбора групп
 
-            # eco = {}
-            # extended_eco = {}
-            # by_gtd = {}
             all_groups = GtdGroup.objects.filter(gtd_id__in=gtds_range, tn_ved__has_environmental_fee=True)
 
             by_tnved = {'expanded': {}, 'total': {}}
@@ -343,31 +306,43 @@ def eco_fee(request):
                     if gtdId in by_tnved['expanded'][tn_ved]:
                         by_tnved['expanded'][tn_ved][gtdId][2] += weight
                         by_tnved['expanded'][tn_ved][gtdId][3] += row[3]
-                    else: # TODO: форматирование таблиц: посередине текст, равное число нулей
-                        # TODO: excel-табличка
+                    else:
                         by_tnved['expanded'][tn_ved][gtdId] = row
                     by_tnved['total'][tn_ved][2] += weight
                     by_tnved['total'][tn_ved][3] += row[3]
                 else:
-                    # by_tnved['total'][tn_ved] = {}
                     by_tnved['expanded'][tn_ved] = {}
 
                     by_tnved['expanded'][tn_ved][gtdId] = row
                     by_tnved['total'][tn_ved] = row
 
-            # application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+            filename = f"{start.strftime('%d-%m-%Y')}-{end.strftime('%d-%m-%Y')}.xlsx"
+            path = os.path.join(MEDIA_ROOT, 'eco/', filename)
+            workbook = xlsxwriter.Workbook(path)
+            worksheet = workbook.add_worksheet()
+            i = 1
+            worksheet.write(0, 0, 'ТН ВЭД')
+            worksheet.write(0, 1, 'Ставка за тонну')
+            worksheet.write(0, 2, 'Норматив утилизации')
+            worksheet.write(0, 3, 'Масса нетто')
+            worksheet.write(0, 4, 'Сумма')
+            t = by_tnved['total']
+            for k in t:
+                worksheet.write(i, 0, k)
+                worksheet.write(i, 1, t[k][0])
+                worksheet.write(i, 2, t[k][1])
+                worksheet.write(i, 3, t[k][2])
+                worksheet.write(i, 4, t[k][3])
+                i += 1
 
-            # TODO: Не гтд раскрываются в ТН ВЭД, а в вершине дерева ТН ВЭД, внутри которых по несколько гтд
-            # ( а масса и сумма остаются на своих же местах)
-            # TODO: в нераскрытом виде дерева "ТН ВЭД" - "Общая сумма по всем ГТД"
-            # TODO: отчет в xlsx без ГТД, только суммарно по всем ГТД
+            workbook.close()
             context = {
                 'start': start,
                 'end': end,
+                'filename': filename,
                 'total': by_tnved['total'],
                 'expanded': by_tnved['expanded'],
             }
-            # return render(request, 'main/test.html', context)
             return render(request, 'main/ecological_fee_build.html', context)
         else:
             form = CalendarDate()
@@ -378,15 +353,14 @@ def eco_fee(request):
             return render(request, 'main/ecological_fee_range.html', context)
 
 
-def generate_eco_xlsx(request): # TODO: взять данные для таблички
-    excel_file = IO()
-    workbook = xlsxwriter.Workbook(excel_file, {'in_memory': True})
-    worksheet = workbook.add_worksheet()
-    worksheet.write('A1', 'zsfjnfgdn')
-    workbook.close()
-    excel_file.seek(0)
-    return HttpResponse(excel_file.read(), charset='utf-8',
-                            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+# Получение xlsx-файла эко сбора из хранилища для скачивания пользователем
+def eco_fee_xlsx(request, filename):
+    filepath = os.path.join(MEDIA_ROOT, 'eco/', filename)
+    path = open(filepath, 'rb')
+    mime_type, _ = mimetypes.guess_type(filepath)
+    response = HttpResponse(path, content_type=mime_type)
+    response['Content-Disposition'] = f"attachment; filename={filename}"
+    return response
 
 
 # Вывод xml-файла выбранной ГТД
@@ -407,21 +381,21 @@ def profile(request):
 class CDDLogout(LogoutView, LoginRequiredMixin):
     template_name = 'main/logout.html'
 
-# TODO: потом вернемся, при работе с пользователями
+
 # class RegisterUserView(CreateView):
 #     model = RegUser
 #     template_name = 'main/register_user.html'
 #     form_class = RegisterUserForm
 #     success_url = reverse_lazy('main:register_done')
 
+#  TODO: Экспорт WMS: генерация xml по шаблону: шапка + артикулы (желательно схлопывать есть есть повторки. ?Иногда если цена товаров разная, то не схлопывается
+# TODO: формат имени файла: слеши заменить на "_"
 
 class RegisterDoneView(TemplateView):
     template_name = 'main/'
 
 
 # Загрузка файлов ГТД в формате .xml
-# TODO: далекое будущее - многопользовательские коллизии - нужно проверять по полю кто последний трогал документ, если не ты, то предупреждаем
-# TODO: далекое будущее - статус черновик/проведен
 
 
 @login_required(login_url='/accounts/login/')
@@ -430,8 +404,7 @@ def upload_gtd(request):
         form = UploadGtdfilesForm(request.POST, request.FILES)
         if form.is_valid():
             on_duplicate = request.POST['on_duplicate']
-            # TODO: (Позже) проверка качества контента
-            # TODO: (Позже) Более подробно указывать возможные ошибки на страницах ошибки
+
 
             uploaded_gtd = UploadGtd(
                 description=request.POST['comment']
@@ -666,7 +639,6 @@ def upload_gtd(request):
         #     return render(request, 'main/error.html')
 
     else:
-        # TODO: drag'n'drop
         form = UploadGtdfilesForm()
         context = {'form': form}
         return render(request, 'main/upload_gtd.html', context)

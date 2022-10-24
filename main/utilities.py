@@ -146,7 +146,6 @@ def parse_gtd(filename):
     for raw_group in raw_groups:
         # Номер товарной группы
         group_number = raw_group.find("GoodsNumeric").text
-        # TODO: добавить имя группы и описание, исправить косяк с именем товара (если маленькое - взять от имени группы
         name_n_desc = raw_group.find_all('GoodsDescription')
         group_name = name_n_desc[0].text
         group_description = name_n_desc[1].text
@@ -327,7 +326,7 @@ def get_tnved_name(code):
     response = requests.get(url)
     soup = Bs(response.text, 'html.parser')
     name = soup.find('ul', {'class': 'tnved'})
-    # TODO: видимо, тут какая-то фигня творится
+    # TODO:
     if name:
         final_name = name.find('li').text[len(code)+5:]
     else:

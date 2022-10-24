@@ -7,9 +7,7 @@ from django.template.defaultfilters import slugify
 
 # Роли реализованы в виде групп (уже существующей структуры)
 # Пользователи базы
-# TODO: в будущее - надо переделать модель юзеров, а то проблемы с паролями и входом
 
-# TODO: подумать, может, надо дропнуть базу, потому что достали проблемы с FK
 # SET FOREIGN_KEY_CHECKS = 0; SET FOREIGN_KEY_CHECKS = 1;
 # Или проблема не в модели?
 class RegUser(AbstractUser):
@@ -203,7 +201,6 @@ class TnVed(models.Model):
         verbose_name = 'ТН ВЭД'
         verbose_name_plural = verbose_name
 
-# TODO: нормальный алгоритм для сохранения только уникальных
     def __str__(self):
         return str(self.code)
 
@@ -323,7 +320,6 @@ class Document(models.Model):
         verbose_name_plural = 'Документы'
 
 
-# TODO: Добавить модель типов документов
 # Тип документов
 class DocumentType(models.Model):
     code = models.CharField(max_length=8, verbose_name='Код типа документа')
@@ -346,7 +342,6 @@ class GtdDocument(models.Model):
         unique_together = ('gtd', 'group', 'document')
 
 
-#  TODO: нужно поле, которое покажет id пользователя, который скинул файл (потом)
 class UploadGtd(models.Model):
     description = models.CharField(max_length=255, blank=True, verbose_name='Краткий комментарий')
     uploaded_at = models.DateTimeField(auto_now_add=True)

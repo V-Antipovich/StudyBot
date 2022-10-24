@@ -45,7 +45,7 @@
                         {% endif %}
                         {% if gtd.gtd_file %}
                             {% url 'main:show_gtd_file' filename=gtd.gtd_file.document as file_url %}
-                            <div>Документ ГТД: <a href={{ file_url }} >Посмотреть</a> / <a download href={{ file_url }}>Скачать</a> </div>
+                            <div>Документ ГТД: <a href="{{ file_url }}" target="_blank" >Посмотреть</a> / <a download href={{ file_url }}>Скачать</a> </div>
                         {% endif %}
                         <hr>
                         <div class="mt-4">

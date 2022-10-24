@@ -58,7 +58,7 @@
             {% endfor %}
         </tbody>
     </table>
-
-    <a href="{% url 'main:eco_xlsx'  %}">Скачать файл</a>
+    <a href="{% url 'main:eco_fee_file' filename=filename %}">Скачать файл</a>
+{#    <a href="{% url 'main:eco_xlsx' filename=filename %}">Скачать файл</a>#}
     </div>
 {% endblock %}
