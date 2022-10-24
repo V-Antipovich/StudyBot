@@ -42,25 +42,37 @@
                         <hr>
                         {% if gtd.last_edited %}
                         <div>Последний добавил/редактировал: {{ gtd.last_edited.username }}</div>
+                        <hr>
                         {% endif %}
+                        <hr>
                         {% if gtd.gtd_file %}
                             {% url 'main:show_gtd_file' filename=gtd.gtd_file.document as file_url %}
                             <div>Документ ГТД: <a href="{{ file_url }}" target="_blank" >Посмотреть</a> / <a download href={{ file_url }}>Скачать</a> </div>
+
                         {% endif %}
-                        <hr>
                         <div class="mt-4">
                             <a class="btn btn-outline-warning" href="{% url 'main:update_gtd' pk=gtd.pk %}">Отредактировать</a>
                             <a class="btn btn-outline-danger" href="{% url 'main:delete_gtd' pk=gtd.pk %}">Удалить</a>
                         </div>
-                    <!--
-                        <div class="row">
-                            <div class="dropdown mt-4">
-                            <button class="btn btn-outline-danger">
-                                <a href="#"Удалить ГТД</a>
-                            </button>
+                        <hr>
+                        <div class="mt-4">
+                            <div class="mt-lg-1">
+                                {% if gtd.exported_to_wms %}
+                                    Экспортирован в WMS
+                                {% else %}
+                                    Экспорт в WMS не был выполнен
+                                {% endif %}
+                                <a class="btn btn-outline-info" href="{% url 'main:to_wms' pk=gtd.pk %}">Экспорт в WMS</a>
+                            </div>
+                            <div class="mt-lg-1">
+                                {% if gtd.exported_to_erp %}
+                                    Экспортирован в ERP
+                                {% else %}
+                                    Экспорт в ERP не был выполнен
+                                {% endif %}
+                                <a class="btn btn-outline-info">Экспорт в ERP</a>
+                            </div>
                         </div>
-                        </div> -->
-
                     </div>
                 </div>
             </div>

@@ -50,6 +50,8 @@ class GtdMain(models.Model):
                                     related_name='+', null=True, blank=True, on_delete=models.SET_NULL)
     last_edited_time = models.DateTimeField(verbose_name='Дата и время добавления/последнего редактирования',
                                             null=True, blank=True, auto_now=True)
+    exported_to_wms = models.BooleanField(verbose_name='Был выполнен экспорт в WMS?', default=False)
+    exported_to_erp = models.BooleanField(verbose_name='Был выполнен экспорт в ERP?', default=False)
 
     class Meta:
         verbose_name = 'Грузовая таможенная декларация'
@@ -356,10 +358,18 @@ class UploadGtd(models.Model):
 
 
 class UploadGtdFile(models.Model):
-    uploaded_gtd = models.ForeignKey('UploadGtd', on_delete=models.CASCADE, verbose_name='id партии загруженных ГТД')
+    uploaded_gtd = models.ForeignKey('UploadGtd', on_delete=models.CASCADE, related_name='+',
+                                     verbose_name='id партии загруженных ГТД')
     document = models.FileField(upload_to='gtd/')
     uploaded_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     class Meta:
         verbose_name = 'Загруженный файл ГТД'
         verbose_name_plural = 'Загруженные файлы ГТД'
+
+
+class WmsExport(models.Model):
+    gtd = models.ForeignKey('GtdMain', on_delete=models.CASCADE, verbose_name='id ГТД', related_name='+')
+    comment = models.TextField(verbose_name='Комментарий', null=True, blank=True)
+    filename = models.CharField(verbose_name='Имя файла', max_length=255)
+    date = models.DateTimeField(auto_now_add=True)

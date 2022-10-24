@@ -15,7 +15,7 @@ import requests
 #         host = 'http://' + ALLOWED_HOSTS[0]
 #     else:
 #         host = 'http://localhost:8000'
-#     context = {'user': user, 'host': host, 'sign': signer.sign(user.username)}
+#     context = {'user': user, 'host': host, 'sigрпn': signer.sign(user.username)}
 #     subject = render_to_string('email/activation_email_subject.txt', context)
 #     body_text = render_to_string('email/activation_email_body.txt', context)
 #     user.email_user(subject, body_text)
@@ -23,11 +23,14 @@ import requests
 
 # Парсинг xml-файла ГТД
 def parse_gtd(filename):
+    """
+    Чтение xml-файла, формирование словаря, в котором будет содержаться шапка, группы, товары, документы
+
+    """
     f = open(filename, 'r', encoding='utf-8')
     content = f.read()
     f.close()
     raw_gtd = Bs(content, "xml")
-    # groups, goods, documents = [], [], []
     gtd_groups = []
 
     # В таблицу ГТД (1 на весь документ)
@@ -321,6 +324,7 @@ def parse_gtd(filename):
     return gtd_main, gtd_groups
 
 
+# Если оказалось, что нужного кода ТН ВЭД нет в базе, он парсится
 def get_tnved_name(code):
     url = 'https://www.tks.ru/db/tnved/search?searchstr=' + code
     response = requests.get(url)

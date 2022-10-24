@@ -7,12 +7,14 @@ from django.core.validators import FileExtensionValidator
 
 from .models import UploadGtd, RegUser, GtdMain, Exporter, Importer, CustomsHouse, GtdGood, GtdGroup
 # from .apps import user_registered
+from customs_declarations_database.settings import USER_DIR
 
 
-class GtdFileForm(forms.Form):
-    file = forms.FileField()
+# class GtdFileForm(forms.Form):
+#     file = forms.FileField()
 
 
+# Форма для xml-файлов ГТД
 class UploadGtdfilesForm(forms.Form):
     comment = forms.CharField(max_length=255, required=False, label='Комментарий (если требуется)')
     document = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}),
@@ -22,6 +24,7 @@ class UploadGtdfilesForm(forms.Form):
                                                'объекты с номерами, уже присутствующими в базе:')
 
 
+# Форма редактирования шапки ГТД
 class GtdUpdateForm(forms.ModelForm):
 
     class Meta:
@@ -39,6 +42,7 @@ class GtdUpdateForm(forms.ModelForm):
         }
 
 
+# Форма редактирования групп ГТД
 class GtdGroupUpdateForm(forms.ModelForm):
 
     class Meta:
@@ -46,6 +50,7 @@ class GtdGroupUpdateForm(forms.ModelForm):
         exclude = ('gtd', 'last_edited_user',)
 
 
+# Форма редактирования товаров ГТД
 class GtdGoodUpdateForm(forms.ModelForm):
 
     class Meta:
@@ -60,6 +65,12 @@ class GtdGoodUpdateForm(forms.ModelForm):
         }
 
 
+# Форма для подготовки к формированию xml для WMS
+class WmsExportComment(forms.Form):
+    comment = forms.CharField(widget=forms.Textarea, label='Добавьте комментарий/описание, если требуется', required=False)
+
+
+# Форма выбора диапазона дат
 class CalendarDate(forms.Form):
     start_date = forms.DateField(label='Начало диапазона',
                                  widget=forms.DateInput(attrs={'type': 'date',
@@ -79,6 +90,7 @@ class CalendarDate(forms.Form):
             raise ValidationError('Неправильный диапазон дат')
     
 
+# Валидатор дат
 def validate_date_range(start, end):
     start = time.strptime(start, '%Y-%m-%d')
     end = time.strptime(end, '%Y-%m-%d')
@@ -86,19 +98,7 @@ def validate_date_range(start, end):
         raise ValidationError('Вы не можете выбрать такой диапазон дат')
 
 
-# class TestRegForm(forms.ModelForm):
-#     password = forms.CharField(label='Пароль', widget=forms.PasswordInput)
-#     password2 = forms.CharField(label='Повторите пароль', widget=forms.PasswordInput)
-#
-#     class Meta:
-#         model = RegUser
-#         fields = ('username', 'email')
-#
-#     def clean_password2(self):
-#         cd = self.cleaned_data
-#         if cd['password'] != cd['password2']:
-#             raise forms.ValidationError('Пароли не совпадают')
-#         return cd['password2']
+# Форма регистрации пользователя
 class RegisterUserForm(forms.ModelForm):
     email = forms.EmailField(required=True, label='Адрес электронной почты')
     password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput,

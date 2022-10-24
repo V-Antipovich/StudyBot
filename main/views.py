@@ -2,7 +2,6 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
-from django.db import IntegrityError
 from django.urls import reverse_lazy, reverse
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
@@ -11,7 +10,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.http import FileResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from .forms import UploadGtdfilesForm, GtdUpdateForm, RegisterUserForm, GtdGoodUpdateForm, GtdGroupUpdateForm,\
-    CalendarDate
+    CalendarDate, WmsExportComment
 from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType,\
     Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType,\
     UploadGtdFile
@@ -19,17 +18,17 @@ from django.views.generic.edit import FormView
 import os
 from .utilities import parse_gtd, get_tnved_name
 from .models import RegUser
-from customs_declarations_database.settings import MEDIA_ROOT
+from customs_declarations_database.settings import MEDIA_ROOT, USER_DIR
 from customs_declarations_database.Constant import under
 import xlsxwriter
 import mimetypes
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import xml.etree.ElementTree as ET
 
 
 # TODO: all todo in extra staff
-# Вспомогательные функции контроля доступа
+# Вспомогательные функции контроля доступа - проверка пользователя, является ли он суперпользователем
 def superuser_check(user):
     return user.is_superuser
 
@@ -144,7 +143,7 @@ def handbook(request):
                     needed_data = ''
                 # Если поле внешнего ключа, обращаемся к связанной модели и получаем данные оттуда
                 # Временная заглушка
-                #needed_data = getattr(field[2].filter(pk=getattr(obj, field[1]))[0], field[3])
+                #  needed_data = getattr(field[2].filter(pk=getattr(obj, field[1]))[0], field[3])
             else:
                 # В противном случае просто обращаемся к значению нужного поля
                 needed_data = getattr(obj, field[1])
@@ -164,16 +163,9 @@ def handbook(request):
 
 
 # Начальная страница
+# TODO: нормальный вид
 def index(request):
     return render(request, 'main/index.html')
-
-
-# Контроллер для тестовой странички
-def test_view(request):
-    context = {
-        'req': request.META #.get('HTTP_REFERER')
-    }
-    return render(request, 'main/test.html', context)
 
 
 # Список всех ГТД
@@ -191,7 +183,6 @@ class ShowGtdView(LoginRequiredMixin, ListView):
             logger.error('Some stupid person use not int for paginate_by')
             # pass # TODO: сделать что-то с заглушкой
         return self.paginate_by
-
 
 
 # Представление персональной страницы ГТД
@@ -246,7 +237,6 @@ def update_gtd_group(request, pk):
             'group': obj,
         }
         return render(request, 'main/update_gtd_group.html', context)
-
 
 
 # Редактировать товар из группы ГТД
@@ -367,6 +357,59 @@ def eco_fee_xlsx(request, filename):
 def show_gtd_file(request, filename):
     get_path = os.path.join(MEDIA_ROOT, str(filename))
     return HttpResponse(open(get_path, 'r', encoding='utf-8'), content_type='application/xml')
+
+
+# Представление для генерации xml-файла
+@login_required
+def to_wms(request, pk):
+    gtd = GtdMain.objects.filter(pk=pk)[0]
+    if request.method == 'POST':
+        form = WmsExportComment(request.POST)
+        if form.is_valid():
+            gtdId = gtd.gtdId.replace('/', '_')
+            gtd_date = gtd.date
+            comment = request.POST['comment']
+            goods = GtdGood.objects.filter(gtd_id=pk) #TODO: parse content
+
+            doc = ET.Element('DOC')
+            doc_in = ET.SubElement(doc, 'DOC_IN')
+            number = ET.SubElement(doc_in, 'NUMBER')
+            number.text = gtdId
+            date = ET.SubElement(doc_in, 'DATE')
+            date.text = gtd_date.strftime("%d-%m-%Y")
+            in_date = ET.SubElement(doc_in, 'IN_DATE')
+            in_date.text = (gtd_date + timedelta(days=5)).strftime("%d-%m-%Y T%HH-%MM-%SS")
+            description = ET.SubElement(doc_in, 'DSC')
+            description.text = comment
+            for good in goods:
+                content = ET.SubElement(doc_in, 'CONTENT')
+                code = ET.SubElement(content, 'CODE')
+                code.set('CODE_ID', good.good.marking)
+                count = ET.SubElement(code, 'CNT')
+                count.text = str(good.quantity)
+                unit_name = ET.SubElement(code, 'UNIT_NAME')
+                unit_name.text = good.qualifier.russian_symbol
+            # test_content = ET.SubElement(doc_in, 'TEST_CONTENT')
+            # test_content.text = ' '.join([good.good.marking for good in goods])
+
+            wms_data = ET.tostring(doc, encoding='utf-8', method='xml')
+            filename = f'{request.user.pk} {gtdId}.xml'
+            filepath = os.path.join(USER_DIR, 'wms/', filename)
+            with open(filepath, 'wb') as wms_file:
+                wms_file.write(wms_data)
+
+            gtd.exported_to_wms = True
+            gtd.save()
+            return redirect('main:per_gtd', pk=pk) # TODO: модальное окно bootstrap если уже имела место выгрузка
+
+    else:
+        form = WmsExportComment()
+
+        context = {
+            'form': form,
+            'gtd': gtd,
+        }
+        return render(request, 'main/wms.html', context)
 
 
 class CDDLogin(LoginView):

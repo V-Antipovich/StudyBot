@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'django_sorting_bootstrap',
     'xlsxwriter',
+    'xml',
 ]
 
 MIDDLEWARE = [
@@ -149,3 +150,6 @@ FILE_UPLOAD_HANDLERS = [
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_PORT = 1025
 SERVER_EMAIL = 'django@my-domain.com'
+
+
+USER_DIR = os.path.join(BASE_DIR, 'USER/')
