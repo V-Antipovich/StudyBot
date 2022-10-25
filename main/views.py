@@ -305,7 +305,7 @@ def eco_fee(request):
                 rate = group.tn_ved.collection_rate
                 standart = group.tn_ved.recycling_standart
                 weight = group.net_weight
-                row = [rate, standart, weight, rate*weight*standart/1000]
+                row = [rate, standart, weight, rate*weight*standart/100000]
 
                 if tn_ved in by_tnved:
                     if gtdId in by_tnved['expanded'][tn_ved]:
@@ -375,7 +375,8 @@ def show_gtd_file(request, filename):
 
 
 # Представление для генерации xml-файла
-@login_required
+# @login_required
+@groups_required('Сотрудник таможенного отдела')
 def to_wms(request, pk):
     gtd = GtdMain.objects.filter(pk=pk)[0]
     if request.method == 'POST':
@@ -386,6 +387,16 @@ def to_wms(request, pk):
             comment = request.POST['comment']
             goods = GtdGood.objects.filter(gtd_id=pk) #TODO: parse content
 
+            unique_goods = {}
+            for good in goods:
+                marking = good.good.marking
+                quantity = good.quantity
+                qualifier = good.qualifier
+                if marking in unique_goods:
+                    unique_goods[marking][0] += quantity
+                else:
+                    unique_goods[marking] = [quantity, qualifier.russian_symbol]
+
             doc = ET.Element('DOC')
             doc_in = ET.SubElement(doc, 'DOC_IN')
             number = ET.SubElement(doc_in, 'NUMBER')
@@ -393,17 +404,17 @@ def to_wms(request, pk):
             date = ET.SubElement(doc_in, 'DATE')
             date.text = gtd_date.strftime("%d-%m-%Y")
             in_date = ET.SubElement(doc_in, 'IN_DATE')
-            in_date.text = (gtd_date + timedelta(days=5)).strftime("%d-%m-%Y T%HH-%MM-%SS")
+            in_date.text = (gtd_date + timedelta(days=5)).strftime("%d-%m-%Y T%H-%M-%S")
             description = ET.SubElement(doc_in, 'DSC')
             description.text = comment
-            for good in goods:
+            for good, good_attrs in unique_goods.items():
                 content = ET.SubElement(doc_in, 'CONTENT')
                 code = ET.SubElement(content, 'CODE')
-                code.set('CODE_ID', good.good.marking)
+                code.set('CODE_ID', good)
                 count = ET.SubElement(code, 'CNT')
-                count.text = str(good.quantity)
+                count.text = str(good_attrs[0])
                 unit_name = ET.SubElement(code, 'UNIT_NAME')
-                unit_name.text = good.qualifier.russian_symbol
+                unit_name.text = good_attrs[1]
             # test_content = ET.SubElement(doc_in, 'TEST_CONTENT')
             # test_content.text = ' '.join([good.good.marking for good in goods])
 

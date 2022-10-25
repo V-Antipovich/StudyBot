@@ -3,14 +3,14 @@
 {% load bootstrap5 %}
 {% load static %}
 
-{% block title %}Тестируем диапазон дат{% endblock %}
+{% block title %}Подоготовка данных для экологического сбора{% endblock %}
 
 {% block extra_links %}
     <link rel="stylesheet" href="{% static 'main/css/flatpickr.min.css' %}" type="text/css">
 {% endblock %}
 
 {% block content %}
-    <h3>Проверка календарика дат</h3>
+    <h3>Выберите диапазон дат</h3>
     {% if message %}
         {{ message }}
     {% endif %}
