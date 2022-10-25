@@ -10,3 +10,10 @@ def another_dict(dictionary, value):
 
 
 register.filter('another_dict', another_dict)
+
+
+def has_group(user, group_name):
+    return user.groups.filter(name=group_name).exists()
+
+
+register.filter('has_group', has_group)

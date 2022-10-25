@@ -1,0 +1,15 @@
+{% extends 'layout/base.html' %}
+
+{% load static %}
+
+{% load bootstrap5 %}
+
+{% block title %} Отказано в доступе {% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <h3>Уважаемый {{ user.username }}!</h3>
+        <h5>У вас нет прав на посещение этой страницы.</h5>
+        <div class="content">Если вы считаете, что таковые права у вас должны иметься, свяжитесь с вашим администратором.</div>
+    </div>
+{% endblock %}

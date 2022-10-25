@@ -1,8 +1,42 @@
 {% extends 'layout/base.html' %}
+{% load bootstrap5 %}
+{% load static %}
+{% load filtertags %}
 
 {% block title %}Профиль пользователя{% endblock %}
 
 {% block content %}
-<h2>Профиль {{ user.username }}</h2>
+<h2>Сотрудник {{ user.username }}</h2>
 <p>Здравствуйте!</p>
+
+    <div class="container-fluid">
+        <div>
+            {% if user.firstname %}
+                Имя: {{ user.firstname }}
+            {% else %}
+                Имя пользователя не введено
+            {% endif %}
+        </div>
+        <div>
+            {% if user.last_name %}
+                Фамилия: {{ user.last_name }}
+            {% else %}
+                Фамилия пользователя не задана
+            {% endif %}
+        </div>
+        <div>
+            Электронный адрес: {{ user.email }}
+        </div>
+        <div>
+{#            Роль в системе: {{ user.groups.name }}#}
+{#            {% if user|has_group:"Администратор" %}#}
+{#                Администратор#}
+{#            {% else %}#}
+{#                {{ user.groups }}#}
+{#            {% endif %}#}
+            Должность: {% for gr in groups.all %}{{ gr }} {% endfor %}
+
+        </div>
+    </div>
+
 {% endblock %}

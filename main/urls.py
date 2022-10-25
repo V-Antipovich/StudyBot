@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import index, upload_gtd, ShowGtdView, show_gtd_file, CDDLogin, CDDLogout, RegisterDoneView, \
     handbook, GtdDetailView, update_gtd, GtdDeleteView, RegisterUserView, profile, update_gtd_good, update_gtd_group,\
-    eco_fee, eco_fee_xlsx, to_wms
+    eco_fee, eco_fee_xlsx, to_wms, AccessDeniedView
 
 
 app_name = 'main'
@@ -26,5 +26,6 @@ urlpatterns = [
     path('documents/show_gtd', ShowGtdView.as_view(), name='show_gtd'),
     path('documents/upload_gtd', upload_gtd, name='upload_gtd'),
     # path('test', test_view, name='test'),
+    path('access_denied', AccessDeniedView.as_view(), name='access_denied'),
     path('', index, name='index')
 ]

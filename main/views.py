@@ -3,6 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
+# from django.views.generic import TemplateView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.base import TemplateView
@@ -33,12 +34,23 @@ def superuser_check(user):
     return user.is_superuser
 
 
+# Декоратор, разрешающий доступ определенным группам
+def groups_required(*group_names):
+    def in_group(u):
+        return u.is_active and (u.is_superuser or bool(u.groups.filter(name__in=group_names)))
+    return user_passes_test(in_group, login_url=reverse_lazy('main:access_denied'))
+
+
 # Представление регистрации пользователя
 class RegisterUserView(CreateView):
     model = RegUser
     template_name = 'main/register_user.html'
     form_class = RegisterUserForm
     success_url = reverse_lazy('main:show_gtd')
+
+
+class AccessDeniedView(TemplateView):
+    template_name = 'main/no_access.html'
 
 
 # Представление обработки справочников
@@ -165,7 +177,8 @@ def handbook(request):
 # Начальная страница
 # TODO: нормальный вид
 def index(request):
-    return render(request, 'main/index.html')
+    return redirect('main:profile')
+    # return render(request, 'main/index.html')
 
 
 # Список всех ГТД
@@ -266,6 +279,8 @@ class GtdDeleteView(DeleteView):
 
 
 # Экологический сбор: выбор периода, сбор данных о ГТД из этого периода, содержащих ТН ВЭД, подлежащие эко сбору
+
+@groups_required('Бухгалтер')
 def eco_fee(request):
     if request.method == 'GET':
         form = CalendarDate()
@@ -418,7 +433,8 @@ class CDDLogin(LoginView):
 
 @login_required
 def profile(request):
-    return render(request, 'main/profile.html')
+    context = {'user': request.user, 'groups': request.user.groups}
+    return render(request, 'main/profile.html', context)
 
 
 class CDDLogout(LogoutView, LoginRequiredMixin):
@@ -441,7 +457,10 @@ class RegisterDoneView(TemplateView):
 # Загрузка файлов ГТД в формате .xml
 
 
-@login_required(login_url='/accounts/login/')
+# @login_required(login_url='/accounts/login/')
+# @user_passes_test(is_accountant)
+
+@groups_required('Администратор', 'Сотрудник таможенного отдела')
 def upload_gtd(request):
     if request.method == 'POST':
         form = UploadGtdfilesForm(request.POST, request.FILES)
