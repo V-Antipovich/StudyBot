@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="added decorators for access limiting">
-      <change afterPath="$PROJECT_DIR$/2nd_code.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/antipovich_user_scripts_FINAL.md" beforeDir="false" afterPath="$PROJECT_DIR$/antipovich_user_scripts_FINAL.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/layout/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/layout/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/ecological_fee_build.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/ecological_fee_build.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/ecological_fee_range.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/ecological_fee_range.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/upload_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/upload_gtd.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
-    </list>
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="minor changes and fixes;&#10;uploaded video with 3 user scripts shown" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -182,7 +173,7 @@
       <workItem from="1666358018325" duration="1002000" />
       <workItem from="1666449211333" duration="26997000" />
       <workItem from="1666533425559" duration="40294000" />
-      <workItem from="1666694716260" duration="14297000" />
+      <workItem from="1666694716260" duration="14416000" />
     </task>
     <task id="LOCAL-00001" summary="restored most files after fixing models of exporters and importers">
       <created>1660373120746</created>
@@ -471,7 +462,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666713206123</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary="minor changes and fixes;&#10;uploaded video with 3 user scripts shown">
+      <created>1666725642244</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1666725642244</updated>
+    </task>
+    <option name="localTasksCounter" value="43" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -500,7 +498,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="raw dynamic handbooks with raw foreign key fields and no sorting." />
     <MESSAGE value="dynamic handbooks, FK fields get values from joined tables" />
     <MESSAGE value="Js scripts for tables sorting" />
     <MESSAGE value="tiny fix in docs view - replace None by ''" />
@@ -525,7 +522,8 @@
     <MESSAGE value="wms export (no modal window)" />
     <MESSAGE value="WMS export with modal window" />
     <MESSAGE value="added decorators for access limiting" />
-    <option name="LAST_COMMIT_MESSAGE" value="added decorators for access limiting" />
+    <MESSAGE value="minor changes and fixes;&#10;uploaded video with 3 user scripts shown" />
+    <option name="LAST_COMMIT_MESSAGE" value="minor changes and fixes;&#10;uploaded video with 3 user scripts shown" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />
