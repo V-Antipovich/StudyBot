@@ -12,3 +12,7 @@ th.sorted[data-order="1"]::after {
 th {
     cursor: pointer;
 }
+
+/*textarea {*/
+/*    rows: 2;*/
+/*}*/

@@ -11,8 +11,8 @@
 
     <div class="container-fluid">
         <div>
-            {% if user.firstname %}
-                Имя: {{ user.firstname }}
+            {% if user.first_name %}
+                Имя: {{ user.first_name }}
             {% else %}
                 Имя пользователя не введено
             {% endif %}
@@ -22,6 +22,13 @@
                 Фамилия: {{ user.last_name }}
             {% else %}
                 Фамилия пользователя не задана
+            {% endif %}
+        </div>
+        <div>
+            {% if user.patronymic %}
+                Отчество: {{ user.patronymic }}
+            {% else %}
+                Отчество не задано
             {% endif %}
         </div>
         <div>

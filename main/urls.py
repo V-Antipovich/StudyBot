@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import index, upload_gtd, ShowGtdView, show_gtd_file, CDDLogin, CDDLogout, RegisterDoneView, \
     handbook, GtdDetailView, update_gtd, GtdDeleteView, RegisterUserView, profile, update_gtd_good, update_gtd_group,\
-    eco_fee, eco_fee_xlsx, to_wms, AccessDeniedView
+    eco_fee, eco_fee_xlsx, to_wms, AccessDeniedView, to_erp
 
 
 app_name = 'main'
@@ -21,6 +21,7 @@ urlpatterns = [
     path('documents/update_gtd/<int:pk>', update_gtd, name='update_gtd'),
     path('documents/delete_gtd/<int:pk>', GtdDeleteView.as_view(), name='delete_gtd'),
     path('documents/show_gtd/file/<path:filename>', show_gtd_file, name='show_gtd_file'),
+    path('erp/<int:pk>', to_erp, name='to_erp'),
     path('wms/<int:pk>', to_wms, name='to_wms'),
     path('documents/show_gtd/<int:pk>', GtdDetailView.as_view(), name='per_gtd'),
     path('documents/show_gtd', ShowGtdView.as_view(), name='show_gtd'),

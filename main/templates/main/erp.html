@@ -1,0 +1,14 @@
+{% extends 'layout/base.html' %}
+{% load bootstrap5 %}
+{% load static %}
+{% block title %}Экспорт в ERP{% endblock %}
+
+{% block content %}
+    <h2>Экспорт в ERP</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_div }}
+        <input type="submit" value="Отправить">
+    </form>
+{#    <form class=""#}
+{% endblock %}

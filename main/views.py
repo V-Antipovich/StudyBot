@@ -11,7 +11,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.http import FileResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from .forms import UploadGtdfilesForm, GtdUpdateForm, RegisterUserForm, GtdGoodUpdateForm, GtdGroupUpdateForm,\
-    CalendarDate, WmsExportComment
+    CalendarDate, ExportComment
 from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType,\
     Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType,\
     UploadGtdFile
@@ -213,6 +213,7 @@ class GtdDetailView(DetailView):
         if open_goods:
             context['goods'] = GtdGood.objects.filter(gtd_id=self.kwargs.get('pk'), group=open_goods)
             context['number'] = GtdGroup.objects.filter(pk=open_goods)[0].number
+            # context['user'] = self.request.user.f
         return context
 
 
@@ -380,12 +381,12 @@ def show_gtd_file(request, filename):
 def to_wms(request, pk):
     gtd = GtdMain.objects.filter(pk=pk)[0]
     if request.method == 'POST':
-        form = WmsExportComment(request.POST)
+        form = ExportComment(request.POST)
         if form.is_valid():
             gtdId = gtd.gtdId.replace('/', '_')
             gtd_date = gtd.date
             comment = request.POST['comment']
-            goods = GtdGood.objects.filter(gtd_id=pk) #TODO: parse content
+            goods = GtdGood.objects.filter(gtd_id=pk)
 
             unique_goods = {}
             for good in goods:
@@ -419,8 +420,8 @@ def to_wms(request, pk):
             # test_content.text = ' '.join([good.good.marking for good in goods])
 
             wms_data = ET.tostring(doc, encoding='utf-8', method='xml')
-            filename = f'{request.user.pk} {gtdId}.xml'
-            filepath = os.path.join(USER_DIR, 'wms/', filename)
+            filename = f'wms {request.user.pk} {gtdId}.xml'
+            filepath = os.path.join(USER_DIR, 'wms/', filename)  # TODO: перенести в функционал модели (толстая модель)
             with open(filepath, 'wb') as wms_file:
                 wms_file.write(wms_data)
 
@@ -429,13 +430,121 @@ def to_wms(request, pk):
             return redirect('main:per_gtd', pk=pk)
 
     else:
-        form = WmsExportComment()
+        form = ExportComment()
 
         context = {
             'form': form,
             'gtd': gtd,
         }
         return render(request, 'main/wms.html', context)
+
+
+@groups_required('Бухгалтер')
+def to_erp(request, pk):
+    gtd = GtdMain.objects.filter(pk=pk)[0]
+    if request.method == 'POST':
+        form = ExportComment(request.POST)
+        if form.is_valid():
+            comment = request.POST['comment']
+            # unique_goods = {}
+            goods = GtdGood.objects.filter(gtd_id=pk) # TODO: повторяющиеся товары в пределах одной группы надо суммировать
+            # for good in goods:
+            #     marking = good.good.marking
+            #     if marking in unique_goods:
+            # attrs = [''] # TODO: перенести в функционал модели (толстая модель)
+            struct = ET.Element('Structure')
+            struct.set('xmlns', 'http://v8.1c.ru/8.1/data/core')
+            struct.set('xmlns:xs', 'http://www.w3.org/2001/XMLSchema')
+            struct.set('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
+
+            prop_guid = ET.SubElement(struct, 'Property')
+            prop_guid.set('name', 'prop_guid')
+
+            value_guid = ET.SubElement(prop_guid, 'Value')
+            value_guid.set('xsi:type', 'xs:string')
+            value_guid.text = '937d9e95-5519-11ed-8070-00155db05a26'
+
+
+            prop_ptiu = ET.SubElement(struct, 'Property')
+            prop_ptiu.set('name', 'НомерПТиУ')
+            value_ptiu = ET.SubElement(prop_ptiu, 'Value')
+            value_ptiu.set('xsi:type', 'xs:string')
+            value_ptiu.text = 'ER-00061362'
+
+            prop_date = ET.SubElement(struct, 'Property')
+            prop_date.set('name', 'Дата')
+            value_date = ET.SubElement(prop_date, 'Value')
+            value_date.set('xsi:type', 'xs:string')
+            value_date.text = gtd.date.strftime("%d-%m-%Y %H-%M-%S")
+
+            prop_warehouse = ET.SubElement(struct, 'Property')
+            prop_warehouse.set('name', 'Склад')
+            value_warehouse = ET.SubElement(prop_warehouse, 'Value')
+            value_warehouse.set('xsi:type', 'xs:string')
+            value_warehouse.text = 'Склад Хлебниково'
+
+            prop_name = ET.SubElement(struct, 'Property')
+            prop_name.set('name', 'Ответственный')
+            value_name = ET.SubElement(prop_name, 'Ответственный')
+            value_name.set('xsi:type', 'xs:string')
+            value_name.text = f'{ request.user.last_name } {request.user.first_name} {request.user.patronymic}'
+
+            prop_comment = ET.SubElement(struct, 'Property')
+            prop_comment.set('name', 'Комментарий')
+            value_comment = ET.SubElement(prop_comment, 'Value')
+            value_comment.set('xsi:type', 'xs:string')
+            value_comment.text = comment
+
+            prop_status = ET.SubElement(struct, 'Property')
+            prop_status.set('name', 'Статус')
+            value_status = ET.SubElement(prop_status, 'Value')
+            value_status.set('xsi:type', 'xs:string')
+            value_status.text = 'К поступлению'
+
+            prop_goods = ET.SubElement(struct, 'Property')
+            prop_goods.set('name', 'Товары')
+            value_goods = ET.SubElement(prop_goods, 'Value')
+            value_goods.set('xsi:type', 'Array')
+
+            for good in goods:
+                value_structure = ET.SubElement(value_goods, 'Value')
+                value_structure.set('xsi:type', 'Structure')
+
+                property_marking = ET.SubElement(value_structure, 'Property')
+                property_marking.set('name', 'Номенклатура')
+                value_marking = ET.SubElement(property_marking, 'Value')
+                value_marking.set('xsi:type', 'xs:string')
+                value_marking.text = good.good.marking
+
+                property_count = ET.SubElement(value_structure, 'Property')
+                property_count.set('name', 'Количество')
+                value_count = ET.SubElement(property_count, 'Value')
+                value_count.set('xsi:type', 'xs:decimal')
+                value_count.text = str(good.quantity)
+
+                property_gtd = ET.SubElement(value_structure, 'Property')
+                property_gtd.set('name', 'ГТД')
+                value_gtd = ET.SubElement(property_gtd, 'Value')
+                value_gtd.set('xsi:type', 'xs:string')
+                value_gtd.text = f"{gtd.gtdId}/{good.group.number}"
+
+            erp_data = ET.tostring(struct, encoding='utf-8', method='xml')
+            filename = f'erp {request.user.pk} {gtd.gtdId.replace("/", "_") }.xml'
+            filepath = os.path.join(USER_DIR, 'erp/', filename)
+
+            with open(filepath, 'wb') as erp_file:
+                erp_file.write(erp_data)
+            gtd.exported_to_erp = True
+            gtd.save()
+            return HttpResponse('<h2>Успешно</h2>')
+
+    else:
+        form = ExportComment()
+        context = {
+            'form': form,
+            'gtd': gtd,
+        }
+        return render(request, 'main/erp.html', context)
 
 
 class CDDLogin(LoginView):

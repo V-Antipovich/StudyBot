@@ -12,6 +12,7 @@ from django.template.defaultfilters import slugify
 # Или проблема не в модели?
 class RegUser(AbstractUser):
     email = models.EmailField(verbose_name='Электронная почта', unique=True)
+    patronymic = models.CharField(verbose_name='Отчество', max_length=255, null=True, blank=True)
     # roles = models.ManyToManyField("JobTitle", verbose_name='Должность', related_name='+', blank=True)
 
     class Meta(AbstractUser.Meta):

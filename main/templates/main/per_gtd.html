@@ -85,6 +85,7 @@
                                 {% else %}
                                     Экспорт в WMS не был выполнен
                                     <a class="btn btn-outline-info" href="{% url 'main:to_wms' pk=gtd.pk %}">Экспорт в WMS</a>
+{#                                    #}
                                 {% endif %}
 
 
@@ -95,7 +96,30 @@
                                 {% else %}
                                     Экспорт в ERP не был выполнен
                                 {% endif %}
-                                <a class="btn btn-outline-info">Экспорт в ERP</a>
+                                {% if user.first_name and user.last_name and user.patronymic %}
+                                <a class="btn btn-outline-info" href="{% url 'main:to_erp' pk=gtd.pk %}">Экспорт в ERP</a>
+                                {% else %}
+                                    <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#erpModal">Экспорт в ERP</button>
+                                    <div class="modal fade" id="erpModal" tabindex="-1" role="dialog" aria-labelledby="wmsModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="wmsModalLabel">Профиль не заполнен</h5>
+                                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Пожалуйста, введите в профиле свои имя и фамилию, чтобы получить доступ
+                                                        </div>
+{#                                                        <div class="modal-footer">#}
+{#                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Назад</button>#}
+{#                                                            <a href="{% url 'main:to_wms' pk=gtd.pk %}"><button type="button" class="btn btn-primary">OK</button></a>#}
+{#                                                        </div>#}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    {% endif %}
                             </div>
                         </div>
                     </div>

@@ -66,8 +66,14 @@ class GtdGoodUpdateForm(forms.ModelForm):
 
 
 # Форма для подготовки к формированию xml для WMS
-class WmsExportComment(forms.Form):
-    comment = forms.CharField(widget=forms.Textarea, label='Добавьте комментарий/описание, если требуется', required=False)
+class ExportComment(forms.Form):
+    comment = forms.CharField(widget=forms.Textarea(attrs={'rows': 2, 'cols': 50}), required=False,
+                              label='Добавьте комментарий/описание, если требуется')
+
+
+# class ErpExportComment(forms.Form):
+#     comment = forms.CharField(widget=forms.Textarea, required=False,
+#                               label='Добавьте комментарий/описание, если требуется')
 
 
 # Форма выбора диапазона дат
