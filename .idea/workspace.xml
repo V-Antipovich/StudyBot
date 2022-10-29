@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="minor changes and fixes;&#10;uploaded video with 3 user scripts done">
-      <change afterPath="$PROJECT_DIR$/main/templates/main/erp.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/main/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/main/static/main/css/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/per_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/per_gtd.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/profile.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
-    </list>
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="export to erp with no end redirect" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -185,7 +175,7 @@
       <workItem from="1666533425559" duration="40294000" />
       <workItem from="1666694716260" duration="15612000" />
       <workItem from="1667033669936" duration="16384000" />
-      <workItem from="1667075860388" duration="1479000" />
+      <workItem from="1667075860388" duration="1603000" />
     </task>
     <task id="LOCAL-00001" summary="restored most files after fixing models of exporters and importers">
       <created>1660373120746</created>
@@ -488,7 +478,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666725729051</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="export to erp with no end redirect">
+      <created>1667077376760</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1667077376760</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -517,7 +514,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Js scripts for tables sorting" />
     <MESSAGE value="tiny fix in docs view - replace None by ''" />
     <MESSAGE value="moved to bootstrap5, replaced handbooks choice, removed documents, changed horizontal menu, remarkably changed gtd Detailed view" />
     <MESSAGE value="lost tablesorting; fully fixed base templates; added user FK in GtdMain" />
@@ -542,7 +538,8 @@
     <MESSAGE value="added decorators for access limiting" />
     <MESSAGE value="minor changes and fixes;&#10;uploaded video with 3 user scripts shown" />
     <MESSAGE value="minor changes and fixes;&#10;uploaded video with 3 user scripts done" />
-    <option name="LAST_COMMIT_MESSAGE" value="minor changes and fixes;&#10;uploaded video with 3 user scripts done" />
+    <MESSAGE value="export to erp with no end redirect" />
+    <option name="LAST_COMMIT_MESSAGE" value="export to erp with no end redirect" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
