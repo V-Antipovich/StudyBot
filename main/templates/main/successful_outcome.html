@@ -1,0 +1,13 @@
+{% extends 'layout/base.html' %}
+
+{% load bootstrap5 %}
+{% load static %}
+
+{% block title %}Операция выполнена успешно{% endblock %}
+
+{% block content %}
+    <h2>Операция выполнена успешно</h2>
+    <h4>Используйте меню для дальнейших действий или вернитесь к ГТД:
+        <a href="{% url 'main:per_gtd' pk=gtd.pk %}">{{ gtd.gtdId }}</a>
+    </h4>
+{% endblock %}

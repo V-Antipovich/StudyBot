@@ -536,8 +536,12 @@ def to_erp(request, pk):
                 erp_file.write(erp_data)
             gtd.exported_to_erp = True
             gtd.save()
-            return HttpResponse('<h2>Успешно</h2>')
-
+            # return HttpResponse('<h2>Успешно</h2>')
+            context = {
+                'gtd': gtd,
+            }
+            return redirect('main:success', pk=pk)
+            # return render(request, 'main/successful_outcome.html', context)
     else:
         form = ExportComment()
         context = {
@@ -546,6 +550,14 @@ def to_erp(request, pk):
         }
         return render(request, 'main/erp.html', context)
 
+
+class SuccessfulOutcome(TemplateView):
+    template_name = 'main/successful_outcome.html'
+
+    def get_context_data(self, pk, **kwargs):
+        context_data = super(SuccessfulOutcome, self).get_context_data(**kwargs)
+        context_data['gtd'] = GtdMain.objects.filter(pk=pk)[0]
+        return context_data
 
 class CDDLogin(LoginView):
     template_name = 'main/login.html'
