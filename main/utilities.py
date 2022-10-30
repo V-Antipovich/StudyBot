@@ -150,8 +150,9 @@ def parse_gtd(filename):
         # Номер товарной группы
         group_number = raw_group.find("GoodsNumeric").text
         name_n_desc = raw_group.find_all('GoodsDescription')
-        group_name = name_n_desc[0].text
-        group_description = name_n_desc[1].text
+        # group_name = name_n_desc[0].text
+        group_name = ''.join([block.text for block in name_n_desc[:2]])
+        # group_description = name_n_desc[1].text
         # Подсубпозиция товара (код ТН ВЭД)
         TN_VED = str(int(raw_group.find('GoodsTNVEDCode').text))
 
@@ -246,7 +247,7 @@ def parse_gtd(filename):
 
         # Товары в ГТД (в цикле)
         gtd_goods = []
-        raw_goods = raw_gtd.find_all('GoodsGroupDescription')
+        raw_goods = raw_group.find_all('GoodsGroupDescription')
         for raw_good in raw_goods:
             # Название товара
             good_name = raw_good.find('GoodsDescription').text
@@ -303,7 +304,7 @@ def parse_gtd(filename):
 
         gtd_group = {
             'name': group_name,
-            'desc': group_description,
+            # 'desc': group_description,
             'tn_ved': TN_VED,
             'number': group_number,
             'gross_weight': gross_weight,
@@ -320,7 +321,7 @@ def parse_gtd(filename):
             'goods': gtd_goods,
         }
         gtd_groups.append(gtd_group)
-
+    print(gtd_main, gtd_groups, sep='\n')
     return gtd_main, gtd_groups
 
 

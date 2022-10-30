@@ -416,8 +416,6 @@ def to_wms(request, pk):
                 count.text = str(good_attrs[0])
                 unit_name = ET.SubElement(code, 'UNIT_NAME')
                 unit_name.text = good_attrs[1]
-            # test_content = ET.SubElement(doc_in, 'TEST_CONTENT')
-            # test_content.text = ' '.join([good.good.marking for good in goods])
 
             wms_data = ET.tostring(doc, encoding='utf-8', method='xml')
             filename = f'wms {request.user.pk} {gtdId}.xml'
@@ -427,7 +425,7 @@ def to_wms(request, pk):
 
             gtd.exported_to_wms = True
             gtd.save()
-            return redirect('main:per_gtd', pk=pk)
+            return redirect('main:success', pk=pk)
 
     else:
         form = ExportComment()
@@ -446,12 +444,9 @@ def to_erp(request, pk):
         form = ExportComment(request.POST)
         if form.is_valid():
             comment = request.POST['comment']
-            # unique_goods = {}
+
             goods = GtdGood.objects.filter(gtd_id=pk) # TODO: повторяющиеся товары в пределах одной группы надо суммировать
-            # for good in goods:
-            #     marking = good.good.marking
-            #     if marking in unique_goods:
-            # attrs = [''] # TODO: перенести в функционал модели (толстая модель)
+            # TODO: перенести в функционал модели (толстая модель)
             struct = ET.Element('Structure')
             struct.set('xmlns', 'http://v8.1c.ru/8.1/data/core')
             struct.set('xmlns:xs', 'http://www.w3.org/2001/XMLSchema')
@@ -463,7 +458,6 @@ def to_erp(request, pk):
             value_guid = ET.SubElement(prop_guid, 'Value')
             value_guid.set('xsi:type', 'xs:string')
             value_guid.text = '937d9e95-5519-11ed-8070-00155db05a26'
-
 
             prop_ptiu = ET.SubElement(struct, 'Property')
             prop_ptiu.set('name', 'НомерПТиУ')
@@ -536,7 +530,6 @@ def to_erp(request, pk):
                 erp_file.write(erp_data)
             gtd.exported_to_erp = True
             gtd.save()
-            # return HttpResponse('<h2>Успешно</h2>')
             context = {
                 'gtd': gtd,
             }
@@ -558,6 +551,7 @@ class SuccessfulOutcome(TemplateView):
         context_data = super(SuccessfulOutcome, self).get_context_data(**kwargs)
         context_data['gtd'] = GtdMain.objects.filter(pk=pk)[0]
         return context_data
+
 
 class CDDLogin(LoginView):
     template_name = 'main/login.html'
@@ -598,7 +592,6 @@ def upload_gtd(request):
         form = UploadGtdfilesForm(request.POST, request.FILES)
         if form.is_valid():
             on_duplicate = request.POST['on_duplicate']
-
 
             uploaded_gtd = UploadGtd(
                 description=request.POST['comment']
@@ -663,12 +656,12 @@ def upload_gtd(request):
                     ogrn=importer_info["orgn"],
                 )
                 if imp_created:
-                    add_importer.country=Country.objects.get(code=importer_info["country"])
-                    add_importer.kpp=importer_info["kpp"]
-                    add_importer.postal_code=importer_info["postal_code"]
-                    add_importer.city=importer_info["city"]
-                    add_importer.street_house=importer_info["street_house"]
-                    add_importer.house=importer_info["house"]
+                    add_importer.country = Country.objects.get(code=importer_info["country"])
+                    add_importer.kpp = importer_info["kpp"]
+                    add_importer.postal_code = importer_info["postal_code"]
+                    add_importer.city = importer_info["city"]
+                    add_importer.street_house = importer_info["street_house"]
+                    add_importer.house = importer_info["house"]
                     add_importer.save()
 
                 # Добавим непосредственно главную инфу гтд
@@ -697,7 +690,6 @@ def upload_gtd(request):
                 # gtd_id = GtdMain.objects.get(gtdId=get_gtdmain["gtdId"])
                 for group in get_gtdgroups:
                     # Заносим группу, если такой ещё не было
-
                     # Проверяем ТН ВЭД
                     code = group["tn_ved"]
                     if code[0] == '0':
@@ -734,7 +726,7 @@ def upload_gtd(request):
                     add_gtdgroup, gtdgroup_created = GtdGroup.objects.update_or_create(
                         gtd=add_gtdmain,
                         name=group['name'],
-                        description=group['desc'],
+                        # description=group['desc'],
                         tn_ved=TnVed.objects.filter(code=str(group['tn_ved']))[0],
                         number=group["number"],
                         gross_weight=group['gross_weight'],
@@ -773,12 +765,22 @@ def upload_gtd(request):
                             add_goodsmark = None
 
                         # Обновляем таблицу товаров
-                        add_good, good_created = Good.objects.update_or_create(
-                            marking=good_itself['marking'],
-                            name=good_itself['name'],
-                            trademark=add_trademark,
-                            goodsmark=add_goodsmark
-                        )
+                        # add_good, good_created = Good.objects.update_or_create(
+                        #     marking=good_itself['marking'],
+                        #     name=good_itself['name'],
+                        #     trademark=add_trademark,
+                        #     goodsmark=add_goodsmark
+                        # )
+                        add_good = Good.objects.filter(marking=good_itself['marking'])
+                        if not add_good.exists():
+                            add_good = Good.objects.create(
+                                marking=good_itself['marking'],
+                                name=good_itself['name'],
+                                trademark=add_trademark,
+                                goodsmark=add_goodsmark
+                            )
+                        else:
+                            add_good = add_good[0]
 
                         # Обновляем справочник производителей (заводов)
                         try_manufacturer = gtd_good['manufacturer']
@@ -790,17 +792,19 @@ def upload_gtd(request):
                             add_manufacturer = None
 
                         # Добавляем Товар ГТД
-                        add_gtdgood, gtdgood_created = GtdGood.objects.update_or_create(
-                            gtd=add_gtdmain,
-                            group=add_gtdgroup,
-                            good_num=gtd_good['good_num'],
-                        )
-                        if gtdgood_created:
-                            add_gtdgood.good = add_good
-                            add_gtdgood.quantity = gtd_good['quantity']
-                            add_gtdgood.qualifier = MeasureQualifier.objects.get(digital_code=gtd_good['qualifier_code'])
-                            add_gtdgood.manufacturer = add_manufacturer
+                        add_gtdgood = GtdGood.objects.filter(gtd_id=add_gtdmain.pk, group_id=add_gtdgroup.pk, good_num=gtd_good['good_num'])
+                        if not add_gtdgood.exists():
+                            add_gtdgood = GtdGood.objects.create(
+                                gtd=add_gtdmain,
+                                group=add_gtdgroup,
+                                good_num=gtd_good['good_num'],
+                                good=Good.objects.get(pk=add_good.pk),
+                                quantity=gtd_good['quantity'],
+                                qualifier=MeasureQualifier.objects.get(digital_code=gtd_good['qualifier_code']),
+                                manufacturer=add_manufacturer
+                            )
                             add_gtdgood.save()
+
                     # Заносим в цикле документы в справочник
                     gtd_documents = group['documents']
 
@@ -827,6 +831,7 @@ def upload_gtd(request):
                 'updated': updated,
                 'new': new,
                 'all': skipped + updated + new,
+                'test': get_goods,
             }
             return render(request, 'main/upload_gtd_log.html', context)
         # else:

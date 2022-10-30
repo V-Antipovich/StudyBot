@@ -169,8 +169,9 @@ class DealType(models.Model):
 # Группы товаров в ГТД
 class GtdGroup(models.Model):
     gtd = models.ForeignKey('GtdMain', on_delete=models.CASCADE, verbose_name='id ГТД', related_name="+")
-    name = models.CharField(verbose_name='Название', max_length=255, null=True, blank=True)
-    description = models.TextField(verbose_name='Описание', null=True, blank=True)
+    # name = models.CharField(verbose_name='Название', max_length=255, null=True, blank=True)
+    name = models.TextField(verbose_name='Название', null=True, blank=True)
+    # description = models.TextField(verbose_name='Описание', null=True, blank=True)
     tn_ved = models.ForeignKey('TnVed', on_delete=models.SET_NULL, null=True,
                                verbose_name='id кода товарной группы ТН ВЭД', related_name="+")
     number = models.IntegerField(verbose_name='Номер товарной группы')
@@ -231,7 +232,7 @@ class Procedure(models.Model):
 
 # Товары - Справочник
 class Good(models.Model):
-    marking = models.CharField(max_length=50, verbose_name='Артикул')
+    marking = models.CharField(max_length=50, verbose_name='Артикул', unique=True)
     name = models.TextField(verbose_name='Товар')
     goodsmark = models.ForeignKey('GoodsMark', on_delete=models.SET_NULL, verbose_name='id торговой марки',
                                   related_name="+", null=True, blank=True)
