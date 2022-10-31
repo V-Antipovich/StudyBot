@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block content %}
-    <h2>ГТД по поставщикам</h2>
+    <h2>Количество ГТД по поставщикам</h2>
     <div class="col-3">
         <form method="post">
         {% csrf_token %}
@@ -40,6 +40,7 @@
 
                 </tbody>
             </table>
+        <a href="{% url 'main:gtd_per_exporter_file' filename=filename %}">Скачать</a>
         </div>
     {% endif %}
 {% endblock %}

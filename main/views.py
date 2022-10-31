@@ -322,7 +322,7 @@ def eco_fee(request):
                     by_tnved['expanded'][tn_ved][gtdId] = row
                     by_tnved['total'][tn_ved] = row
 
-            filename = f"{start.strftime('%d-%m-%Y')}-{end.strftime('%d-%m-%Y')}.xlsx"
+            filename = f"eco {request.user.pk} {start.strftime('%d-%m-%Y')}-{end.strftime('%d-%m-%Y')}.xlsx"
             path = os.path.join(MEDIA_ROOT, 'eco/', filename)
             workbook = xlsxwriter.Workbook(path)
             worksheet = workbook.add_worksheet()
@@ -438,7 +438,7 @@ def to_wms(request, pk):
 
 
 @groups_required('Бухгалтер')
-def to_erp(request, pk):
+def to_erp(request, pk): #TODO: лог пользователю в профиль
     gtd = GtdMain.objects.filter(pk=pk)[0]
     if request.method == 'POST':
         form = ExportComment(request.POST)
@@ -574,10 +574,23 @@ def statistics_report_gtd_per_exporter(request):
                     exporters[exp] = 1
             exporters = list(exporters.items())
             exporters.sort(key=lambda x: x[0])
+            filename = f"gtds_per_exporter {request.user.pk} {start.strftime('%d-%m-%Y')}-{end.strftime('%d-%m-%Y')}.xlsx"
+            path = os.path.join(MEDIA_ROOT, 'statistics/', filename)
+            workbook = xlsxwriter.Workbook(path)
+            worksheet = workbook.add_worksheet()
+            i = 1
+            worksheet.write(0, 0, 'Поставщик')
+            worksheet.write(0, 1, 'Количество ГТД')
+            for exp in exporters:
+                worksheet.write(i, 0, exp[0])
+                worksheet.write(i, 1, exp[1])
+                i += 1
+            workbook.close()
             context = {
                 'form': CalendarDate(),
                 'exporters': exporters,
-                'show': True
+                'show': True,
+                'filename': filename,
             }
             return render(request, 'main/statistics_report_gtd_per_exporter.html', context)
     else:
@@ -587,6 +600,15 @@ def statistics_report_gtd_per_exporter(request):
             'message': '',
         }
         return render(request, 'main/statistics_report_gtd_per_exporter.html', context)
+
+
+def gtd_per_exporter_xlsx(request, filename):
+    filepath = os.path.join(MEDIA_ROOT, 'statistics/', filename)
+    path = open(filepath, 'rb')
+    mime_type, _ = mimetypes.guess_type(filepath)
+    response = HttpResponse(path, content_type=mime_type)
+    response['Content-Disposition'] = f"attachment; filename={filename}"
+    return response
 
 
 class CDDLogin(LoginView):

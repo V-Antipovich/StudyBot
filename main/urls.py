@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import index, upload_gtd, ShowGtdView, show_gtd_file, CDDLogin, CDDLogout, handbook,\
     GtdDetailView, update_gtd, GtdDeleteView, RegisterUserView, profile, update_gtd_good, update_gtd_group,\
-    eco_fee, eco_fee_xlsx, to_wms, AccessDeniedView, to_erp, SuccessfulOutcome, StatisticsMenu, statistics_report_gtd_per_exporter
+    eco_fee, eco_fee_xlsx, to_wms, AccessDeniedView, to_erp, SuccessfulOutcome, StatisticsMenu,\
+    statistics_report_gtd_per_exporter, gtd_per_exporter_xlsx
 
 
 app_name = 'main'
@@ -14,6 +15,7 @@ urlpatterns = [
     path('accounts/login/', CDDLogin.as_view(), name='login'),
     path('accounts/logout/', CDDLogout.as_view(), name='logout'),
     # path('eco_fee/xlsx/<path:filename>', show_eco, name='eco_xlsx'),
+    path('statistics/gtd_per_exporter/<path:filename>', gtd_per_exporter_xlsx, name='gtd_per_exporter_file'),
     path('statistics/gtd_per_exporter', statistics_report_gtd_per_exporter, name='statistics_gtd_per_exporter'),
     path('statistics/menu', StatisticsMenu.as_view(), name='statistics_menu'),
     path('eco_fee/file/<path:filename>', eco_fee_xlsx, name='eco_fee_file'),
