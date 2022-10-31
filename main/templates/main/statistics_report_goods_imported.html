@@ -1,0 +1,48 @@
+{% extends 'layout/base.html' %}
+{% load bootstrap5 %}
+{% load static %}
+
+{% block title %}Ввезенное оборудование{% endblock %}
+
+{% block extra_links %}
+    <link rel="stylesheet" href="{% static 'main/css/report_tables.css' %}">
+    <script src="{% static 'main/js/table_sort.js' %}"></script>
+    <script src="{% static 'main/js/table_search.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <h2>Приход оборудования {% if show %}за период {{ start|date:"d.m.Y" }} - {{ end|date:"d.m.Y" }}{% endif %}</h2>
+    <div class="col-3">
+        {% if message %}
+            <div class="error_message"> {{ message }}</div>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit">
+        </form>
+    </div>
+    {% if show %}
+        <input type="text" class="form-control" placeholder="Начните вводить слова фильтрации" id="search-text" onkeyup="tableSearch()">
+
+        <a href="{% url 'main:report_goods_imported_file' filename=filename %}">Скачать</a>
+        <table id="sortable_searchable">
+            <thead>
+                <tr>
+                    <th>Артикул</th>
+                    <th>Имя товара</th>
+                    <th>Количество</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for good in goods %}
+                    <tr>
+                        <td>{{ good.0 }}</td>
+                        <td>{{ good.1.0 }}</td>
+                        <td>{{ good.1.1 }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

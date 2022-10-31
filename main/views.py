@@ -591,6 +591,15 @@ def statistics_report_gtd_per_exporter(request):
                 'exporters': exporters,
                 'show': True,
                 'filename': filename,
+                'start': start,
+                'end': end,
+            }
+            return render(request, 'main/statistics_report_gtd_per_exporter.html', context)
+        else:
+            form = CalendarDate()
+            context = {
+                'form': form,
+                'message': 'Некорректный диапазон. Попробуйте ещё раз.',
             }
             return render(request, 'main/statistics_report_gtd_per_exporter.html', context)
     else:
@@ -602,7 +611,77 @@ def statistics_report_gtd_per_exporter(request):
         return render(request, 'main/statistics_report_gtd_per_exporter.html', context)
 
 
+@groups_required('Аналитик') #TODO: Хэндлеры xlsx записать в одну вьюшку
 def gtd_per_exporter_xlsx(request, filename):
+    filepath = os.path.join(MEDIA_ROOT, 'statistics/', filename)
+    path = open(filepath, 'rb')
+    mime_type, _ = mimetypes.guess_type(filepath)
+    response = HttpResponse(path, content_type=mime_type)
+    response['Content-Disposition'] = f"attachment; filename={filename}"
+    return response
+
+
+@groups_required('Аналитик')
+def statistics_report_goods_imported(request):
+    if request.method == 'POST':
+        form = CalendarDate(request.POST)
+        if form.is_valid():
+            start = datetime.strptime(form.data['start_date'], "%Y-%m-%d")
+            end = datetime.strptime(form.data['end_date'], "%Y-%m-%d")
+
+            gtds = GtdMain.objects.filter(date__range=[start, end])
+            goods = GtdGood.objects.filter(gtd__in=gtds)
+
+            unique_goods = {}
+            for good in goods:
+                marking = good.good.marking
+                if marking in unique_goods:
+                    unique_goods[marking][1] += good.quantity
+                else:
+                    unique_goods[marking] = [good.good.name, good.quantity]
+            unique_goods = sorted(list(unique_goods.items()), key=lambda x: x[0])
+
+            filename = f"goods_imported {request.user.pk} {start.strftime('%d-%m-%Y')}-{end.strftime('%d-%m-%Y')}.xlsx"
+            path = os.path.join(MEDIA_ROOT, 'statistics/', filename)
+            workbook = xlsxwriter.Workbook(path)
+            worksheet = workbook.add_worksheet()
+            i = 1
+            worksheet.write(0, 0, 'Артикул')
+            worksheet.write(0, 1, 'Имя товара')
+            worksheet.write(0, 2, 'Количество')
+            for good in unique_goods:
+                worksheet.write(i, 0, good[0])
+                worksheet.write(i, 1, good[1][0])
+                worksheet.write(i, 2, good[1][1])
+                i += 1
+            workbook.close()
+            context = {
+                'form': CalendarDate(),
+                'start': start,
+                'end': end,
+                'show': True,
+                'goods': unique_goods,
+                'filename': filename,
+                # 'goods': goods,
+                # 'gtds': gtds,
+            }
+            return render(request, 'main/statistics_report_goods_imported.html', context)
+        else:
+            context = {
+                'form': CalendarDate(),
+                'message': 'Некорректный диапазон. Попробуйте ещё раз.',
+            }
+            return render(request, 'main/statistics_report_goods_imported.html', context)
+    else:
+        form = CalendarDate()
+        context = {
+            'form': form,
+            'message': '',
+        }
+        return render(request, 'main/statistics_report_goods_imported.html', context)
+
+
+def report_goods_imported_xlsx(request, filename):
     filepath = os.path.join(MEDIA_ROOT, 'statistics/', filename)
     path = open(filepath, 'rb')
     mime_type, _ = mimetypes.guess_type(filepath)
@@ -642,7 +721,7 @@ class CDDLogout(LogoutView, LoginRequiredMixin):
 # @login_required(login_url='/accounts/login/')
 # @user_passes_test(is_accountant)
 
-@groups_required('Администратор', 'Сотрудник таможенного отдела')
+@groups_required('Сотрудник таможенного отдела')
 def upload_gtd(request):
     if request.method == 'POST':
         form = UploadGtdfilesForm(request.POST, request.FILES)

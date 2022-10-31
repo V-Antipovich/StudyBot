@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="added menu for statistic reports; added report gtds number per exporter; found js scripts for table sorting and searching (filtering)">
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="added xlsx file for report gtds number per exporter">
+      <change afterPath="$PROJECT_DIR$/main/migrations/0076_reguser_patronymic.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/migrations/0077_remove_gtdgroup_description.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/migrations/0078_alter_gtdgroup_name.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/migrations/0079_alter_good_marking.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/migrations/0080_alter_importer_unique_together.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/templates/main/statistics_report_goods_imported.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/static/main/css/report_tables.css" beforeDir="false" afterPath="$PROJECT_DIR$/main/static/main/css/report_tables.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/statistic_reports_menu.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/statistic_reports_menu.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/templates/main/statistics_report_gtd_per_exporter.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/statistics_report_gtd_per_exporter.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/utilities.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -20,8 +29,8 @@
       <list>
         <option value="Python Script" />
         <option value="CSS File" />
-        <option value="HTML File" />
         <option value="JavaScript File" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -181,7 +190,7 @@
       <workItem from="1666533425559" duration="40294000" />
       <workItem from="1666694716260" duration="15612000" />
       <workItem from="1667033669936" duration="16384000" />
-      <workItem from="1667075860388" duration="36842000" />
+      <workItem from="1667075860388" duration="48911000" />
     </task>
     <task id="LOCAL-00001" summary="restored most files after fixing models of exporters and importers">
       <created>1660373120746</created>
@@ -519,7 +528,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667211567911</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="added xlsx file for report gtds number per exporter">
+      <created>1667230685534</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1667230685534</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -548,7 +564,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added Delete view for Gtd with cascade delete of gtdgroups, gtdgoods and gtddocuments" />
     <MESSAGE value="added UpdateView for gtds, preparation for changing user model" />
     <MESSAGE value="update gtd view made as function, changing user id who last touched" />
     <MESSAGE value="added log after uploading gtd files" />
@@ -573,7 +588,8 @@
     <MESSAGE value="added page of success after exporting to erp" />
     <MESSAGE value="fixed major bug of uploading goods in groups" />
     <MESSAGE value="added menu for statistic reports; added report gtds number per exporter; found js scripts for table sorting and searching (filtering)" />
-    <option name="LAST_COMMIT_MESSAGE" value="added menu for statistic reports; added report gtds number per exporter; found js scripts for table sorting and searching (filtering)" />
+    <MESSAGE value="added xlsx file for report gtds number per exporter" />
+    <option name="LAST_COMMIT_MESSAGE" value="added xlsx file for report gtds number per exporter" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

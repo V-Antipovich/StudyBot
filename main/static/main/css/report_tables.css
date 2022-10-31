@@ -41,3 +41,7 @@ h3 {
     text-align: center;
     align-items: center;
 }
+
+.error_message {
+    color: #f64747;
+}

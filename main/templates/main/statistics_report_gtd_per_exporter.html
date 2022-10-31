@@ -10,19 +10,24 @@
 {% endblock %}
 
 {% block content %}
-    <h2>Количество ГТД по поставщикам</h2>
-    <div class="col-3">
-        <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Ок">
-        </form>
+    <h2>Количество ГТД по поставщикам {% if show %}в период {{ start|date:"d.m.Y" }} - {{ end|date:"d.m.Y" }}{% endif %}</h2>
+    <div class="align-self-xl-center">
+        <div class="col-3">
+            {% if message %}
+                <div id="error_message" >{{ message }}</div>
+            {% endif %}
+            <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Ок">
+            </form>
+        </div>
     </div>
+
 {#    {{ range }}#}
     {% if show %}
         <div class="container m-7">
-
-            <input class="form-control" type="text" placeholder="что-то" id="search-text" onkeyup="tableSearch()">
+            <input type="text" class="form-control" placeholder="Начните вводить слова фильтрации" id="search-text" onkeyup="tableSearch()">
             <table id="sortable_searchable">
                 <thead>
                     <tr>

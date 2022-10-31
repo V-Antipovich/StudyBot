@@ -214,7 +214,9 @@ def parse_gtd(filename):
             doc_type = int(raw_doc.find('PresentedDocumentModeCode').text)
 
             # Номер документа
-            doc_number = raw_doc.find('PrDocumentNumber').text
+            doc_number = raw_doc.find('PrDocumentNumber')
+            if doc_number:
+                doc_number = doc_number.text
 
             # Номер признака представления
             present_code_num = raw_doc.find('DocPresentKindCode').text
@@ -257,6 +259,10 @@ def parse_gtd(filename):
             good_name = raw_good.find('GoodsDescription').text
             if len(good_name) < 10:
                 good_name = group_name
+
+            while not good_name[0].isalpha():
+                good_name = good_name[1:]
+
             raw_good_infos = raw_good.find_all('GoodsGroupInformation')
             # Номер товара в группе
             good_group_num = raw_good.find('GroupNum').text

@@ -2,7 +2,8 @@ from django.urls import path
 from .views import index, upload_gtd, ShowGtdView, show_gtd_file, CDDLogin, CDDLogout, handbook,\
     GtdDetailView, update_gtd, GtdDeleteView, RegisterUserView, profile, update_gtd_good, update_gtd_group,\
     eco_fee, eco_fee_xlsx, to_wms, AccessDeniedView, to_erp, SuccessfulOutcome, StatisticsMenu,\
-    statistics_report_gtd_per_exporter, gtd_per_exporter_xlsx
+    statistics_report_gtd_per_exporter, gtd_per_exporter_xlsx, statistics_report_goods_imported,\
+    report_goods_imported_xlsx
 
 
 app_name = 'main'
@@ -15,6 +16,8 @@ urlpatterns = [
     path('accounts/login/', CDDLogin.as_view(), name='login'),
     path('accounts/logout/', CDDLogout.as_view(), name='logout'),
     # path('eco_fee/xlsx/<path:filename>', show_eco, name='eco_xlsx'),
+    path('statistics/goods_imported/<path:filename>', report_goods_imported_xlsx, name='report_goods_imported_file'),
+    path('statistics/goods_imported', statistics_report_goods_imported, name='report_goods_imported'),
     path('statistics/gtd_per_exporter/<path:filename>', gtd_per_exporter_xlsx, name='gtd_per_exporter_file'),
     path('statistics/gtd_per_exporter', statistics_report_gtd_per_exporter, name='statistics_gtd_per_exporter'),
     path('statistics/menu', StatisticsMenu.as_view(), name='statistics_menu'),
