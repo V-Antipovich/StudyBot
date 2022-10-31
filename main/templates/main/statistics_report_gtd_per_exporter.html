@@ -1,0 +1,45 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% load bootstrap5 %}
+{% block title %}ГТД по поставщикам{% endblock %}
+
+{% block extra_links %}
+    <link rel="stylesheet" href="{% static 'main/css/report_tables.css' %}">
+    <script src="{% static 'main/js/table_sort.js' %}"></script>
+    <script src="{% static 'main/js/table_search.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <h2>ГТД по поставщикам</h2>
+    <div class="col-3">
+        <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Ок">
+        </form>
+    </div>
+{#    {{ range }}#}
+    {% if show %}
+        <div class="container m-7">
+
+            <input class="form-control" type="text" placeholder="что-то" id="search-text" onkeyup="tableSearch()">
+            <table id="sortable_searchable">
+                <thead>
+                    <tr>
+                        <th>Поставщик</th>
+                        <th data-type="number" >Кол-во гтд</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for k in exporters %}
+                        <tr>
+                            <td>{{ k.0 }}</td>
+                            <td>{{ k.1 }}</td>
+                        </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'layout/base.html' %}
+
+{% load bootstrap5 %}
+
+{% load static %}
+
+{% block title %}Статистические отчеты{% endblock %}
+<style href="{% static 'main/css/style.css' %}"></style>
+{% block content %}
+    <h3>Отчёты</h3>
+{#    <div class="row">#}
+{#        <div class="col-md-4"></div>#}
+{#        <div class="col-md-3 d-flex justify-content-center">#}
+{#            <div class="row ml-0 mr-0">#}
+{#                <a>Количество ГТД до поставщикам</a> <a>Количество ввезенного оборудования за период</a>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+    <div class="container">
+        <div style="float: left; width: 49%;">
+            <a href="{% url 'main:statistics_gtd_per_exporter' %}">Количество ГТД до поставщикам</a>
+        </div>
+        <div style="float:right; width: 49%;">
+            <a href="#">Количество ввезенного оборудования за период</a>
+        </div>
+    </div>
+{% endblock %}

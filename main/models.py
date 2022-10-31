@@ -120,6 +120,7 @@ class Importer(models.Model):
     class Meta:
         verbose_name = 'Импортер'
         verbose_name_plural = 'Импортеры'
+        unique_together = ('name', 'postal_code',)
 
     def __str__(self):
         return self.name

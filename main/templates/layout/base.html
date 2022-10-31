@@ -30,7 +30,7 @@
             <button class="btn btn-outline-primary dropdown-toggle" type="button" id="reports"
             data-bs-toggle="dropdown">Отчёты</button>
             <ul class="dropdown-menu" aria-labelledby="documents-dropdown">
-                <li><a href="#" class="dropdown-item">Статистические отчеты</a></li>
+                <li><a href="{% url 'main:statistics_menu' %}" class="dropdown-item">Статистические отчеты</a></li>
                 <li><a href="{% url 'main:eco_fee' %}" class="dropdown-item">Экологический сбор</a> </li>
             </ul>
             <button class="btn btn-outline-primary dropdown-toggle" type="button"

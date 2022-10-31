@@ -37,7 +37,7 @@ def superuser_check(user):
 # Декоратор, разрешающий доступ определенным группам
 def groups_required(*group_names):
     def in_group(u):
-        return u.is_active and (u.is_superuser or bool(u.groups.filter(name__in=group_names)))
+        return u.is_active and (u.is_superuser or u.groups.filter(name='Администратор').exists() or bool(u.groups.filter(name__in=group_names)))
     return user_passes_test(in_group, login_url=reverse_lazy('main:access_denied'))
 
 
@@ -553,6 +553,42 @@ class SuccessfulOutcome(TemplateView):
         return context_data
 
 
+class StatisticsMenu(TemplateView):
+    template_name = 'main/statistic_reports_menu.html'
+
+
+@groups_required('Аналитик')
+def statistics_report_gtd_per_exporter(request):
+    if request.method == 'POST':
+        form = CalendarDate(request.POST)
+        if form.is_valid():
+            start = datetime.strptime(form.data['start_date'], "%Y-%m-%d")
+            end = datetime.strptime(form.data['end_date'], "%Y-%m-%d")
+            gtds_range = GtdMain.objects.filter(date__range=[start, end])
+            exporters = {}
+            for gtd in gtds_range:
+                exp = gtd.exporter.name
+                if exp in exporters:
+                    exporters[exp] += 1
+                else:
+                    exporters[exp] = 1
+            exporters = list(exporters.items())
+            exporters.sort(key=lambda x: x[0])
+            context = {
+                'form': CalendarDate(),
+                'exporters': exporters,
+                'show': True
+            }
+            return render(request, 'main/statistics_report_gtd_per_exporter.html', context)
+    else:
+        form = CalendarDate()
+        context = {
+            'form': form,
+            'message': '',
+        }
+        return render(request, 'main/statistics_report_gtd_per_exporter.html', context)
+
+
 class CDDLogin(LoginView):
     template_name = 'main/login.html'
 
@@ -573,11 +609,9 @@ class CDDLogout(LogoutView, LoginRequiredMixin):
 #     form_class = RegisterUserForm
 #     success_url = reverse_lazy('main:register_done')
 
-#  TODO: Экспорт WMS: генерация xml по шаблону: шапка + артикулы (желательно схлопывать есть есть повторки. ?Иногда если цена товаров разная, то не схлопывается
-# TODO: формат имени файла: слеши заменить на "_"
 
-class RegisterDoneView(TemplateView):
-    template_name = 'main/'
+# class RegisterDoneView(TemplateView):
+#     template_name = 'main/'
 
 
 # Загрузка файлов ГТД в формате .xml
@@ -638,15 +672,29 @@ def upload_gtd(request):
 
                 # Обновим справочник экспортеров если требуется
                 exporter_info = get_gtdmain["exporter"]
-                add_exporter, exp_created = Exporter.objects.update_or_create(
-                    name=exporter_info["name"],
-                    postal_code=exporter_info["postal_code"],
-                    country=Country.objects.get(code=exporter_info["country"]),
-                    city=exporter_info["city"],
-                    street_house=exporter_info['street_house'],
-                    house=exporter_info["house"],
-                    region=exporter_info['region']
-                )
+                # add_exporter, exp_created = Exporter.objects.update_or_create(
+                #     name=exporter_info["name"],
+                #     postal_code=exporter_info["postal_code"],
+                #     country=Country.objects.get(code=exporter_info["country"]),
+                #     city=exporter_info["city"],
+                #     street_house=exporter_info['street_house'],
+                #     house=exporter_info["house"],
+                #     region=exporter_info['region']
+                # )
+                add_exporter = Exporter.objects.filter(name=exporter_info["name"], postal_code=exporter_info["postal_code"])
+                if add_exporter.exists():
+                    add_exporter = add_exporter[0]
+                else:
+                    add_exporter = Exporter.objects.create(
+                        name=exporter_info["name"],
+                        postal_code=exporter_info["postal_code"],
+                        country=Country.objects.get(code=exporter_info["country"]),
+                        city=exporter_info["city"],
+                        street_house=exporter_info['street_house'],
+                        house=exporter_info["house"],
+                        region=exporter_info['region']
+                    )
+                    add_exporter.save()
 
                 # Обновим справочник импортеров
                 importer_info = get_gtdmain["importer"]

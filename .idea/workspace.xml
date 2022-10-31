@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="added page of success after exporting to erp">
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="fixed major bug of uploading goods in groups">
+      <change afterPath="$PROJECT_DIR$/main/static/main/js/table_sort.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/templates/main/statistic_reports_menu.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/templates/main/statistics_report_gtd_per_exporter.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/per_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/per_gtd.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/static/main/css/eco.css" beforeDir="false" afterPath="$PROJECT_DIR$/main/static/main/css/report_tables.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/static/main/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/main/static/main/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/layout/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/layout/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/ecological_fee_build.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/ecological_fee_build.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/templates/main/upload_gtd_log.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/upload_gtd_log.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/utilities.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
@@ -20,10 +27,10 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JavaScript File" />
         <option value="Python Script" />
         <option value="CSS File" />
         <option value="HTML File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -183,7 +190,7 @@
       <workItem from="1666533425559" duration="40294000" />
       <workItem from="1666694716260" duration="15612000" />
       <workItem from="1667033669936" duration="16384000" />
-      <workItem from="1667075860388" duration="11851000" />
+      <workItem from="1667075860388" duration="34005000" />
     </task>
     <task id="LOCAL-00001" summary="restored most files after fixing models of exporters and importers">
       <created>1660373120746</created>
@@ -507,7 +514,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667106872697</updated>
     </task>
-    <option name="localTasksCounter" value="47" />
+    <task id="LOCAL-00047" summary="fixed major bug of uploading goods in groups">
+      <created>1667122442512</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1667122442512</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -536,7 +550,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="lost tablesorting; fully fixed base templates; added user FK in GtdMain" />
     <MESSAGE value="added interactive tables with sorting and filter; cleaned up some views, deleted some templates" />
     <MESSAGE value="added Delete view for Gtd with cascade delete of gtdgroups, gtdgoods and gtddocuments" />
     <MESSAGE value="added UpdateView for gtds, preparation for changing user model" />
@@ -561,7 +574,8 @@
     <MESSAGE value="export to erp with no end redirect" />
     <MESSAGE value="export to erp with no end redirect; added patronymic to user" />
     <MESSAGE value="added page of success after exporting to erp" />
-    <option name="LAST_COMMIT_MESSAGE" value="added page of success after exporting to erp" />
+    <MESSAGE value="fixed major bug of uploading goods in groups" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed major bug of uploading goods in groups" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

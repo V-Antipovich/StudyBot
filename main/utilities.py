@@ -56,7 +56,11 @@ def parse_gtd(filename):
 
     # Экспортер
     raw_exporter = raw_gtd.find('ESADout_CUConsignor')
-    exporter = raw_exporter.find('OrganizationName').text    # cat_ru: OrganizationName
+    exporter = raw_exporter.find('OrganizationName').text #.replace(/(\.)([A-ZА-Я])/g, '$1 $2')    # cat_ru: OrganizationName
+    for i in range(len(exporter)-1):
+        if exporter[i] == '.' and exporter[i+1].isalpha():
+            exporter = exporter[:i+1] + ' ' + exporter[i+1:]
+
     exporter_postal_code = raw_exporter.find('PostalCode')
     if exporter_postal_code:
         exporter_postal_code = exporter_postal_code.text
@@ -321,7 +325,7 @@ def parse_gtd(filename):
             'goods': gtd_goods,
         }
         gtd_groups.append(gtd_group)
-    print(gtd_main, gtd_groups, sep='\n')
+    # print(gtd_main, gtd_groups, sep='\n')
     return gtd_main, gtd_groups
 
 

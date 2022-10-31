@@ -1,18 +1,13 @@
-thead {
-    position: sticky;
+.textcols {
+    white-space: nowrap;
 }
-th.sorted[data-order="-1"]::after {
-	content: "▼"
-}
-
-th.sorted[data-order="1"]::after {
-	content: "▲"
-}
-
-th {
-    cursor: pointer;
+.textcols-item {
+    white-space: normal;
+    display: inline-block;
+    width: 48%;
+    vertical-align: top;
 }
 
-/*textarea {*/
-/*    rows: 2;*/
-/*}*/
+.textcols .textcols-item:first-child {
+    margin-left: 4%;
+}
