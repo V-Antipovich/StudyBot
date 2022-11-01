@@ -289,7 +289,7 @@ def eco_fee(request):
             'form': form,
             'message': ''
         }
-        return render(request, 'main/ecological_fee_range.html', context)
+        return render(request, 'main/ecological_fee_build.html', context)
     else:
         form = CalendarDate(request.POST)
         if form.is_valid():
@@ -323,7 +323,7 @@ def eco_fee(request):
                     by_tnved['total'][tn_ved] = row
 
             filename = f"eco {request.user.pk} {start.strftime('%d-%m-%Y')}-{end.strftime('%d-%m-%Y')}.xlsx"
-            path = os.path.join(MEDIA_ROOT, 'eco/', filename)
+            path = os.path.join(MEDIA_ROOT, 'reports/eco', filename)
             workbook = xlsxwriter.Workbook(path)
             worksheet = workbook.add_worksheet()
             i = 1
@@ -343,30 +343,22 @@ def eco_fee(request):
 
             workbook.close()
             context = {
+                'form': CalendarDate(),
+                'show': True,
                 'start': start,
                 'end': end,
                 'filename': filename,
                 'total': by_tnved['total'],
                 'expanded': by_tnved['expanded'],
             }
-            return render(request, 'main/ecological_fee_build.html', context)
+            # return render(request, 'main/ecological_fee_build.html', context)
         else:
             form = CalendarDate()
             context = {
                 'form': form,
                 'message': 'Некорректный диапазон. Попробуйте ещё раз.',
             }
-            return render(request, 'main/ecological_fee_range.html', context)
-
-
-# Получение xlsx-файла эко сбора из хранилища для скачивания пользователем
-def eco_fee_xlsx(request, filename):
-    filepath = os.path.join(MEDIA_ROOT, 'eco/', filename)
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-    response = HttpResponse(path, content_type=mime_type)
-    response['Content-Disposition'] = f"attachment; filename={filename}"
-    return response
+        return render(request, 'main/ecological_fee_build.html', context)
 
 
 # Вывод xml-файла выбранной ГТД
@@ -437,6 +429,7 @@ def to_wms(request, pk):
         return render(request, 'main/wms.html', context)
 
 
+# Формирование файла для ERP
 @groups_required('Бухгалтер')
 def to_erp(request, pk): #TODO: лог пользователю в профиль
     gtd = GtdMain.objects.filter(pk=pk)[0]
@@ -575,7 +568,7 @@ def statistics_report_gtd_per_exporter(request):
             exporters = list(exporters.items())
             exporters.sort(key=lambda x: x[0])
             filename = f"gtds_per_exporter {request.user.pk} {start.strftime('%d-%m-%Y')}-{end.strftime('%d-%m-%Y')}.xlsx"
-            path = os.path.join(MEDIA_ROOT, 'statistics/', filename)
+            path = os.path.join(MEDIA_ROOT, 'reports/statistics', filename)
             workbook = xlsxwriter.Workbook(path)
             worksheet = workbook.add_worksheet()
             i = 1
@@ -611,16 +604,6 @@ def statistics_report_gtd_per_exporter(request):
         return render(request, 'main/statistics_report_gtd_per_exporter.html', context)
 
 
-@groups_required('Аналитик') #TODO: Хэндлеры xlsx записать в одну вьюшку
-def gtd_per_exporter_xlsx(request, filename):
-    filepath = os.path.join(MEDIA_ROOT, 'statistics/', filename)
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-    response = HttpResponse(path, content_type=mime_type)
-    response['Content-Disposition'] = f"attachment; filename={filename}"
-    return response
-
-
 @groups_required('Аналитик')
 def statistics_report_goods_imported(request):
     if request.method == 'POST':
@@ -642,7 +625,7 @@ def statistics_report_goods_imported(request):
             unique_goods = sorted(list(unique_goods.items()), key=lambda x: x[0])
 
             filename = f"goods_imported {request.user.pk} {start.strftime('%d-%m-%Y')}-{end.strftime('%d-%m-%Y')}.xlsx"
-            path = os.path.join(MEDIA_ROOT, 'statistics/', filename)
+            path = os.path.join(MEDIA_ROOT, 'reports/statistics', filename)
             workbook = xlsxwriter.Workbook(path)
             worksheet = workbook.add_worksheet()
             i = 1
@@ -681,17 +664,13 @@ def statistics_report_goods_imported(request):
         return render(request, 'main/statistics_report_goods_imported.html', context)
 
 
-def report_goods_imported_xlsx(request, filename):
-    filepath = os.path.join(MEDIA_ROOT, 'statistics/', filename)
+def report_xlsx(request, folder, filename):
+    filepath = os.path.join(MEDIA_ROOT, 'reports/', folder, filename)
     path = open(filepath, 'rb')
     mime_type, _ = mimetypes.guess_type(filepath)
     response = HttpResponse(path, content_type=mime_type)
     response['Content-Disposition'] = f"attachment; filename={filename}"
     return response
-
-
-class CDDLogin(LoginView):
-    template_name = 'main/login.html'
 
 
 @login_required
@@ -700,6 +679,12 @@ def profile(request):
     return render(request, 'main/profile.html', context)
 
 
+# Авторизация
+class CDDLogin(LoginView):
+    template_name = 'main/login.html'
+
+
+# Выход из аккаунта
 class CDDLogout(LogoutView, LoginRequiredMixin):
     template_name = 'main/logout.html'
 

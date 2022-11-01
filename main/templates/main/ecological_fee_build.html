@@ -9,13 +9,26 @@
     <link rel="stylesheet" href="{% static 'main/css/report_tables.css' %}">
     <script src="{% static 'main/js/jquery-3.6.1.js' %}"></script>
     <script src="{% static 'main/js/expand_tables.js' %}"></script>
+    <script src="{% static 'main/js/table_sort.js' %}"></script>
+    <script src="{% static 'main/js/table_search.js' %}"></script>
 {% endblock %}
 
 {% block content %}
-    <h3>Отчёт по экологическому сбору: {{ start|date:"d.m.Y" }} - {{ end|date:"d.m.Y" }}</h3>
+    <h3>Отчёт по экологическому сбору: {% if show %} {{ start|date:"d.m.Y" }} - {{ end|date:"d.m.Y" }}{% endif %}</h3>
+    {% if message %}
+        {{ message }}
+    {% endif %}
+    <div class="col-3">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Задать">
+        </form>
+    </div>
+    {% if show %}
     <div class="container m-7">
-
-        <table>
+        <a href="{% url 'main:report_xlsx' folder='eco/' filename=filename %}">Скачать файл</a>
+        <table id="sortable_searchable">
         <thead>
             <tr>
                 <th>Код ТН ВЭД</th>
@@ -58,7 +71,7 @@
             {% endfor %}
         </tbody>
     </table>
-    <a href="{% url 'main:eco_fee_file' filename=filename %}">Скачать файл</a>
-{#    <a href="{% url 'main:eco_xlsx' filename=filename %}">Скачать файл</a>#}
+
+    {% endif %}
     </div>
 {% endblock %}
