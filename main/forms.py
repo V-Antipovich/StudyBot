@@ -78,28 +78,38 @@ class ExportComment(forms.Form):
 
 # Форма выбора диапазона дат
 class CalendarDate(forms.Form):
-    start_date = forms.DateField(label='Начало диапазона',
+    start_date = forms.DateField(label='Начало диапазона', input_formats=['%d-%m-%Y'],
                                  widget=forms.DateInput(attrs={'type': 'date',
-                                                             'class': 'form-control',
-                                                             'placeholder': 'Начало диапазона'}))
-    end_date = forms.DateField(label='Окончание',
+                                                               'class': 'form-control',
+                                                               'placeholder': 'dd-mm-YYYY'}))
+
+    end_date = forms.DateField(label='Конец диапазона', input_formats=['%d-%m-%Y'],
                                widget=forms.DateInput(attrs={'type': 'date',
                                                              'class': 'form-control',
-                                                             'placeholder': 'Конец диапазона'}))
+                                                             'placeholder': 'dd-mm-YYYY'}
+                                                      ))
 
-    def clean(self):
-        cleaned_data = super().clean()
-        start_date = cleaned_data.get('start_date')
-        end_date = cleaned_data.get('end_date')
+    # def clean(self):
+    #     cleaned_data = super().clean()
+    #     start_date = cleaned_data.get('start_date')
+    #     end_date = cleaned_data.get('end_date')
+    #     if start_date and end_date:
+    #         if start_date < end_date:
+    #             raise ValidationError('Неправильный диапазон')
+        # print(start_date, end_date)
+        # print(cleaned_data)
+        # if start_date > end_date:
+        #     raise ValidationError('Неправильный диапазон дат')
+    # def is_valid(self):
+    #     condition = super(CalendarDate, self).is_valid()
+    #     print(self.cleaned_data)
+    #     return condition
 
-        if start_date > end_date:
-            raise ValidationError('Неправильный диапазон дат')
-    
 
 # Валидатор дат
 def validate_date_range(start, end):
-    start = time.strptime(start, '%Y-%m-%d')
-    end = time.strptime(end, '%Y-%m-%d')
+    start = time.strptime(start, '%d-%m-%Y')
+    end = time.strptime(end, '%d-%m-%Y')
     if start >= end:
         raise ValidationError('Вы не можете выбрать такой диапазон дат')
 

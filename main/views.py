@@ -280,7 +280,6 @@ class GtdDeleteView(DeleteView):
 
 
 # Экологический сбор: выбор периода, сбор данных о ГТД из этого периода, содержащих ТН ВЭД, подлежащие эко сбору
-
 @groups_required('Бухгалтер')
 def eco_fee(request):
     if request.method == 'GET':
@@ -289,12 +288,20 @@ def eco_fee(request):
             'form': form,
             'message': ''
         }
-        return render(request, 'main/ecological_fee_build.html', context)
+        return render(request, 'main/ecological_fee.html', context)
     else:
         form = CalendarDate(request.POST)
+        # print(request.POST)
+        # print(form.data)
+        # print(form.data is None)
+        # print(form.is_valid())
+        # print(form.errors)
         if form.is_valid():
-            start = datetime.strptime(form.data['start_date'], "%Y-%m-%d")
-            end = datetime.strptime(form.data['end_date'], "%Y-%m-%d")
+            cd = form.cleaned_data
+            # start = datetime.strptime(cd['start_date'], "%d-%m-%Y")
+            # end = datetime.strptime(cd['end_date'], "%d-%m-%Y")
+            start = cd['start_date']
+            end = cd['end_date']
             gtds_range = GtdMain.objects.filter(date__range=[start, end])
 
             all_groups = GtdGroup.objects.filter(gtd_id__in=gtds_range, tn_ved__has_environmental_fee=True)
@@ -343,7 +350,7 @@ def eco_fee(request):
 
             workbook.close()
             context = {
-                'form': CalendarDate(),
+                'form': form, #CalendarDate( )# initial={'start_date': start, 'end_date': end}),
                 'show': True,
                 'start': start,
                 'end': end,
@@ -351,14 +358,14 @@ def eco_fee(request):
                 'total': by_tnved['total'],
                 'expanded': by_tnved['expanded'],
             }
-            # return render(request, 'main/ecological_fee_build.html', context)
+            # return render(request, 'main/ecological_fee.html', context)
         else:
             form = CalendarDate()
             context = {
                 'form': form,
                 'message': 'Некорректный диапазон. Попробуйте ещё раз.',
             }
-        return render(request, 'main/ecological_fee_build.html', context)
+        return render(request, 'main/ecological_fee.html', context)
 
 
 # Вывод xml-файла выбранной ГТД
@@ -664,6 +671,7 @@ def statistics_report_goods_imported(request):
         return render(request, 'main/statistics_report_goods_imported.html', context)
 
 
+@groups_required('Аналитик')
 def report_xlsx(request, folder, filename):
     filepath = os.path.join(MEDIA_ROOT, 'reports/', folder, filename)
     path = open(filepath, 'rb')

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="added report of goods imported">
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="one handler view for all xlsx-reports">
+      <change afterPath="$PROJECT_DIR$/main/static/main/js/use_flatpickr.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/ecological_fee_build.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/ecological_fee_build.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/ecological_fee_range.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/statistics_report_goods_imported.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/statistics_report_goods_imported.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/statistics_report_gtd_per_exporter.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/statistics_report_gtd_per_exporter.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/customs_declarations_database/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/customs_declarations_database/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/static/main/css/report_tables.css" beforeDir="false" afterPath="$PROJECT_DIR$/main/static/main/css/report_tables.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/ecological_fee_build.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/ecological_fee.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -23,8 +23,8 @@
       <list>
         <option value="Python Script" />
         <option value="CSS File" />
-        <option value="JavaScript File" />
         <option value="HTML File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -184,14 +184,7 @@
       <workItem from="1666533425559" duration="40294000" />
       <workItem from="1666694716260" duration="15612000" />
       <workItem from="1667033669936" duration="16384000" />
-      <workItem from="1667075860388" duration="52137000" />
-    </task>
-    <task id="LOCAL-00002" summary="restored most files after fixing models of exporters and importers">
-      <created>1660373133300</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1660373133300</updated>
+      <workItem from="1667075860388" duration="63027000" />
     </task>
     <task id="LOCAL-00003" summary="GtdMain works properly!">
       <created>1660380269561</created>
@@ -529,7 +522,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667249695940</updated>
     </task>
-    <option name="localTasksCounter" value="51" />
+    <task id="LOCAL-00051" summary="one handler view for all xlsx-reports">
+      <created>1667280698391</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1667280698391</updated>
+    </task>
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -551,14 +551,25 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="text">
+                    <value>
+                      <list>
+                        <option value="cale" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="update gtd view made as function, changing user id who last touched" />
     <MESSAGE value="added log after uploading gtd files" />
     <MESSAGE value="added updating goods in group" />
     <MESSAGE value="added updating groups in gtd" />
@@ -583,7 +594,8 @@
     <MESSAGE value="added menu for statistic reports; added report gtds number per exporter; found js scripts for table sorting and searching (filtering)" />
     <MESSAGE value="added xlsx file for report gtds number per exporter" />
     <MESSAGE value="added report of goods imported" />
-    <option name="LAST_COMMIT_MESSAGE" value="added report of goods imported" />
+    <MESSAGE value="one handler view for all xlsx-reports" />
+    <option name="LAST_COMMIT_MESSAGE" value="one handler view for all xlsx-reports" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -42,6 +42,6 @@ h3 {
     align-items: center;
 }
 
-.error_message {
+div .error_message {
     color: #f64747;
 }

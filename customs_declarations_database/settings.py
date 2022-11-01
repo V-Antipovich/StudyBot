@@ -120,7 +120,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -153,3 +153,5 @@ SERVER_EMAIL = 'django@my-domain.com'
 
 
 USER_DIR = os.path.join(BASE_DIR, 'USER/')
+
+DATE_INPUT_FORMATS = '%d-%m-%Y'

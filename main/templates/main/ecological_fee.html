@@ -6,7 +6,11 @@
 {% block title %}Отчет по экологическому сбору{% endblock %}
 
 {% block extra_links %}
-    <link rel="stylesheet" href="{% static 'main/css/report_tables.css' %}">
+    <link rel="stylesheet" href="{% static 'main/css/report_tables.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'main/css/flatpickr.min.css' %}" type="text/css">
+{#    <script src="{% static 'main/js/flatpickr.js' %}"></script>#}
+
+{#    <script src="{% static 'main/js/use_flatpickr.js' %}"></script>#}
     <script src="{% static 'main/js/jquery-3.6.1.js' %}"></script>
     <script src="{% static 'main/js/expand_tables.js' %}"></script>
     <script src="{% static 'main/js/table_sort.js' %}"></script>
@@ -14,9 +18,9 @@
 {% endblock %}
 
 {% block content %}
-    <h3>Отчёт по экологическому сбору: {% if show %} {{ start|date:"d.m.Y" }} - {{ end|date:"d.m.Y" }}{% endif %}</h3>
+    <h3>Отчёт по экологическому сбору{% if show %}: {{ start|date:"d.m.Y" }} - {{ end|date:"d.m.Y" }}{% endif %}</h3>
     {% if message %}
-        {{ message }}
+        <div class="error_message">{{ message }}</div>
     {% endif %}
     <div class="col-3">
         <form method="post">
@@ -74,4 +78,12 @@
 
     {% endif %}
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        config = {
+            dateFormat: "d-m-Y",
+            {#altInput: true,#}
+        }
+        flatpickr("input[type=date]", config);
+    </script>
 {% endblock %}
