@@ -7,15 +7,26 @@ from django.core.validators import FileExtensionValidator
 
 from .models import UploadGtd, RegUser, GtdMain, Exporter, Importer, CustomsHouse, GtdGood, GtdGroup
 from .apps import user_registered
-from customs_declarations_database.settings import USER_DIR
-# from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.utils.translation import gettext_lazy as _
-# class GtdFileForm(forms.Form):
-#     file = forms.FileField()
-
-# User = get_user_model()
 
 
+class PaginateForm(forms.Form):
+    # paginate_by = forms.IntegerField(help_text='Кол-во записей на странице')
+    paginate_by = forms.ChoiceField(help_text='По сколько записей располагать на странице', choices=(
+        (1, '10'),
+        (2, '25'),
+        (3, '50'),
+        (4, '100'),
+    ))
+
+    def clean(self):
+        cleaned_data = super().clean()
+        paginate_by = cleaned_data['paginate_by']
+        if type(paginate_by) != int and paginate_by <= 0:
+            self.add_error('paginate_by', 'Число должно быть целым и положительным')
+
+
+# TODO: Отдельная форма для админов, где можно редачить и роль
+# Редактирование данных пользователя
 class ChangeUserInfoForm(forms.ModelForm):
     email = forms.EmailField(required=True, label='Адрес электронной почты')
 
@@ -24,15 +35,15 @@ class ChangeUserInfoForm(forms.ModelForm):
         fields = ('username', 'email', 'first_name', 'last_name', 'patronymic',)
 
 
+# Форма регистрации пользователя
 class RegisterUserForm(forms.ModelForm):
     email = forms.EmailField(required=True, label='Адрес электронной почты')
     password = forms.CharField(label='Пароль', widget=forms.PasswordInput,
                                help_text=password_validation.password_validators_help_text_html())
 
     class Meta:
-        model = RegUser #TODO: устанавливать группу
+        model = RegUser
         fields = ('username', 'email', 'password', 'first_name', 'last_name', 'patronymic', 'groups')
-        # exclude = ('is_activated',)
 
     def clean_password(self):
         psw = self.cleaned_data['password']
@@ -48,8 +59,7 @@ class RegisterUserForm(forms.ModelForm):
         user.is_activated = False
         if commit:
             user.save()
-        # user_registered.send(RegisterUserForm, instance=user)
-        user_registered.send(RegisterUserForm, instance=user, password=psw)
+        user_registered.send(RegisterUserForm, instance=user, password=psw)  # Сигнал отсылать письмо
         return user
 
 

@@ -11,6 +11,7 @@ class MainConfig(AppConfig):
 user_registered = Signal(['instance'])
 
 
+# Обработчик сигнала
 def user_registered_dispatcher(sender, **kwargs):
     send_activation_email(kwargs['instance'], kwargs['password'])
 

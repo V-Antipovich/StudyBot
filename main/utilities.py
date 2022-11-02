@@ -8,6 +8,7 @@ from customs_declarations_database.settings import ALLOWED_HOSTS
 signer = Signer()
 
 
+# Функция для непосредственной отправки письма на почту новым пользователям
 def send_activation_email(user, password):
     if ALLOWED_HOSTS:
         host = 'http://' + ALLOWED_HOSTS[0]

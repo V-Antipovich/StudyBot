@@ -1,34 +1,25 @@
-from django.contrib.auth import get_user_model
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib.sites.shortcuts import get_current_site
 from django.core.signing import BadSignature
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect
-from django.template.loader import render_to_string
-from django.urls import reverse_lazy, reverse
-# from django.views.generic import TemplateView
-from django.utils.encoding import force_bytes, force_str
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.views import View
-from django.views.generic.list import ListView
-from django.views.generic.detail import DetailView
+from django.urls import reverse_lazy
+from django.views.generic.list import ListView, BaseListView
+from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormMixin
 from django.http import FileResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.core.mail import EmailMessage
 from .forms import UploadGtdfilesForm, GtdUpdateForm, GtdGoodUpdateForm, GtdGroupUpdateForm,\
-    CalendarDate, ExportComment, ChangeUserInfoForm, RegisterUserForm
+    CalendarDate, ExportComment, ChangeUserInfoForm, RegisterUserForm, PaginateForm
 from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType,\
     Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType,\
     UploadGtdFile
-from django.views.generic.edit import FormView
 import os
 from .utilities import parse_gtd, get_tnved_name, signer
 from .models import RegUser
-# from .token import account_activation_token
 from customs_declarations_database.settings import MEDIA_ROOT, USER_DIR
 from customs_declarations_database.Constant import under
 import xlsxwriter
@@ -51,6 +42,7 @@ def groups_required(*group_names):
     return user_passes_test(in_group, login_url=reverse_lazy('main:access_denied'))
 
 
+# Страница уведомляющая об отсутствии нужных прав
 class AccessDeniedView(TemplateView):
     template_name = 'main/no_access.html'
 
@@ -65,6 +57,7 @@ class CDDLogout(LogoutView, LoginRequiredMixin):
     template_name = 'main/logout.html'
 
 
+# Редактирование данных пользователя
 class ChangeUserInfoView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = RegUser
     template_name = 'main/change_user_info.html'
@@ -82,12 +75,14 @@ class ChangeUserInfoView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
         return get_object_or_404(queryset, pk=self.user_id)
 
 
+# Смена пароля
 class RegUserPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin, PasswordChangeView):
     template_name = 'main/password_change.html'
     success_url = reverse_lazy('main:profile')
     success_message = 'Пароль успешно изменен'
 
 
+# Контроллер для добавления нового пользователя
 class RegisterUserView(CreateView):
     model = RegUser
     template_name = 'main/register_user.html'
@@ -95,10 +90,12 @@ class RegisterUserView(CreateView):
     success_url = reverse_lazy('main:register_done')
 
 
+# Страница сообщения об успешной регистрации
 class RegisterDoneView(TemplateView):
     template_name = 'main/register_done.html'
 
 
+# Активация пользователя после перехода по ссылке
 def user_activate(request, sign):
     try:
         username = signer.unsign(sign)
@@ -115,6 +112,7 @@ def user_activate(request, sign):
     return render(request, template)
 
 
+# Страница с данными пользователя
 class Profile(TemplateView):
     template_name = 'main/profile.html'
 
@@ -125,28 +123,40 @@ class Profile(TemplateView):
         return context
 
 
-# Начальная страница
+# Страница '/' - перенаправление на основную
 # TODO: нормальный вид
 def index(request):
     return redirect('main:show_gtd')
     # return render(request, 'main/index.html')
 
 
-# Список всех ГТД
-class ShowGtdView(LoginRequiredMixin, ListView):
-    model = GtdMain
-    template_name = 'main/show_gtd.html'
-    login_url = reverse_lazy('main:login')
-    context_object_name = 'gtds'
-    # paginate_by = 10
+# class ShowGtdView(LoginRequiredMixin, ListView):
+#     model = GtdMain
+#     template_name = 'main/show_gtd.html'
+#     login_url = reverse_lazy('main:login')
+#     context_object_name = 'gtds'
+#     # paginate_by = 50
 
-    def get_paginate_by(self, queryset):
-        try:
-            self.paginate_by = int(self.request.GET.get('paginate_by', 10))
-        except ValueError:
-            logger.error('Some stupid person use not int for paginate_by')
-            # pass # TODO: сделать что-то с заглушкой
-        return self.paginate_by
+
+@login_required
+def show_gtd_list(request):
+    gtd_list = GtdMain.objects.all()
+    paginate_by = request.GET.get('paginate_by', 10)
+    page = request.GET.get('page', 1)
+    paginator = Paginator(gtd_list, paginate_by)
+    try:
+        gtds = paginator.page(page)
+    except PageNotAnInteger:
+        gtds = paginator.page(1)
+    except EmptyPage:
+        gtds = paginator.page(paginator.num_pages)
+
+    context = {
+        'gtds': gtds,
+        'paginate_by': paginate_by,
+        'form': PaginateForm({paginate_by})
+    }
+    return render(request, 'main/show_gtd.html', context)
 
 
 # Представление персональной страницы ГТД

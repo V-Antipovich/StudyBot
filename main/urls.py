@@ -1,9 +1,9 @@
 from django.urls import path
-from .views import index, upload_gtd, ShowGtdView, show_gtd_file, CDDLogin, CDDLogout, handbook,\
+from .views import index, upload_gtd, show_gtd_file, CDDLogin, CDDLogout, handbook,\
     GtdDetailView, update_gtd, GtdDeleteView, Profile, update_gtd_good, update_gtd_group,\
     eco_fee, to_wms, AccessDeniedView, to_erp, SuccessfulOutcome, StatisticsMenu,\
     statistics_report_gtd_per_exporter, statistics_report_goods_imported, report_xlsx, ChangeUserInfoView,\
-    RegUserPasswordChangeView, RegisterUserView, RegisterDoneView, user_activate
+    RegUserPasswordChangeView, RegisterUserView, RegisterDoneView, user_activate, show_gtd_list  #, ShowGtdView
 
 
 app_name = 'main'
@@ -33,7 +33,8 @@ urlpatterns = [
     path('erp/<int:pk>', to_erp, name='to_erp'),
     path('wms/<int:pk>', to_wms, name='to_wms'),
     path('documents/show_gtd/<int:pk>', GtdDetailView.as_view(), name='per_gtd'),
-    path('documents/show_gtd', ShowGtdView.as_view(), name='show_gtd'),
+    # path('documents/show_gtd', ShowGtdView.as_view(), name='show_gtd'),
+    path('documents/show_gtd', show_gtd_list, name='show_gtd'),
     path('documents/upload_gtd', upload_gtd, name='upload_gtd'),
     path('access_denied', AccessDeniedView.as_view(), name='access_denied'),
     path('', index, name='index')
