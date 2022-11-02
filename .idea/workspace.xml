@@ -1,23 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="added flatpickr.js and fixed minor problems with it">
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="registration with email on debugging server">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/customs_declarations_database/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/customs_declarations_database/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/apps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/email/activation_email_body" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/email/activation_email_subject" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/layout/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/layout/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/add_user.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/profile.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/register_done.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/register_user.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/test.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/utilities.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -194,14 +180,7 @@
       <workItem from="1666533425559" duration="40294000" />
       <workItem from="1666694716260" duration="15612000" />
       <workItem from="1667033669936" duration="16384000" />
-      <workItem from="1667075860388" duration="91287000" />
-    </task>
-    <task id="LOCAL-00004" summary="everything's broken, but i need a backup">
-      <created>1660679946378</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1660679946378</updated>
+      <workItem from="1667075860388" duration="94715000" />
     </task>
     <task id="LOCAL-00005" summary="everything's broken, but i need a backup">
       <created>1660679981699</created>
@@ -539,7 +518,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667298796321</updated>
     </task>
-    <option name="localTasksCounter" value="53" />
+    <task id="LOCAL-00053" summary="registration with email on debugging server">
+      <created>1667372647709</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1667372647709</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -580,7 +566,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added updating goods in group" />
     <MESSAGE value="added updating groups in gtd" />
     <MESSAGE value="made information in user-scripts and script-changes more up to date, according to the progress of the project" />
     <MESSAGE value="changed user_scripts and application;&#10;added columns to TnVed model as preparation for building statistics" />
@@ -605,7 +590,8 @@
     <MESSAGE value="added report of goods imported" />
     <MESSAGE value="one handler view for all xlsx-reports" />
     <MESSAGE value="added flatpickr.js and fixed minor problems with it" />
-    <option name="LAST_COMMIT_MESSAGE" value="added flatpickr.js and fixed minor problems with it" />
+    <MESSAGE value="registration with email on debugging server" />
+    <option name="LAST_COMMIT_MESSAGE" value="registration with email on debugging server" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

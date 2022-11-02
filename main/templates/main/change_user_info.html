@@ -1,0 +1,13 @@
+{% extends 'layout/base.html' %}
+{% load bootstrap5 %}
+{% load static %}
+{% block title %}Правка данных профиля{% endblock %}
+
+{% block content %}
+    <h2>Редактирование личных данных пользователя {{ reguser.username }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% bootstrap_form form layout="horizontal" %}
+        {% buttons submit='Сохранить' %} {% endbuttons %}
+    </form>
+{% endblock %}
