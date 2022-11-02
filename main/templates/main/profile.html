@@ -44,6 +44,12 @@
             Должность: {% for gr in groups.all %}{{ gr }} {% endfor %}
 
         </div>
+        <a class="btn btn-outline-info" href="{% url 'main:profile_change' %}">
+            Изменить данные профиля
+        </a>
+        <a class="btn btn-outline-info" href="{% url 'main:password_change' %}">
+            Изменить пароль
+        </a>
     </div>
 
 {% endblock %}

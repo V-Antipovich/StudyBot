@@ -1,17 +1,56 @@
 import time
 
 from django import forms
-from django.contrib.auth import password_validation
+from django.contrib.auth import password_validation, get_user_model, authenticate
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 
 from .models import UploadGtd, RegUser, GtdMain, Exporter, Importer, CustomsHouse, GtdGood, GtdGroup
-# from .apps import user_registered
+from .apps import user_registered
 from customs_declarations_database.settings import USER_DIR
-
-
+# from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.utils.translation import gettext_lazy as _
 # class GtdFileForm(forms.Form):
 #     file = forms.FileField()
+
+# User = get_user_model()
+
+
+class ChangeUserInfoForm(forms.ModelForm):
+    email = forms.EmailField(required=True, label='Адрес электронной почты')
+
+    class Meta:
+        model = RegUser
+        fields = ('username', 'email', 'first_name', 'last_name', 'patronymic',)
+
+
+class RegisterUserForm(forms.ModelForm):
+    email = forms.EmailField(required=True, label='Адрес электронной почты')
+    password = forms.CharField(label='Пароль', widget=forms.PasswordInput,
+                               help_text=password_validation.password_validators_help_text_html())
+
+    class Meta:
+        model = RegUser #TODO: устанавливать группу
+        fields = ('username', 'email', 'password', 'first_name', 'last_name', 'patronymic', 'groups')
+        # exclude = ('is_activated',)
+
+    def clean_password(self):
+        psw = self.cleaned_data['password']
+        if psw:
+            password_validation.validate_password(psw)
+        return psw
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        psw = self.cleaned_data['password']
+        user.set_password(psw)
+        user.is_active = False
+        user.is_activated = False
+        if commit:
+            user.save()
+        # user_registered.send(RegisterUserForm, instance=user)
+        user_registered.send(RegisterUserForm, instance=user, password=psw)
+        return user
 
 
 # Форма для xml-файлов ГТД
@@ -114,37 +153,37 @@ def validate_date_range(start, end):
         raise ValidationError('Вы не можете выбрать такой диапазон дат')
 
 
-# Форма регистрации пользователя
-class RegisterUserForm(forms.ModelForm):
-    email = forms.EmailField(required=True, label='Адрес электронной почты')
-    password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput,
-                                help_text=password_validation.password_validators_help_text_html())
-    password2 = forms.CharField(label='Пароль (повторно)', widget=forms.PasswordInput,
-                                help_text='Введите тот же самый пароль ещё раз для проверки')
-
-    def clean_password1(self):
-        password1 = self.cleaned_data['password1']
-        if password1:
-            password_validation.validate_password(password1)
-        return password1
-
-    def clean(self):
-        super().clean()
-        password1 = self.cleaned_data['password1']
-        password2 = self.cleaned_data['password2']
-        if password1 and password2 and password2 != password1:
-            errors = {'password2': ValidationError("Введенные пароли не совпадают", code='password_mismatch')}
-            raise ValidationError(errors)
-
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.set_password(self.cleaned_data['password1'])
-        user.is_active = False
-        user.is_activated = False
-        if commit:
-            user.save()
-        return user
-
-    class Meta:
-        model = RegUser
-        fields = ('username', 'email', 'password1', 'password2',)
+# # Форма регистрации пользователя
+# class RegisterUserForm(forms.ModelForm):
+#     email = forms.EmailField(required=True, label='Адрес электронной почты')
+#     password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput,
+#                                 help_text=password_validation.password_validators_help_text_html())
+#     password2 = forms.CharField(label='Пароль (повторно)', widget=forms.PasswordInput,
+#                                 help_text='Введите тот же самый пароль ещё раз для проверки')
+#
+#     def clean_password1(self):
+#         password1 = self.cleaned_data['password1']
+#         if password1:
+#             password_validation.validate_password(password1)
+#         return password1
+#
+#     def clean(self):
+#         super().clean()
+#         password1 = self.cleaned_data['password1']
+#         password2 = self.cleaned_data['password2']
+#         if password1 and password2 and password2 != password1:
+#             errors = {'password2': ValidationError("Введенные пароли не совпадают", code='password_mismatch')}
+#             raise ValidationError(errors)
+#
+#     def save(self, commit=True):
+#         user = super().save(commit=False)
+#         user.set_password(self.cleaned_data['password1'])
+#         user.is_active = False
+#         user.is_activated = False
+#         if commit:
+#             user.save()
+#         return user
+#
+#     class Meta:
+#         model = RegUser
+#         fields = ('username', 'email', 'password1', 'password2',)

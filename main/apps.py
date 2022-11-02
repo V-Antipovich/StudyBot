@@ -1,17 +1,18 @@
 from django.apps import AppConfig
-#from django.dispatch import Signal
-#from utilities import send_activation_email
-#
-# user_registered = Signal()
-#
-#
-# def user_registered_dispatcher(sender, **kwargs):
-#     send_activation_email(kwargs['instance'])
-#
-#
-# user_registered.connect(user_registered_dispatcher)
+from django.dispatch import Signal
+from .utilities import send_activation_email
 
 
 class MainConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'main'
+
+
+user_registered = Signal(['instance'])
+
+
+def user_registered_dispatcher(sender, **kwargs):
+    send_activation_email(kwargs['instance'], kwargs['password'])
+
+
+user_registered.connect(user_registered_dispatcher)

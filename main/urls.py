@@ -1,15 +1,22 @@
 from django.urls import path
 from .views import index, upload_gtd, ShowGtdView, show_gtd_file, CDDLogin, CDDLogout, handbook,\
-    GtdDetailView, update_gtd, GtdDeleteView, RegisterUserView, profile, update_gtd_good, update_gtd_group,\
+    GtdDetailView, update_gtd, GtdDeleteView, Profile, update_gtd_good, update_gtd_group,\
     eco_fee, to_wms, AccessDeniedView, to_erp, SuccessfulOutcome, StatisticsMenu,\
-    statistics_report_gtd_per_exporter, statistics_report_goods_imported, report_xlsx
+    statistics_report_gtd_per_exporter, statistics_report_goods_imported, report_xlsx, ChangeUserInfoView,\
+    RegUserPasswordChangeView, RegisterUserView, RegisterDoneView, user_activate
 
 
 app_name = 'main'
 urlpatterns = [
     path('handbook', handbook, name='handbook'),
-    path('accounts/profile/', profile, name='profile'),
-    path('accounts/register', RegisterUserView.as_view(), name='register'),
+    # path('activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/', activate, name='activate'),
+    # path('accounts/register', register, name='register'),
+    path('accounts/register/activate/<str:sign>/', user_activate, name='register_activate'),
+    path('accounts/register/done/', RegisterDoneView.as_view(), name='register_done'),
+    path('accounts/register/', RegisterUserView.as_view(), name='register'),
+    path('accounts/password/change', RegUserPasswordChangeView.as_view(), name='password_change'),
+    path('accounts/profile/change', ChangeUserInfoView.as_view(), name='profile_change'),
+    path('accounts/profile/', Profile.as_view(), name='profile'),
     path('accounts/login/', CDDLogin.as_view(), name='login'),
     path('accounts/logout/', CDDLogout.as_view(), name='logout'),
     path('statistics/goods_imported', statistics_report_goods_imported, name='report_goods_imported'),

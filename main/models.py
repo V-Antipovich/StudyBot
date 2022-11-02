@@ -11,16 +11,19 @@ from django.template.defaultfilters import slugify
 # SET FOREIGN_KEY_CHECKS = 0; SET FOREIGN_KEY_CHECKS = 1;
 # Или проблема не в модели?
 class RegUser(AbstractUser):
+    is_activated = models.BooleanField(verbose_name='Завершил регистрацию?', default=False)
     email = models.EmailField(verbose_name='Электронная почта', unique=True)
     patronymic = models.CharField(verbose_name='Отчество', max_length=255, null=True, blank=True)
+    # email_verified = models.BooleanField(default=False)
     # roles = models.ManyToManyField("JobTitle", verbose_name='Должность', related_name='+', blank=True)
 
     class Meta(AbstractUser.Meta):
         pass
 
-    def save(self, *args, **kwargs):
-        self.is_active = True
-        return super(RegUser, self).save(*args, **kwargs)
+
+    # def save(self, *args, **kwargs):
+    #     self.is_active = True
+    #     return super(RegUser, self).save(*args, **kwargs)
 
 
 # class JobTitle(models.Model):

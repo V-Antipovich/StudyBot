@@ -1,24 +1,22 @@
 import datetime
 from bs4 import BeautifulSoup as Bs
 import requests
+from django.core.signing import Signer
+from django.template.loader import render_to_string
+from customs_declarations_database.settings import ALLOWED_HOSTS
 
-# TODO: потом вернуться к этому
-# from customs_declarations_database.settings import ALLOWED_HOSTS
-# from django.core.signing import Signer
-# from django.template.loader import render_to_string
-#
-# signer = Signer()
-#
-# # TODO: закончи потом с регистрацией и имейлами
-# def send_activation_email(user):
-#     if ALLOWED_HOSTS:
-#         host = 'http://' + ALLOWED_HOSTS[0]
-#     else:
-#         host = 'http://localhost:8000'
-#     context = {'user': user, 'host': host, 'sigрпn': signer.sign(user.username)}
-#     subject = render_to_string('email/activation_email_subject.txt', context)
-#     body_text = render_to_string('email/activation_email_body.txt', context)
-#     user.email_user(subject, body_text)
+signer = Signer()
+
+
+def send_activation_email(user, password):
+    if ALLOWED_HOSTS:
+        host = 'http://' + ALLOWED_HOSTS[0]
+    else:
+        host = 'http://localhost:8000'
+    context = {'user': user, 'host': host, 'sign': signer.sign(user.username), 'password': password}
+    subject = render_to_string('email/activation_letter_subject.txt', context)
+    body_text = render_to_string('email/activation_letter_body.txt', context)
+    user.email_user(subject, body_text)
 
 
 # Парсинг xml-файла ГТД

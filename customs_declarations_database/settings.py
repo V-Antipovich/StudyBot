@@ -12,7 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
-from .config import db_host, db_port, db_user, db_name, db_password
+from .config import db_host, db_port, db_user, db_name, db_password,\
+    email_host_user, email_host_password
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     'django_sorting_bootstrap',
     'xlsxwriter',
     'xml',
+    'six',
 ]
 
 MIDDLEWARE = [
@@ -124,6 +126,8 @@ TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
+USE_L10N = True
+
 USE_TZ = True
 
 
@@ -147,11 +151,18 @@ FILE_UPLOAD_HANDLERS = [
     "django.core.files.uploadhandler.TemporaryFileUploadHandler"
 ]
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_PORT = 1025
-SERVER_EMAIL = 'django@my-domain.com'
-
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_PORT = 1025
+# SERVER_EMAIL = 'django@my-domain.com'
+# EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = False
+# EMAIL_HOST = 'smpt.mail.ru'
+# EMAIL_HOST_USER = email_host_user
+# EMAIL_HOST_PASSWORD = email_host_password
 
 USER_DIR = os.path.join(BASE_DIR, 'USER/')
 
 DATE_INPUT_FORMATS = '%d-%m-%Y'
+
+EMAIL_PORT = 8025
+EMAIL_HOST = 'localhost'

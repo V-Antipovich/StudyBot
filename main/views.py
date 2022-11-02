@@ -1,24 +1,34 @@
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth import get_user_model
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.signing import BadSignature
 from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy, reverse
 # from django.views.generic import TemplateView
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.views import View
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.http import FileResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from .forms import UploadGtdfilesForm, GtdUpdateForm, RegisterUserForm, GtdGoodUpdateForm, GtdGroupUpdateForm,\
-    CalendarDate, ExportComment
+from django.core.mail import EmailMessage
+from .forms import UploadGtdfilesForm, GtdUpdateForm, GtdGoodUpdateForm, GtdGroupUpdateForm,\
+    CalendarDate, ExportComment, ChangeUserInfoForm, RegisterUserForm
 from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType,\
     Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType,\
     UploadGtdFile
 from django.views.generic.edit import FormView
 import os
-from .utilities import parse_gtd, get_tnved_name
+from .utilities import parse_gtd, get_tnved_name, signer
 from .models import RegUser
+# from .token import account_activation_token
 from customs_declarations_database.settings import MEDIA_ROOT, USER_DIR
 from customs_declarations_database.Constant import under
 import xlsxwriter
@@ -41,143 +51,84 @@ def groups_required(*group_names):
     return user_passes_test(in_group, login_url=reverse_lazy('main:access_denied'))
 
 
-# Представление регистрации пользователя
-class RegisterUserView(CreateView):
-    model = RegUser
-    template_name = 'main/register_user.html'
-    form_class = RegisterUserForm
-    success_url = reverse_lazy('main:show_gtd')
-
-
 class AccessDeniedView(TemplateView):
     template_name = 'main/no_access.html'
 
 
-# Представление обработки справочников
-def handbook(request):
-    choice = request.GET.get('choice', 'default')
+# Авторизация
+class CDDLogin(LoginView):
+    template_name = 'main/login.html'
 
-    # Словарь со всеми справочниками системы
-    # Ключ - параметр url, Значение - (<Модель этого справочника>, <Название справочника для пользователей>)
-    avaliable_handbooks = {
-        'customs_houses': (CustomsHouse, 'Отделы таможни'),
-        'exporters': (Exporter, 'Экспортеры'),  # Содержит обращение к другим моделям
-        'importers': (Importer, 'Импортеры'),  # Содержит обращение к другим моделям
-        'countries': (Country, 'Государства'),
-        'currencies': (Currency, 'Валюты'),
-        'deal_types': (DealType, 'Классификатор характера сделки'),
-        'tn_ved': (TnVed, 'Классификатор ТН ВЭД'),
-        'procedures': (Procedure, 'Таможенные процедуры'),
-        'goods': (Good, 'Товары'),
-        'trade_marks': (TradeMark, 'Товарные знаки'),  # Содержит обращение к другим моделям
-        'goods_marks': (GoodsMark, 'Торговые марки'),  # Содержит обращение к другим моделям
-        'manufacturers': (Manufacturer, 'Производители (заводы)'),
-        'qualifiers': (MeasureQualifier, 'Единицы измерения'),
-        'doc_types': (DocumentType, 'Классификатор типов документов'),
-    }
 
-    # Некоторые справочники содержат FK, которые для фронта надо подменять
-    # Словарь с зависимыми моделями
-    # Ключи - поля FK, которые встречаются в моделях из avaliable_handbooks
-    # Значения - (<Модель, с которой через FK отношение m2o>,
-    #             <Поле из этой модели, чье значение требуется>,
-    #             <Порядковый номер поля в списке полей этой модели>)
-    dependent_models = {
-        'country_id': (Country, 'russian_name', 2),
-        'goodsmark_id': (GoodsMark, 'goodsmark', 1),
-        'trademark_id': (TradeMark, 'trademark', 1),
-      #  'doc_type_id': (DocumentType, 'code', 1),
-    }
-    # По умолчанию на странице справочников будет открыт справочник товаров
-    if choice == 'default':
-        choice = 'goods'
-    # По параметру ссылки получаем название и модель справочника
-    get_handbook = avaliable_handbooks[choice]
-    handbook_name = get_handbook[1]
-    handbook_class = get_handbook[0]
+# Выход из аккаунта
+class CDDLogout(LogoutView, LoginRequiredMixin):
+    template_name = 'main/logout.html'
 
-    handbook_objects = handbook_class.objects.all()
 
-    # Доступ к полям модели справочника
-    meta = handbook_class._meta
-    get_fields = meta.get_fields()
+class ChangeUserInfoView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
+    model = RegUser
+    template_name = 'main/change_user_info.html'
+    form_class = ChangeUserInfoForm
+    success_url = reverse_lazy('main:profile')
+    success_message = 'Данные пользователя изменены'
 
-    # Массив для хранения служебной инфы для махинаций с атрибутами
-    fields_system_data = []
-    # Массив для имен колонок таблицы - как они будут отображаться на фронте
-    fields_verbose_names = []
+    def setup(self, request, *args, **kwargs):
+        self.user_id = request.user.pk
+        return super(ChangeUserInfoView, self).setup(request, *args, **kwargs)
 
-    for field in get_fields:
-        methods = dir(field)
-        # Служебное поле PK не включаем
-        if '_check_primary_key' not in methods:
-            # Обработаем FK - Выведем данные непосредственно из связанной таблицы
-            if '_related_query_name' in methods:
-                # Достаем данные связанной модели
-                dependent_tuple = dependent_models[field.attname]
+    def get_object(self, queryset=None):
+        if not queryset:
+            queryset = self.get_queryset()
+        return get_object_or_404(queryset, pk=self.user_id)
 
-                dependent_model = dependent_tuple[0]
-                dependent_objects = dependent_model.objects
 
-                # Для имени колонки возьмем один объект из связанной модели
-                dependent_object = dependent_models[field.attname][0].objects.last()
-                needed_field = dependent_tuple[1]
+class RegUserPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin, PasswordChangeView):
+    template_name = 'main/password_change.html'
+    success_url = reverse_lazy('main:profile')
+    success_message = 'Пароль успешно изменен'
 
-                # Объекты массива служебной инфы
-                # (<Bool: поле внешнего ключа?>, <Имя поля>,
-                # <Объекты связанной модели>, <Нужное поле из связанной модели>)
-                sys_attrs = (True, field.attname, dependent_objects, needed_field)
 
-                # Имя поля для пользователя в связанной модели
-                verbose_name = dependent_object._meta.get_fields()[dependent_tuple[2]].verbose_name
+class RegisterUserView(CreateView):
+    model = RegUser
+    template_name = 'main/register_user.html'
+    form_class = RegisterUserForm
+    success_url = reverse_lazy('main:register_done')
 
-            else:
-                # (<Bool: поле внешнего ключа?>, <имя поля для фронта>)
-                sys_attrs = (False, field.attname)
 
-                verbose_name = field.verbose_name
+class RegisterDoneView(TemplateView):
+    template_name = 'main/register_done.html'
 
-            fields_system_data.append(sys_attrs)
-            fields_verbose_names.append(verbose_name)
 
-    # Собираем непосредственно данные справочника
-    handbook_data = []
-    for obj in handbook_objects:
-        attrs = []
-        # Для каждого атрибута пройдемся по его полям
-        for field in fields_system_data:
-            if field[0]:
-                needed_pk = getattr(obj, field[1])
-                needed_raw_obj = field[2].filter(pk=needed_pk)
-                if needed_raw_obj.exists():
-                    needed_data = getattr(needed_raw_obj[0], field[3])
-                else:
-                    needed_data = ''
-                # Если поле внешнего ключа, обращаемся к связанной модели и получаем данные оттуда
-                # Временная заглушка
-                #  needed_data = getattr(field[2].filter(pk=getattr(obj, field[1]))[0], field[3])
-            else:
-                # В противном случае просто обращаемся к значению нужного поля
-                needed_data = getattr(obj, field[1])
-                if not needed_data:
-                    needed_data = ''
-            attrs.append(needed_data)
-        handbook_data.append(attrs)
+def user_activate(request, sign):
+    try:
+        username = signer.unsign(sign)
+    except BadSignature:
+        return render(request, 'main/bad_signature.html')
+    user = get_object_or_404(RegUser, username=username)
+    if user.is_activated:
+        template = 'main/user_is_activated.html'
+    else:
+        template = 'main/activation_done.html'
+        user.is_active = True
+        user.is_activated = True
+        user.save()
+    return render(request, template)
 
-    context = {
-        'choice': choice,
-        'handbook_name': handbook_name,
-        'verbose_names': fields_verbose_names,
-        'values': handbook_data,
-        'avaliable_handbooks': list(avaliable_handbooks.items()),
-        }
-    return render(request, 'main/handbook.html', context)
+
+class Profile(TemplateView):
+    template_name = 'main/profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(Profile, self).get_context_data(**kwargs)
+        context['user'] = self.request.user
+        context['groups'] = self.request.user.groups
+        return context
 
 
 # Начальная страница
 # TODO: нормальный вид
 def index(request):
-    return redirect('main:profile')
+    return redirect('main:show_gtd')
     # return render(request, 'main/index.html')
 
 
@@ -291,84 +242,85 @@ def eco_fee(request):
         return render(request, 'main/ecological_fee.html', context)
     else:
         form = CalendarDate(request.POST)
-        # print(request.POST)
-        # print(form.data)
-        # print(form.data is None)
-        # print(form.is_valid())
-        # print(form.errors)
         if form.is_valid():
             cd = form.cleaned_data
             # start = datetime.strptime(cd['start_date'], "%d-%m-%Y")
             # end = datetime.strptime(cd['end_date'], "%d-%m-%Y")
             start = cd['start_date']
             end = cd['end_date']
-            gtds_range = GtdMain.objects.filter(date__range=[start, end])
+            print(type(start), type(end))
 
-            all_groups = GtdGroup.objects.filter(gtd_id__in=gtds_range, tn_ved__has_environmental_fee=True)
+            if start <= end:
+                gtds_range = GtdMain.objects.filter(date__range=[start, end])
 
-            by_tnved = {'expanded': {}, 'total': {}}
-            for group in all_groups:
-                gtdId = group.gtd.gtdId
-                tn_ved = group.tn_ved.code
-                rate = group.tn_ved.collection_rate
-                standart = group.tn_ved.recycling_standart
-                weight = group.net_weight
-                row = [rate, standart, weight, rate*weight*standart/100000]
+                all_groups = GtdGroup.objects.filter(gtd_id__in=gtds_range, tn_ved__has_environmental_fee=True)
 
-                if tn_ved in by_tnved:
-                    if gtdId in by_tnved['expanded'][tn_ved]:
-                        by_tnved['expanded'][tn_ved][gtdId][2] += weight
-                        by_tnved['expanded'][tn_ved][gtdId][3] += row[3]
+                by_tnved = {'expanded': {}, 'total': {}}
+                for group in all_groups:
+                    gtdId = group.gtd.gtdId
+                    tn_ved = group.tn_ved.code
+                    rate = group.tn_ved.collection_rate
+                    standart = group.tn_ved.recycling_standart
+                    weight = group.net_weight
+                    row = [rate, standart, weight, rate*weight*standart/100000]
+
+                    if tn_ved in by_tnved:
+                        if gtdId in by_tnved['expanded'][tn_ved]:
+                            by_tnved['expanded'][tn_ved][gtdId][2] += weight
+                            by_tnved['expanded'][tn_ved][gtdId][3] += row[3]
+                        else:
+                            by_tnved['expanded'][tn_ved][gtdId] = row
+                        by_tnved['total'][tn_ved][2] += weight
+                        by_tnved['total'][tn_ved][3] += row[3]
                     else:
+                        by_tnved['expanded'][tn_ved] = {}
+
                         by_tnved['expanded'][tn_ved][gtdId] = row
-                    by_tnved['total'][tn_ved][2] += weight
-                    by_tnved['total'][tn_ved][3] += row[3]
-                else:
-                    by_tnved['expanded'][tn_ved] = {}
+                        by_tnved['total'][tn_ved] = row
 
-                    by_tnved['expanded'][tn_ved][gtdId] = row
-                    by_tnved['total'][tn_ved] = row
+                filename = f"eco {request.user.pk} {start.strftime('%d-%m-%Y')}-{end.strftime('%d-%m-%Y')}.xlsx"
+                path = os.path.join(MEDIA_ROOT, 'reports/eco', filename)
+                workbook = xlsxwriter.Workbook(path)
+                worksheet = workbook.add_worksheet()
+                i = 1
+                worksheet.write(0, 0, 'ТН ВЭД')
+                worksheet.write(0, 1, 'Ставка за тонну')
+                worksheet.write(0, 2, 'Норматив утилизации')
+                worksheet.write(0, 3, 'Масса нетто')
+                worksheet.write(0, 4, 'Сумма')
+                t = by_tnved['total']
+                for k in t:
+                    worksheet.write(i, 0, k)
+                    worksheet.write(i, 1, t[k][0])
+                    worksheet.write(i, 2, t[k][1])
+                    worksheet.write(i, 3, t[k][2])
+                    worksheet.write(i, 4, t[k][3])
+                    i += 1
 
-            filename = f"eco {request.user.pk} {start.strftime('%d-%m-%Y')}-{end.strftime('%d-%m-%Y')}.xlsx"
-            path = os.path.join(MEDIA_ROOT, 'reports/eco', filename)
-            workbook = xlsxwriter.Workbook(path)
-            worksheet = workbook.add_worksheet()
-            i = 1
-            worksheet.write(0, 0, 'ТН ВЭД')
-            worksheet.write(0, 1, 'Ставка за тонну')
-            worksheet.write(0, 2, 'Норматив утилизации')
-            worksheet.write(0, 3, 'Масса нетто')
-            worksheet.write(0, 4, 'Сумма')
-            t = by_tnved['total']
-            for k in t:
-                worksheet.write(i, 0, k)
-                worksheet.write(i, 1, t[k][0])
-                worksheet.write(i, 2, t[k][1])
-                worksheet.write(i, 3, t[k][2])
-                worksheet.write(i, 4, t[k][3])
-                i += 1
+                workbook.close()
+                newform = CalendarDate({'start_date': start, 'end_date': end})
+                context = {
+                    'form': newform, # CalendarDate(data=request.POST), #initial=request.POST), #CalendarDate( )# initial={'start_date': start, 'end_date': end}),
+                    'show': True,
+                    'start': start,
+                    'end': end,
+                    'filename': filename,
+                    'total': by_tnved['total'],
+                    'expanded': by_tnved['expanded'],
+                }
 
-            workbook.close()
-            context = {
-                'form': form, #CalendarDate( )# initial={'start_date': start, 'end_date': end}),
-                'show': True,
-                'start': start,
-                'end': end,
-                'filename': filename,
-                'total': by_tnved['total'],
-                'expanded': by_tnved['expanded'],
-            }
-            # return render(request, 'main/ecological_fee.html', context)
-        else:
-            form = CalendarDate()
-            context = {
-                'form': form,
-                'message': 'Некорректный диапазон. Попробуйте ещё раз.',
-            }
+                return render(request, 'main/ecological_fee.html', context)
+
+        form = CalendarDate()
+        context = {
+            'form': form,
+            'message': 'Некорректный диапазон. Попробуйте ещё раз.',
+        }
         return render(request, 'main/ecological_fee.html', context)
 
 
 # Вывод xml-файла выбранной ГТД
+@login_required
 def show_gtd_file(request, filename):
     get_path = os.path.join(MEDIA_ROOT, str(filename))
     return HttpResponse(open(get_path, 'r', encoding='utf-8'), content_type='application/xml')
@@ -553,10 +505,12 @@ class SuccessfulOutcome(TemplateView):
         return context_data
 
 
+# Меню отчетов
 class StatisticsMenu(TemplateView):
     template_name = 'main/statistic_reports_menu.html'
 
 
+# Отчет - ГТД по поставщикам
 @groups_required('Аналитик')
 def statistics_report_gtd_per_exporter(request):
     if request.method == 'POST':
@@ -671,6 +625,7 @@ def statistics_report_goods_imported(request):
         return render(request, 'main/statistics_report_goods_imported.html', context)
 
 
+# Файл xlsx отчета
 @groups_required('Аналитик')
 def report_xlsx(request, folder, filename):
     filepath = os.path.join(MEDIA_ROOT, 'reports/', folder, filename)
@@ -681,39 +636,128 @@ def report_xlsx(request, folder, filename):
     return response
 
 
-@login_required
-def profile(request):
-    context = {'user': request.user, 'groups': request.user.groups}
-    return render(request, 'main/profile.html', context)
+# Представление обработки справочников
+def handbook(request):
+    choice = request.GET.get('choice', 'default')
 
+    # Словарь со всеми справочниками системы
+    # Ключ - параметр url, Значение - (<Модель этого справочника>, <Название справочника для пользователей>)
+    avaliable_handbooks = {
+        'customs_houses': (CustomsHouse, 'Отделы таможни'),
+        'exporters': (Exporter, 'Экспортеры'),  # Содержит обращение к другим моделям
+        'importers': (Importer, 'Импортеры'),  # Содержит обращение к другим моделям
+        'countries': (Country, 'Государства'),
+        'currencies': (Currency, 'Валюты'),
+        'deal_types': (DealType, 'Классификатор характера сделки'),
+        'tn_ved': (TnVed, 'Классификатор ТН ВЭД'),
+        'procedures': (Procedure, 'Таможенные процедуры'),
+        'goods': (Good, 'Товары'),
+        'trade_marks': (TradeMark, 'Товарные знаки'),  # Содержит обращение к другим моделям
+        'goods_marks': (GoodsMark, 'Торговые марки'),  # Содержит обращение к другим моделям
+        'manufacturers': (Manufacturer, 'Производители (заводы)'),
+        'qualifiers': (MeasureQualifier, 'Единицы измерения'),
+        'doc_types': (DocumentType, 'Классификатор типов документов'),
+    }
 
-# Авторизация
-class CDDLogin(LoginView):
-    template_name = 'main/login.html'
+    # Некоторые справочники содержат FK, которые для фронта надо подменять
+    # Словарь с зависимыми моделями
+    # Ключи - поля FK, которые встречаются в моделях из avaliable_handbooks
+    # Значения - (<Модель, с которой через FK отношение m2o>,
+    #             <Поле из этой модели, чье значение требуется>,
+    #             <Порядковый номер поля в списке полей этой модели>)
+    dependent_models = {
+        'country_id': (Country, 'russian_name', 2),
+        'goodsmark_id': (GoodsMark, 'goodsmark', 1),
+        'trademark_id': (TradeMark, 'trademark', 1),
+      #  'doc_type_id': (DocumentType, 'code', 1),
+    }
+    # По умолчанию на странице справочников будет открыт справочник товаров
+    if choice == 'default':
+        choice = 'goods'
+    # По параметру ссылки получаем название и модель справочника
+    get_handbook = avaliable_handbooks[choice]
+    handbook_name = get_handbook[1]
+    handbook_class = get_handbook[0]
 
+    handbook_objects = handbook_class.objects.all()
 
-# Выход из аккаунта
-class CDDLogout(LogoutView, LoginRequiredMixin):
-    template_name = 'main/logout.html'
+    # Доступ к полям модели справочника
+    meta = handbook_class._meta
+    get_fields = meta.get_fields()
 
+    # Массив для хранения служебной инфы для махинаций с атрибутами
+    fields_system_data = []
+    # Массив для имен колонок таблицы - как они будут отображаться на фронте
+    fields_verbose_names = []
 
-# class RegisterUserView(CreateView):
-#     model = RegUser
-#     template_name = 'main/register_user.html'
-#     form_class = RegisterUserForm
-#     success_url = reverse_lazy('main:register_done')
+    for field in get_fields:
+        methods = dir(field)
+        # Служебное поле PK не включаем
+        if '_check_primary_key' not in methods:
+            # Обработаем FK - Выведем данные непосредственно из связанной таблицы
+            if '_related_query_name' in methods:
+                # Достаем данные связанной модели
+                dependent_tuple = dependent_models[field.attname]
 
+                dependent_model = dependent_tuple[0]
+                dependent_objects = dependent_model.objects
 
-# class RegisterDoneView(TemplateView):
-#     template_name = 'main/'
+                # Для имени колонки возьмем один объект из связанной модели
+                dependent_object = dependent_models[field.attname][0].objects.last()
+                needed_field = dependent_tuple[1]
+
+                # Объекты массива служебной инфы
+                # (<Bool: поле внешнего ключа?>, <Имя поля>,
+                # <Объекты связанной модели>, <Нужное поле из связанной модели>)
+                sys_attrs = (True, field.attname, dependent_objects, needed_field)
+
+                # Имя поля для пользователя в связанной модели
+                verbose_name = dependent_object._meta.get_fields()[dependent_tuple[2]].verbose_name
+
+            else:
+                # (<Bool: поле внешнего ключа?>, <имя поля для фронта>)
+                sys_attrs = (False, field.attname)
+
+                verbose_name = field.verbose_name
+
+            fields_system_data.append(sys_attrs)
+            fields_verbose_names.append(verbose_name)
+
+    # Собираем непосредственно данные справочника
+    handbook_data = []
+    for obj in handbook_objects:
+        attrs = []
+        # Для каждого атрибута пройдемся по его полям
+        for field in fields_system_data:
+            if field[0]:
+                needed_pk = getattr(obj, field[1])
+                needed_raw_obj = field[2].filter(pk=needed_pk)
+                if needed_raw_obj.exists():
+                    needed_data = getattr(needed_raw_obj[0], field[3])
+                else:
+                    needed_data = ''
+                # Если поле внешнего ключа, обращаемся к связанной модели и получаем данные оттуда
+                # Временная заглушка
+                #  needed_data = getattr(field[2].filter(pk=getattr(obj, field[1]))[0], field[3])
+            else:
+                # В противном случае просто обращаемся к значению нужного поля
+                needed_data = getattr(obj, field[1])
+                if not needed_data:
+                    needed_data = ''
+            attrs.append(needed_data)
+        handbook_data.append(attrs)
+
+    context = {
+        'choice': choice,
+        'handbook_name': handbook_name,
+        'verbose_names': fields_verbose_names,
+        'values': handbook_data,
+        'avaliable_handbooks': list(avaliable_handbooks.items()),
+        }
+    return render(request, 'main/handbook.html', context)
 
 
 # Загрузка файлов ГТД в формате .xml
-
-
-# @login_required(login_url='/accounts/login/')
-# @user_passes_test(is_accountant)
-
 @groups_required('Сотрудник таможенного отдела')
 def upload_gtd(request):
     if request.method == 'POST':
