@@ -5,7 +5,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.core.signing import BadSignature
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic.list import ListView, BaseListView
 from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.base import TemplateView
@@ -237,6 +237,23 @@ class GtdDeleteView(DeleteView):
     success_url = reverse_lazy('main:show_gtd')
     context_object_name = 'gtd'
 
+
+# Страница удаления группы товаров
+class GtdGroupDeleteView(DeleteView):
+    model = GtdGroup
+    template_name = 'main/delete_gtdgroup.html'
+    # success_url = reverse_lazy('main:per_gtd')
+    context_object_name = 'group'
+
+    def get_object(self, queryset=None):
+        obj = super(GtdGroupDeleteView, self).get_object(queryset)
+        gtd = obj.gtd
+        self.success_url = reverse('main:per_gtd', kwargs={'pk': gtd.pk})  # reverse_lazy('main:per_gtd', pk=gtd.pk)
+        # Пересчитываем суммы в родительской гтд
+        gtd.recount_deleted(obj.pk)
+        return obj
+
+# Страница удаления товара
 
 # Экологический сбор: выбор периода, сбор данных о ГТД из этого периода, содержащих ТН ВЭД, подлежащие эко сбору
 @groups_required('Бухгалтер')
@@ -526,7 +543,7 @@ def handbook_xlsx(request, filename):
 
 
 # Представление обработки справочников
-def handbook(request, choice):
+def handbook(request, choice):  # TODO: edit, delete
     # choice = request.GET.get('choice', 'default')
 
     # Словарь со всеми справочниками системы
