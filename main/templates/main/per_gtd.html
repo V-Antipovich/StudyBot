@@ -18,10 +18,7 @@
 {% block content %}
 
 <div class="container mt-2">
-        <h3 class="mb-3">ГТД {{ gtd.gtdId }}</h3>
-{#        <h4>#}
-{#            <a href="{% url 'main:show_gtd' %}">Список ГТД</a> -> {{ gtd.gtdId }}#}
-{#        </h4>#}
+        <h3 class="mb-3"> <a href="{% url 'main:show_gtd' %}">К списку ГТД</a> -> ГТД {{ gtd.gtdId }}</h3>
         <ul class="nav nav-tabs">
             <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="tab" id="gtdmain-tab" href="#gtdmain">Главная</a>
@@ -98,14 +95,44 @@
 
                             </div>
                             <div class="mt-lg-1">
-                                {% if gtd.exported_to_erp %}
-                                    Экспортирован в ERP
-                                {% else %}
-                                    Экспорт в ERP не был выполнен
-                                {% endif %}
                                 {% if user.first_name and user.last_name and user.patronymic %}
-                                <a class="btn btn-outline-info" href="{% url 'main:to_erp' pk=gtd.pk %}">Экспорт в ERP</a>
+                                    {% if gtd.exported_to_erp %}
+                                        Экспортирован в ERP
+                                        <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#wmsModal">
+                                            Экспорт в ERP
+                                        </button>
+                                        <div class="modal fade" id="wmsModal" tabindex="-1" role="dialog" aria-labelledby="wmsModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="wmsModalLabel">Эта ГТД уже была экспортирована</h5>
+                                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Нажмите ОК, если вы всё равно хотите сгенерировать xml по этой ГТД для ERP
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Назад</button>
+                                                        <a href="{% url 'main:to_erp' pk=gtd.pk %}"><button type="button" class="btn btn-primary">OK</button></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        Экспорт в ERP не был выполнен
+{#                                        <button type="button" class="btn btn-outline-info">#}
+                                            <a class="btn btn-outline-info" href="{% url 'main:to_erp' pk=gtd.pk %}">Экспорт в ERP</a>
+{#                                        </button>#}
+                                    {% endif %}
                                 {% else %}
+                                    {% if gtd.exported_to_erp %}
+                                        Экспортирован в ERP
+                                    {% else %}
+                                        Экспорт в ERP не был выполнен
+                                    {% endif %}
+
                                     <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#erpModal">Экспорт в ERP</button>
                                     <div class="modal fade" id="erpModal" tabindex="-1" role="dialog" aria-labelledby="wmsModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
@@ -121,7 +148,7 @@
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Назад</button>
-                                                            <a href="{% url 'main:to_wms' pk=gtd.pk %}"><button type="button" class="btn btn-primary">OK</button></a>
+{#                                                            <a href="{% url 'main:to_wms' pk=gtd.pk %}"><button type="button" class="btn btn-primary">OK</button></a>#}
                                                         </div>
                                                     </div>
                                                 </div>

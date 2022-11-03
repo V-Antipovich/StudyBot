@@ -1,15 +1,23 @@
+import os
+from datetime import timedelta
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.template.defaultfilters import slugify
 
+import xml.etree.ElementTree as ET
 
 # Create your models here.
 
 # Роли реализованы в виде групп (уже существующей структуры)
 # Пользователи базы
 
+
 # SET FOREIGN_KEY_CHECKS = 0; SET FOREIGN_KEY_CHECKS = 1;
 # Или проблема не в модели?
+from customs_declarations_database.settings import USER_DIR
+
+
 class RegUser(AbstractUser):
     is_activated = models.BooleanField(verbose_name='Завершил регистрацию?', default=False)
     email = models.EmailField(verbose_name='Электронная почта', unique=True)
@@ -70,6 +78,139 @@ class GtdMain(models.Model):
         verbose_name_plural = 'Грузовые таможенные декларации'
         ordering = ['-date']
         unique_together = ('gtdId', 'customs_house', 'date', 'order_num')
+
+    def export_to_erp(self, comment, user):
+        goods = GtdGood.objects.filter(gtd_id=self.pk)
+        gtd_id = self.gtdId
+        struct = ET.Element('Structure')
+        struct.set('xmlns', 'http://v8.1c.ru/8.1/data/core')
+        struct.set('xmlns:xs', 'http://www.w3.org/2001/XMLSchema')
+        struct.set('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
+
+        prop_guid = ET.SubElement(struct, 'Property')
+        prop_guid.set('name', 'prop_guid')
+
+        value_guid = ET.SubElement(prop_guid, 'Value')
+        value_guid.set('xsi:type', 'xs:string')
+        value_guid.text = '937d9e95-5519-11ed-8070-00155db05a26'
+
+        prop_ptiu = ET.SubElement(struct, 'Property')
+        prop_ptiu.set('name', 'НомерПТиУ')
+        value_ptiu = ET.SubElement(prop_ptiu, 'Value')
+        value_ptiu.set('xsi:type', 'xs:string')
+        value_ptiu.text = 'ER-00061362'
+
+        prop_date = ET.SubElement(struct, 'Property')
+        prop_date.set('name', 'Дата')
+        value_date = ET.SubElement(prop_date, 'Value')
+        value_date.set('xsi:type', 'xs:string')
+        value_date.text = self.date.strftime("%d-%m-%Y %H-%M-%S")  # gtd.date.strftime("%d-%m-%Y %H-%M-%S")
+
+        prop_warehouse = ET.SubElement(struct, 'Property')
+        prop_warehouse.set('name', 'Склад')
+        value_warehouse = ET.SubElement(prop_warehouse, 'Value')
+        value_warehouse.set('xsi:type', 'xs:string')
+        value_warehouse.text = 'Склад Хлебниково'
+
+        prop_name = ET.SubElement(struct, 'Property')
+        prop_name.set('name', 'Ответственный')
+        value_name = ET.SubElement(prop_name, 'Ответственный')
+        value_name.set('xsi:type', 'xs:string')
+        value_name.text = f'{user.last_name} {user.first_name} {user.patronymic}'
+
+        prop_comment = ET.SubElement(struct, 'Property')
+        prop_comment.set('name', 'Комментарий')
+        value_comment = ET.SubElement(prop_comment, 'Value')
+        value_comment.set('xsi:type', 'xs:string')
+        value_comment.text = comment
+
+        prop_status = ET.SubElement(struct, 'Property')
+        prop_status.set('name', 'Статус')
+        value_status = ET.SubElement(prop_status, 'Value')
+        value_status.set('xsi:type', 'xs:string')
+        value_status.text = 'К поступлению'
+
+        prop_goods = ET.SubElement(struct, 'Property')
+        prop_goods.set('name', 'Товары')
+        value_goods = ET.SubElement(prop_goods, 'Value')
+        value_goods.set('xsi:type', 'Array')
+
+        for good in goods:
+            value_structure = ET.SubElement(value_goods, 'Value')
+            value_structure.set('xsi:type', 'Structure')
+
+            property_marking = ET.SubElement(value_structure, 'Property')
+            property_marking.set('name', 'Номенклатура')
+            value_marking = ET.SubElement(property_marking, 'Value')
+            value_marking.set('xsi:type', 'xs:string')
+            value_marking.text = good.good.marking
+
+            property_count = ET.SubElement(value_structure, 'Property')
+            property_count.set('name', 'Количество')
+            value_count = ET.SubElement(property_count, 'Value')
+            value_count.set('xsi:type', 'xs:decimal')
+            value_count.text = str(good.quantity)
+
+            property_gtd = ET.SubElement(value_structure, 'Property')
+            property_gtd.set('name', 'ГТД')
+            value_gtd = ET.SubElement(property_gtd, 'Value')
+            value_gtd.set('xsi:type', 'xs:string')
+            value_gtd.text = f"{self.gtdId}/{good.group.number}"
+
+        erp_data = ET.tostring(struct, encoding='utf-8', method='xml')
+        filename = f'erp {user.pk} { gtd_id.replace("/", "_")}.xml'
+        filepath = os.path.join(USER_DIR, 'erp/', filename)
+
+        with open(filepath, 'wb') as erp_file:
+            erp_file.write(erp_data)
+        # gtd.exported_to_erp = True
+        # gtd.save()
+        self.exported_to_erp = True
+        self.save()
+
+    def export_to_wms(self, comment, user):
+        gtd_id = self.gtdId.replace('/', '_')
+
+        gtd_date = self.date
+        goods = GtdGood.objects.filter(gtd_id=self.pk)
+
+        unique_goods = {}
+        for good in goods:
+            marking = good.good.marking
+            quantity = good.quantity
+            qualifier = good.qualifier
+            if marking in unique_goods:
+                unique_goods[marking][0] += quantity
+            else:
+                unique_goods[marking] = [quantity, qualifier.russian_symbol]
+
+        doc = ET.Element('DOC')
+        doc_in = ET.SubElement(doc, 'DOC_IN')
+        number = ET.SubElement(doc_in, 'NUMBER')
+        number.text = gtd_id
+        date = ET.SubElement(doc_in, 'DATE')
+        date.text = gtd_date.strftime("%d-%m-%Y")
+        in_date = ET.SubElement(doc_in, 'IN_DATE')
+        in_date.text = (gtd_date + timedelta(days=5)).strftime("%d-%m-%Y T%H-%M-%S")
+        description = ET.SubElement(doc_in, 'DSC')
+        description.text = comment
+        for good, good_attrs in unique_goods.items():
+            content = ET.SubElement(doc_in, 'CONTENT')
+            code = ET.SubElement(content, 'CODE')
+            code.set('CODE_ID', good)
+            count = ET.SubElement(code, 'CNT')
+            count.text = str(good_attrs[0])
+            unit_name = ET.SubElement(code, 'UNIT_NAME')
+            unit_name.text = good_attrs[1]
+
+        wms_data = ET.tostring(doc, encoding='utf-8', method='xml')
+        filename = f'wms {user.pk} {gtd_id}.xml'
+        filepath = os.path.join(USER_DIR, 'wms/', filename)
+        with open(filepath, 'wb') as wms_file:
+            wms_file.write(wms_data)
+
+        self.exported_to_wms = True
+        self.save()
 
 
 # Отделы таможни - Справочник
