@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="added gtdgroup detete with recounting the total summ feature">
-      <change afterPath="$PROJECT_DIR$/main/templates/main/delete_gtd_good.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/templates/main/delete_gtd_group.html" afterDir="false" />
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="added gtd good delete view">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/templates/main/per_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/per_gtd.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/update_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/update_gtd.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/update_gtd_good.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/update_gtd_good.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/templates/main/update_gtd_group.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/update_gtd_group.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
@@ -186,14 +186,7 @@
       <workItem from="1666533425559" duration="40294000" />
       <workItem from="1666694716260" duration="15612000" />
       <workItem from="1667033669936" duration="16384000" />
-      <workItem from="1667075860388" duration="153918000" />
-    </task>
-    <task id="LOCAL-00011" summary="Login and logout views">
-      <created>1661283607300</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1661283607300</updated>
+      <workItem from="1667075860388" duration="161401000" />
     </task>
     <task id="LOCAL-00012" summary="raw dynamic handbooks with raw foreign key fields and no sorting.">
       <created>1661426981829</created>
@@ -531,7 +524,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667486470498</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <task id="LOCAL-00060" summary="added gtd good delete view">
+      <created>1667498667531</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1667498667532</updated>
+    </task>
+    <option name="localTasksCounter" value="61" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -572,7 +572,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="preparations for first code show" />
     <MESSAGE value="preparations for expanded view of eco table" />
     <MESSAGE value="expanded eco table (with no xlsx file)" />
     <MESSAGE value="added xlsx files download for eco fee" />
@@ -597,7 +596,8 @@
     <MESSAGE value="edited erp &amp; wms: moved funtions to GtdMain model class" />
     <MESSAGE value="modified handbooks: filtering, sorting, downloading, edited urls; new model for handbooks" />
     <MESSAGE value="added gtdgroup detete with recounting the total summ feature" />
-    <option name="LAST_COMMIT_MESSAGE" value="added gtdgroup detete with recounting the total summ feature" />
+    <MESSAGE value="added gtd good delete view" />
+    <option name="LAST_COMMIT_MESSAGE" value="added gtd good delete view" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />

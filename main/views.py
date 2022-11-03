@@ -177,9 +177,17 @@ class GtdDetailView(DetailView):
 
 
 # Класс создания новой группы в ГТД
-class CreateGtdGroup(CreateView): # TODO: дописать
-    model = GtdGroup
-    template_name = 'main/create_gtd_group.html'
+# class CreateGtdGroup(CreateView):
+#     model = GtdGroup
+#     template_name = 'main/create_gtd_group.html'
+#     context_object_name = 'group'
+    # fields = ('')
+    # def get_object(self, queryset=None):
+    #     obj = super(CreateGtdGroup, self).get_object(queryset)
+    #     self.success_url = reverse('main:per_gtd', kwargs={'pk': obj.gtd.pk})
+    # def get_context_data(self, **kwargs):
+    #     context = super(CreateGtdGroup, self).get_context_data(**kwargs)
+    #     context[]
 
 
 # Представление редактирования шапки ГТД
@@ -191,13 +199,13 @@ def update_gtd(request, pk):
         if form.is_valid():
             form.save()
             return redirect('main:per_gtd', pk=pk)
-    else:
-        form = GtdUpdateForm(instance=obj)
-        context = {
-            'form': form,
-            'gtd': obj,
-        }
-        return render(request, 'main/update_gtd.html', context)
+
+    form = GtdUpdateForm(instance=obj)
+    context = {
+        'form': form,
+        'gtd': obj,
+    }
+    return render(request, 'main/update_gtd.html', context)
 
 
 # Функция для редактирования группы товаров
@@ -209,13 +217,18 @@ def update_gtd_group(request, pk):  # TODO: ко всем хлебным кро�
         if form.is_valid():
             form.save()
             return redirect('main:per_gtd', pk=obj.gtd.pk)
+        else:
+            message = 'Проверьте корректность формы. Возможно, вы указали номер группы, ' \
+                      'который уже существует в этой ГТД.'
     else:
-        form = GtdGroupUpdateForm(instance=obj)
-        context = {
-            'form': form,
-            'group': obj,
-        }
-        return render(request, 'main/update_gtd_group.html', context)
+        message = ''
+    form = GtdGroupUpdateForm(instance=obj)
+    context = {
+        'form': form,
+        'group': obj,
+        'message': message,
+    }
+    return render(request, 'main/update_gtd_group.html', context)
 
 
 # Редактировать товар из группы ГТД

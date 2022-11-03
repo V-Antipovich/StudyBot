@@ -5,10 +5,14 @@
 {% block title %}Редактировать группу{% endblock %}
 {% block content %}
 
-    <h2>Редактировать группу{{ group.gtd.gtdId }}/{{ group.number }}</h2>
+    <h3 class="mb-3"> <a href="{% url 'main:show_gtd' %}">К списку ГТД</a> ->
+        ГТД <a href="{% url 'main:per_gtd' pk=group.gtd.pk %}">{{ group.gtd.gtdId }}</a> ->
+        Редактировать группу {{ group.number }}</h3>
+        {% if message %}<h5>{{ message }}</h5> {% endif %}
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Сохранить">
+{#        {{ form.as_p }}#}
+        {% bootstrap_form form layout='horizontal' %}
+        {% buttons submit='Ок' %}{% endbuttons %}
     </form>
 {% endblock %}

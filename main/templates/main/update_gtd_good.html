@@ -4,7 +4,7 @@
 
 {% block title %}Редактировать товар{% endblock %}
 {% block content %}
-    <h3>Редактировать товар {{ good.good_num }} группы {{ good.gtd.gtdId }}/{{ good.group.number }}</h3>
+    <h3 class="mb-3"> <a href="{% url 'main:show_gtd' %}">К списку ГТД</a> -> ГТД <a href="{% url 'main:per_gtd' pk=good.gtd.pk %}">{{ good.gtd.gtdId }}</a> -> Редактировать товар {{ good.good.marking }}</h3>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}

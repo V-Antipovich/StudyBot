@@ -6,9 +6,12 @@
 {% block title %}Изменить ГТД {{ gtd.gtdId }}{% endblock %}
 
 {% block content %}
+
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Сохранить">
+{#        {{ form.as_p }}#}
+        {% bootstrap_form form layout='horizontal' %}
+{#        <input type="submit" value="Сохранить">#}
+    {% buttons submit='Ок' %}{% endbuttons %}
     </form>
 {% endblock %}

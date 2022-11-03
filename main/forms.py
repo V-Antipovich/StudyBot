@@ -78,7 +78,7 @@ class GtdUpdateForm(forms.ModelForm):
 
     class Meta:
         model = GtdMain
-        fields = ('gtdId', 'customs_house', 'total_goods_number', 'exporter',
+        fields = ('customs_house', 'total_goods_number', 'exporter',
                   'importer', 'trading_country', 'currency', 'total_invoice_amount', 'currency_rate',
                   'deal_type',)
         labels = {
@@ -92,11 +92,30 @@ class GtdUpdateForm(forms.ModelForm):
 
 
 # Форма редактирования групп ГТД
-class GtdGroupUpdateForm(forms.ModelForm):
+class GtdGroupUpdateForm(forms.ModelForm):  # TODO: labels
+    # gtd = forms.ModelChoiceField(GtdMain.objects.all(), required=True,
+    #                              widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
     class Meta:
         model = GtdGroup
-        exclude = ('gtd', 'last_edited_user',)
+        exclude = ('last_edited_user',)
+        widgets = {
+            'gtd': forms.HiddenInput()
+        }
+
+    # def is_valid(self):
+    #     valid = super(GtdGroupUpdateForm, self).is_valid()
+    #     # if valid:
+    #     cd = self.cleaned_data
+    #     gtd, number = cd['gtd'], cd['number']
+    #     print(gtd, number)
+    #     return valid
+    # def clean(self):
+    #     cleaned_data = super(GtdGroupUpdateForm, self).clean()
+    #     gtd = cleaned_data['gtd']
+    #     number = cleaned_data['number']
+    #     if GtdGroup.objects.filter(gtd_id=gtd.pk, number=number).exists():
+    #         raise ValidationError('В этой ГТД группа с таким номером уже существует')
 
 
 # Форма редактирования товаров ГТД
