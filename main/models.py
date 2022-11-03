@@ -42,7 +42,7 @@ class RegUser(AbstractUser):
 
 
 # Главная инфа гтд (1 на весь документ)
-class GtdMain(models.Model):
+class GtdMain(models.Model):  # TODO: при любом изменении поменять wms и erp на false?
     gtdId = models.CharField(max_length=23, verbose_name='Номер гтд', unique=True)
     customs_house = models.ForeignKey('CustomsHouse', on_delete=models.SET_NULL,
                                       verbose_name='id таможенного отделения', related_name="+", null=True, blank=True)
@@ -528,3 +528,8 @@ class WmsExport(models.Model):
     comment = models.TextField(verbose_name='Комментарий', null=True, blank=True)
     filename = models.CharField(verbose_name='Имя файла', max_length=255)
     date = models.DateTimeField(auto_now_add=True)
+
+
+class Handbook(models.Model):
+    name = models.CharField(verbose_name='Название', max_length=255)
+    is_actual_table = models.BooleanField(verbose_name='Актуальная таблица', default=False)

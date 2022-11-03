@@ -16,7 +16,7 @@ from .forms import UploadGtdfilesForm, GtdUpdateForm, GtdGoodUpdateForm, GtdGrou
     CalendarDate, ExportComment, ChangeUserInfoForm, RegisterUserForm, PaginateForm
 from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType,\
     Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType,\
-    UploadGtdFile
+    UploadGtdFile, Handbook
 import os
 from .utilities import parse_gtd, get_tnved_name, signer
 from .models import RegUser
@@ -152,7 +152,7 @@ def show_gtd_list(request):
     context = {
         'gtds': gtds,
         'paginate_by': paginate_by,
-        'form': PaginateForm({paginate_by})
+        # 'form': PaginateForm({paginate_by})
     }
     return render(request, 'main/show_gtd.html', context)
 
@@ -335,18 +335,14 @@ def show_gtd_file(request, filename):
 
 
 # Представление для генерации xml-файла
-# @login_required
 @groups_required('Сотрудник таможенного отдела')
 def to_wms(request, pk):
     gtd = GtdMain.objects.filter(pk=pk)[0]
     if request.method == 'POST':
         form = ExportComment(request.POST)
         if form.is_valid():
-
             comment = form.cleaned_data.get('comment', '')
             gtd.export_to_wms(comment, request.user)
-
-
             return redirect('main:success', pk=pk)
 
     else:
@@ -519,9 +515,19 @@ def report_xlsx(request, folder, filename):
     return response
 
 
+@groups_required('Сотрудник таможенного отдела')
+def handbook_xlsx(request, filename):
+    filepath = os.path.join(MEDIA_ROOT, 'handbooks/', filename)
+    path = open(filepath, 'rb')
+    mime_type, _ = mimetypes.guess_type(filepath)
+    response = HttpResponse(path, content_type=mime_type)
+    response['Content-Disposition'] = f"attachment; filename={filename}"
+    return response
+
+
 # Представление обработки справочников
-def handbook(request):
-    choice = request.GET.get('choice', 'default')
+def handbook(request, choice):
+    # choice = request.GET.get('choice', 'default')
 
     # Словарь со всеми справочниками системы
     # Ключ - параметр url, Значение - (<Модель этого справочника>, <Название справочника для пользователей>)
@@ -629,13 +635,51 @@ def handbook(request):
                     needed_data = ''
             attrs.append(needed_data)
         handbook_data.append(attrs)
+    # print(handbook_name)
+
+    # TODO: + фильтры, сортировка и пагинация в шаблоне
+    # Если среди файлов справочников нет нужного нам, то мы должны его сейчас создать
+    filename = f"{handbook_name}.xlsx"
+    filepath = os.path.join(MEDIA_ROOT, 'handbooks/', filename)
+    # if not os.path.exists(filepath):
+    handbook_model_obj = Handbook.objects.get(name=handbook_name)
+    if not os.path.exists(filepath) and not handbook_model_obj.is_actual_table:
+        workbook = xlsxwriter.Workbook(filepath)
+        worksheet = workbook.add_worksheet()
+        i, j = 1, 0
+        # j = 0
+        for name in fields_verbose_names:
+            worksheet.write(0, j, name)
+            j += 1
+
+        for value_row in handbook_data:
+            j = 0
+            for value in value_row:
+                worksheet.write(i, j, value)
+                j += 1
+            i += 1
+        workbook.close()
+        handbook_model_obj.is_actual_table = True
+        handbook_model_obj.save()
+
+    paginate_by = request.GET.get('paginate_by', 100)
+    page = request.GET.get('page', 1)
+    paginator = Paginator(handbook_data, paginate_by)
+    try:
+        values = paginator.page(page)
+    except PageNotAnInteger:
+        values = paginator.page(1)
+    except EmptyPage:
+        values = paginator.page(paginator.num_pages)
 
     context = {
         'choice': choice,
         'handbook_name': handbook_name,
         'verbose_names': fields_verbose_names,
-        'values': handbook_data,
+        'values': values,
         'avaliable_handbooks': list(avaliable_handbooks.items()),
+        'filename': filename,
+        'paginate_by': paginate_by
         }
     return render(request, 'main/handbook.html', context)
 

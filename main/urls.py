@@ -3,12 +3,13 @@ from .views import index, upload_gtd, show_gtd_file, CDDLogin, CDDLogout, handbo
     GtdDetailView, update_gtd, GtdDeleteView, Profile, update_gtd_good, update_gtd_group,\
     eco_fee, to_wms, AccessDeniedView, to_erp, SuccessfulOutcome, StatisticsMenu,\
     statistics_report_gtd_per_exporter, statistics_report_goods_imported, report_xlsx, ChangeUserInfoView,\
-    RegUserPasswordChangeView, RegisterUserView, RegisterDoneView, user_activate, show_gtd_list  #, ShowGtdView
+    RegUserPasswordChangeView, RegisterUserView, RegisterDoneView, user_activate, show_gtd_list, handbook_xlsx
 
 
 app_name = 'main'
 urlpatterns = [
-    path('handbook', handbook, name='handbook'),
+    path('handbook_xlsx/<path:filename>', handbook_xlsx, name='handbook_xlsx'),
+    path('handbook/<str:choice>', handbook, name='handbook'),
     # path('activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/', activate, name='activate'),
     # path('accounts/register', register, name='register'),
     path('accounts/register/activate/<str:sign>/', user_activate, name='register_activate'),

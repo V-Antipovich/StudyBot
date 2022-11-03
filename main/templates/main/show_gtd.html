@@ -14,17 +14,12 @@
     <h5>Щелкните по цифре в колонке "Число групп товаров", чтобы перейти к группам ГТД</h5>
     <p>Выводится по {{ paginate_by }} записей на странице. Изменить: </p>
     <form method="get">
-{#        {% csrf_token %}#}
-{#        {{ form }}#}
-{#        <input type="number" value="">#}
         <select id="input-limit" name="paginate_by" class="form-control">
             <option value="10">10</option>
             <option value="25">25</option>
             <option value="50">50</option>
             <option value="100">100</option>
         </select>
-{#        {% csrf_token %}#}
-{#        {{ form }}#}
         <input type="submit"> </input>
     </form>
 
