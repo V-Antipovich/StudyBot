@@ -84,6 +84,7 @@ class GtdMain(models.Model):  # TODO: при любом изменении по�
         groups = GtdGroup.objects.filter(gtd_id=self.pk)
         self.total_cost = sum(group.customs_cost for group in groups if group.pk != deleted_pk)
         self.total_invoice_amount = self.total_cost / self.currency_rate
+        self.total_goods_number -= 1
         self.save()
 
     def export_to_erp(self, comment, user):

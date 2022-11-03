@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import index, upload_gtd, show_gtd_file, CDDLogin, CDDLogout, handbook,\
+from .views import index, upload_gtd, show_gtd_file, CDDLogin, CDDLogout, handbook, GtdGoodDeleteView,\
     GtdDetailView, update_gtd, GtdDeleteView, Profile, update_gtd_good, update_gtd_group,\
     eco_fee, to_wms, AccessDeniedView, to_erp, SuccessfulOutcome, StatisticsMenu, GtdGroupDeleteView, \
     statistics_report_gtd_per_exporter, statistics_report_goods_imported, report_xlsx, ChangeUserInfoView,\
@@ -10,8 +10,6 @@ app_name = 'main'
 urlpatterns = [
     path('handbook_xlsx/<path:filename>', handbook_xlsx, name='handbook_xlsx'),
     path('handbook/<str:choice>', handbook, name='handbook'),
-    # path('activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/', activate, name='activate'),
-    # path('accounts/register', register, name='register'),
     path('accounts/register/activate/<str:sign>/', user_activate, name='register_activate'),
     path('accounts/register/done/', RegisterDoneView.as_view(), name='register_done'),
     path('accounts/register/', RegisterUserView.as_view(), name='register'),
@@ -25,7 +23,8 @@ urlpatterns = [
     path('statistics/menu', StatisticsMenu.as_view(), name='statistics_menu'),
     path('eco_fee', eco_fee, name='eco_fee'),
     path('report_xlsx/<path:folder>/<path:filename>', report_xlsx, name='report_xlsx'),
-    path('documents/delete_group/<int:pk>', GtdGroupDeleteView.as_view(), name='delete_gtd_group'),
+    path('documents/delete_gtd_good/<int:pk>', GtdGoodDeleteView.as_view(), name='delete_gtd_good'),
+    path('documents/delete_gtd_group/<int:pk>', GtdGroupDeleteView.as_view(), name='delete_gtd_group'),
     path('documents/update_gtd_group/<int:pk>', update_gtd_group, name='update_gtd_group'),
     path('documents/update_gtd_good/<int:pk>', update_gtd_good, name='update_gtd_good'),
     path('documents/update_gtd/<int:pk>', update_gtd, name='update_gtd'),

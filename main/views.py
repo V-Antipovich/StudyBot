@@ -176,6 +176,12 @@ class GtdDetailView(DetailView):
         return context
 
 
+# Класс создания новой группы в ГТД
+class CreateGtdGroup(CreateView): # TODO: дописать
+    model = GtdGroup
+    template_name = 'main/create_gtd_group.html'
+
+
 # Представление редактирования шапки ГТД
 def update_gtd(request, pk):
     obj = get_object_or_404(GtdMain, pk=pk)
@@ -195,7 +201,7 @@ def update_gtd(request, pk):
 
 
 # Функция для редактирования группы товаров
-def update_gtd_group(request, pk):
+def update_gtd_group(request, pk):  # TODO: ко всем хлебным крошкам модальное меню-предупреждение
     obj = get_object_or_404(GtdGroup, pk=pk)
     if request.method == 'POST':
         obj.last_edited_user = request.user
@@ -241,7 +247,7 @@ class GtdDeleteView(DeleteView):
 # Страница удаления группы товаров
 class GtdGroupDeleteView(DeleteView):
     model = GtdGroup
-    template_name = 'main/delete_gtdgroup.html'
+    template_name = 'main/delete_gtd_group.html'
     # success_url = reverse_lazy('main:per_gtd')
     context_object_name = 'group'
 
@@ -253,7 +259,18 @@ class GtdGroupDeleteView(DeleteView):
         gtd.recount_deleted(obj.pk)
         return obj
 
+
 # Страница удаления товара
+class GtdGoodDeleteView(DeleteView):
+    model = GtdGood
+    template_name = 'main/delete_gtd_good.html'
+    context_object_name = 'good'
+
+    def get_object(self, queryset=None):
+        obj = super(GtdGoodDeleteView, self).get_object(queryset)
+        self.success_url = reverse('main:per_gtd', kwargs={'pk': obj.gtd.pk})
+        return obj
+
 
 # Экологический сбор: выбор периода, сбор данных о ГТД из этого периода, содержащих ТН ВЭД, подлежащие эко сбору
 @groups_required('Бухгалтер')

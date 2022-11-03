@@ -4,6 +4,7 @@
 
 {% block title %}Редактировать группу{% endblock %}
 {% block content %}
+
     <h2>Редактировать группу{{ group.gtd.gtdId }}/{{ group.number }}</h2>
     <form method="post">
         {% csrf_token %}
