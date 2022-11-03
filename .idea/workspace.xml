@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="full user registration with email confirmation">
-      <change afterPath="$PROJECT_DIR$/main/migrations/0081_reguser_is_activated.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/static/main/css/gtd_tables.css" afterDir="false" />
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="main page: CBV-&gt;FBV; backend paginator">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/apps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/main/css/report_tables.css" beforeDir="false" afterPath="$PROJECT_DIR$/main/static/main/css/report_tables.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/show_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/show_gtd.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/utilities.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/layout/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/layout/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/per_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/per_gtd.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,10 +17,10 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JavaScript File" />
         <option value="Python Script" />
         <option value="HTML File" />
         <option value="CSS File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -188,14 +181,7 @@
       <workItem from="1666533425559" duration="40294000" />
       <workItem from="1666694716260" duration="15612000" />
       <workItem from="1667033669936" duration="16384000" />
-      <workItem from="1667075860388" duration="113480000" />
-    </task>
-    <task id="LOCAL-00006" summary="fixed parsing">
-      <created>1660822190411</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1660822190411</updated>
+      <workItem from="1667075860388" duration="131412000" />
     </task>
     <task id="LOCAL-00007" summary="fixed parsing, added online searching for Tn Ved">
       <created>1660824125869</created>
@@ -533,7 +519,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667379118023</updated>
     </task>
-    <option name="localTasksCounter" value="55" />
+    <task id="LOCAL-00055" summary="main page: CBV-&gt;FBV; backend paginator">
+      <created>1667404426000</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1667404426000</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -574,7 +567,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="made information in user-scripts and script-changes more up to date, according to the progress of the project" />
     <MESSAGE value="changed user_scripts and application;&#10;added columns to TnVed model as preparation for building statistics" />
     <MESSAGE value="corrected some info in changes.md" />
     <MESSAGE value="added columns for tn_ved, prepared for ecological fee reports" />
@@ -599,7 +591,8 @@
     <MESSAGE value="added flatpickr.js and fixed minor problems with it" />
     <MESSAGE value="registration with email on debugging server" />
     <MESSAGE value="full user registration with email confirmation" />
-    <option name="LAST_COMMIT_MESSAGE" value="full user registration with email confirmation" />
+    <MESSAGE value="main page: CBV-&gt;FBV; backend paginator" />
+    <option name="LAST_COMMIT_MESSAGE" value="main page: CBV-&gt;FBV; backend paginator" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
