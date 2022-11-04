@@ -1,11 +1,12 @@
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.signing import BadSignature
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
+from django.utils.decorators import method_decorator
 from django.views.generic.list import ListView, BaseListView
 from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.base import TemplateView
@@ -25,6 +26,7 @@ from customs_declarations_database.Constant import under
 import xlsxwriter
 import mimetypes
 from datetime import datetime, timedelta
+from braces.views import GroupRequiredMixin
 
 
 # TODO: all todo in extra staff
@@ -33,11 +35,62 @@ def superuser_check(user):
     return user.is_superuser
 
 
+def groups_required(allowed_roles=[]):
+    def decorator(view_func):
+        def wrap(request, *args, **kwargs):
+            if request.user.groups.filter(name__in=allowed_roles).exists():
+                return view_func(request, *args, **kwargs)
+            else:
+                return HttpResponseRedirect(reverse_lazy('main:access_denied'))
+        return wrap
+    return decorator
+
 # Декоратор, разрешающий доступ определенным группам
-def groups_required(*group_names):
-    def in_group(u):
-        return u.is_active and (u.is_superuser or u.groups.filter(name='Администратор').exists() or bool(u.groups.filter(name__in=group_names)))
-    return user_passes_test(in_group, login_url=reverse_lazy('main:access_denied'))
+# def groups_required(*group_names):
+#
+   # """ Requires user membership in at least one of the groups passed in. """
+
+   # def in_groups(u):
+   #     if u.is_authenticated():
+   #         if bool(u.groups.filter(name__in=group_names)) | u.is_superuser:
+   #             return True
+   #     return False
+   # return user_passes_test(in_groups, login_url=)
+# def groups_required(*group_names):
+#     # print('шаг 2')
+#     def in_group(u):
+#         # print('шаг 2')
+#         return u.is_active and (u.is_superuser or u.groups.filter(name='Администратор').exists() or bool(u.groups.filter(name__in=group_names)))
+#     return user_passes_test(in_group, login_url=reverse_lazy('main:access_denied'))
+
+
+# class MyGroupRequiredMixin(GroupRequiredMixin):
+#
+#     def get_login_url(self):
+#         user = self.request.user #.is_authenticated
+#         if user.is_authenticated:
+#             self.login_url = reverse_lazy('main:access_denied')
+        # else:
+        #     self.login_url = reverse_lazy('main:login')
+        # self.login_url = reverse_lazy('main:access_denied')
+        # return super(MyGroupRequiredMixin, self).get_login_url()
+#
+# class UserHasRoleMixin(LoginRequiredMixin, UserPassesTestMixin):
+#     groups = None
+#
+#     def get_test_func(self):
+#         if self.groups:
+#             return groups_required(*self.groups)
+#         else:
+#             # print('шаг 1')
+#             return groups_required()
+#
+#     def test_func(self):
+#         super(UserHasRoleMixin, self).test_func()
+#
+#     def dispatch(self, request, *args, **kwargs):
+#         return super(UserHasRoleMixin, self).dispatch(request, *args, **kwargs)
+#
 
 
 # Страница уведомляющая об отсутствии нужных прав
@@ -56,7 +109,7 @@ class CDDLogout(LogoutView, LoginRequiredMixin):
 
 
 # Редактирование данных пользователя
-class ChangeUserInfoView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
+class ChangeUserInfoView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = RegUser
     template_name = 'main/change_user_info.html'
     form_class = ChangeUserInfoForm
@@ -74,13 +127,15 @@ class ChangeUserInfoView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
 
 
 # Смена пароля
-class RegUserPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin, PasswordChangeView):
+class RegUserPasswordChangeView(LoginRequiredMixin, SuccessMessageMixin, PasswordChangeView):
     template_name = 'main/password_change.html'
     success_url = reverse_lazy('main:profile')
     success_message = 'Пароль успешно изменен'
 
 
 # Контроллер для добавления нового пользователя
+@method_decorator(login_required, name='dispatch')
+@method_decorator(groups_required(allowed_roles=['Администратор']), name='dispatch')
 class RegisterUserView(CreateView):
     model = RegUser
     template_name = 'main/register_user.html'
@@ -111,7 +166,7 @@ def user_activate(request, sign):
 
 
 # Страница с данными пользователя
-class Profile(TemplateView):
+class Profile(LoginRequiredMixin, TemplateView):
     template_name = 'main/profile.html'
 
     def get_context_data(self, **kwargs):
@@ -122,18 +177,10 @@ class Profile(TemplateView):
 
 
 # Страница '/' - перенаправление на основную
-# TODO: нормальный вид
+@login_required
 def index(request):
     return redirect('main:show_gtd')
     # return render(request, 'main/index.html')
-
-
-# class ShowGtdView(LoginRequiredMixin, ListView):
-#     model = GtdMain
-#     template_name = 'main/show_gtd.html'
-#     login_url = reverse_lazy('main:login')
-#     context_object_name = 'gtds'
-#     # paginate_by = 50
 
 
 @login_required
@@ -148,17 +195,19 @@ def show_gtd_list(request):
         gtds = paginator.page(1)
     except EmptyPage:
         gtds = paginator.page(paginator.num_pages)
-
+    user = request.user
     context = {
         'gtds': gtds,
         'paginate_by': paginate_by,
+        'context': user,
+        'for_customs_officer': user.groups.filter(name__in=['Администратор', 'Сотрудник таможенного отдела'])
         # 'form': PaginateForm({paginate_by})
     }
     return render(request, 'main/show_gtd.html', context)
 
 
 # Представление персональной страницы ГТД
-class GtdDetailView(DetailView):
+class GtdDetailView(LoginRequiredMixin, DetailView):
     model = GtdMain
     template_name = 'main/per_gtd.html'
     context_object_name = 'gtd'
@@ -171,6 +220,10 @@ class GtdDetailView(DetailView):
         context['groups'] = groups
         open_goods = self.request.GET.get('group')
         context['are_goods_shown'] = open_goods
+        user = self.request.user
+        context['user'] = user
+        context['for_customs_officer'] = user.groups.filter(name__in=['Администратор', 'Сотрудник таможенного отдела']).exists()
+        context['for_accountant'] = user.groups.filter(name__in=['Администратор', 'Бухгалтер']).exists()
         if open_goods:
             context['goods'] = GtdGood.objects.filter(gtd_id=self.kwargs.get('pk'), group=open_goods)
             context['current_group'] = GtdGroup.objects.filter(pk=open_goods)[0]
@@ -180,6 +233,7 @@ class GtdDetailView(DetailView):
 
 # TODO: ограничение доступа для классов CUD гтд
 # Представление редактирования шапки ГТД
+@groups_required(allowed_roles=['Сотрудник таможенного отдела', 'Администратор'])
 def update_gtd(request, pk):
     obj = get_object_or_404(GtdMain, pk=pk)
     if request.method == 'POST':
@@ -198,7 +252,8 @@ def update_gtd(request, pk):
 
 
 # Класс добавления новой группы в ГТД # TODO: верстка при больших значениях
-class GtdGroupCreateView(CreateView):
+@method_decorator(groups_required(allowed_roles=['Сотрудник таможенного отдела', 'Администратор']), name='dispatch')
+class GtdGroupCreateView(LoginRequiredMixin, CreateView):
     model = GtdGroup
     template_name = 'main/create_gtd_group.html'
     context_object_name = 'group'
@@ -216,6 +271,7 @@ class GtdGroupCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super(GtdGroupCreateView, self).get_context_data(**kwargs)
         context['gtd'] = get_object_or_404(GtdMain, pk=self.kwargs.get('pk'))
+
         return context
 
 
@@ -241,6 +297,7 @@ class GtdGoodCreateView(CreateView):
         context = super(GtdGoodCreateView, self).get_context_data(**kwargs)
         context['group'] = get_object_or_404(GtdGroup, pk=self.kwargs.get('pk'))
         return context
+
 
 # Функция для редактирования группы товаров
 class GtdGroupUpdateView(UpdateView):

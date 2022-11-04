@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'xlsxwriter',
     'xml',
     'six',
+    'braces',
 ]
 
 MIDDLEWARE = [
@@ -161,3 +162,6 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 USER_DIR = os.path.join(BASE_DIR, 'USER/')
 
 DATE_INPUT_FORMATS = '%d-%m-%Y'
+
+# LOGIN_REDIRECT_URL = 'accounts/login/'
+# LOGIN_URL = 'accounts/login/'

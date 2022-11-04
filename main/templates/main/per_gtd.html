@@ -2,6 +2,7 @@
 
 {% load static %}
 {% load bootstrap5 %}
+{% load filtertags %}
 
 {% block title %}ГТД {{ gtd.gtdId }}{% endblock %}
 
@@ -45,55 +46,59 @@
                         <div>Код характера сделки: {{ gtd.deal_type.code }}</div>
                         <hr>
                         {% if gtd.last_edited %}
-                        <div>Последний добавил/редактировал: {{ gtd.last_edited.username }}</div>
-                        <hr>
+                            <div>Последний добавил/редактировал: {{ gtd.last_edited.username }}</div>
+                            <hr>
                         {% endif %}
-                        <hr>
                         {% if gtd.gtd_file %}
                             {% url 'main:show_gtd_file' filename=gtd.gtd_file.document as file_url %}
                             <div>Документ ГТД: <a href="{{ file_url }}" target="_blank" >Посмотреть</a> / <a download href={{ file_url }}>Скачать</a> </div>
-
                         {% endif %}
+
+                        {% if for_customs_officer %}
+                            <div class="mt-4">
+                                <a class="btn btn-outline-warning" href="{% url 'main:update_gtd' pk=gtd.pk %}">Отредактировать</a>
+                                <a class="btn btn-outline-danger" href="{% url 'main:delete_gtd' pk=gtd.pk %}">Удалить</a>
+                            </div>
+                            <hr>
+                        {% endif %}
+
                         <div class="mt-4">
-                            <a class="btn btn-outline-warning" href="{% url 'main:update_gtd' pk=gtd.pk %}">Отредактировать</a>
-                            <a class="btn btn-outline-danger" href="{% url 'main:delete_gtd' pk=gtd.pk %}">Удалить</a>
-                        </div>
-                        <hr>
-                        <div class="mt-4">
+                        {% if for_customs_officer %}
                             <div class="mt-lg-1">
-                                {% if gtd.exported_to_wms %}
-                                    Экспортирован в WMS
-                                    <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#wmsModal">
-                                        Экспорт в WMS
-                                    </button>
-                                    <div class="modal fade" id="wmsModal" tabindex="-1" role="dialog" aria-labelledby="wmsModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="wmsModalLabel">Эта ГТД уже была экспортирована</h5>
-                                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    Нажмите ОК, если вы всё равно хотите сгенерировать xml по этой ГТД
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Назад</button>
-                                                    <a href="{% url 'main:to_wms' pk=gtd.pk %}"><button type="button" class="btn btn-primary">OK</button></a>
-                                                </div>
+                            {% if gtd.exported_to_wms %}
+                                Экспортирован в WMS
+                                <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#wmsModal">
+                                    Экспорт в WMS
+                                </button>
+                                <div class="modal fade" id="wmsModal" tabindex="-1" role="dialog" aria-labelledby="wmsModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="wmsModalLabel">Эта ГТД уже была экспортирована</h5>
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Нажмите ОК, если вы всё равно хотите сгенерировать xml по этой ГТД
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Назад</button>
+                                                <a href="{% url 'main:to_wms' pk=gtd.pk %}"><button type="button" class="btn btn-primary">OK</button></a>
                                             </div>
                                         </div>
                                     </div>
-
-                                {% else %}
-                                    Экспорт в WMS не был выполнен
-                                    <a class="btn btn-outline-info" href="{% url 'main:to_wms' pk=gtd.pk %}">Экспорт в WMS</a>
-
-                                {% endif %}
-
-
+                                </div>
+                            {% else %}
+                                Экспорт в WMS не был выполнен
+                                <a class="btn btn-outline-info" href="{% url 'main:to_wms' pk=gtd.pk %}">
+                                    Экспорт в WMS
+                                </a>
+                            {% endif %}
                             </div>
+                        {% endif %}
+
+                        {% if for_accountant %}
                             <div class="mt-lg-1">
                                 {% if user.first_name and user.last_name and user.patronymic %}
                                     {% if gtd.exported_to_erp %}
@@ -135,41 +140,46 @@
 
                                     <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#erpModal">Экспорт в ERP</button>
                                     <div class="modal fade" id="erpModal" tabindex="-1" role="dialog" aria-labelledby="wmsModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="wmsModalLabel">Профиль не заполнен</h5>
-                                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            Пожалуйста, введите в профиле свои имя и фамилию, чтобы получить доступ
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Назад</button>
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="wmsModalLabel">Профиль не заполнен</h5>
+                                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Пожалуйста, введите в профиле свои имя и фамилию, чтобы получить доступ
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Назад</button>
 {#                                                            <a href="{% url 'main:to_wms' pk=gtd.pk %}"><button type="button" class="btn btn-primary">OK</button></a>#}
-                                                        </div>
-                                                    </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
                                     {% endif %}
-                            </div>
+                                </div>
+                        {% endif %}
                         </div>
+                        </div>
+                        </div>
+
                     </div>
-                </div>
-            </div>
+
             <div class="tab-pane" id="gtdgroups">
                 <div class="row border g-0 rounded shadow-sm">
                     <div class="col p-4">
                         <h3>
                             Разделы ГТД
+                            {% if for_customs_officer %}
                             <a href="{% url 'main:create_gtd_group' pk=gtd.pk %}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="2.5%" height="2.5%" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
-                                  <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
-                                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                            </svg>
-                        </a>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="2.5%" height="2.5%" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                                      <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                                      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                </svg>
+                            </a>
+                            {% endif %}
                         </h3>
                         <table class="table">
                             <thead>
@@ -184,8 +194,10 @@
                                     <th>% пошлины</th>
                                     <th>Сумма НДС</th>
                                     <th>% НДС</th>
+                                    {% if for_customs_officer %}
                                     <th>Редактировать</th>
                                     <th>Удалить</th>
+                                    {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
@@ -201,6 +213,7 @@
                                         <td>{{ group.fee_percent }}</td>
                                         <td>{{ group.ndc }}</td>
                                         <td>{{ group.ndc_percent }}</td>
+                                        {% if for_customs_officer %}
                                         <td>
                                             <a href="{% url 'main:update_gtd_group' pk=group.pk %}" class="btn btn-outline-warning">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
@@ -216,6 +229,7 @@
                                                 </svg>
                                             </a>
                                         </td>
+                                    {% endif %}
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -223,12 +237,14 @@
                         {% if are_goods_shown %}
                             <h3>
                                 {{ gtd.gtdId }}/{{ current_group.number }}
+                                {% if for_customs_officer %}
                                 <a href="{% url 'main:create_gtd_good' pk=current_group.pk %}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="2.5%" height="2.5%" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">#}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="2.5%" height="2.5%" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
                                       <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
                                       <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-{#                                  </svg>
+                                  </svg>
                                 </a>
+                                {% endif %}
                             </h3>
                             <table class="table" id="gtd_tables">
                                 <thead>
@@ -237,8 +253,10 @@
                                         <th>Артикул</th>
                                         <th>Количество</th>
                                         <th>Производитель (Завод)</th>
+                                        {% if for_customs_officer %}
                                         <th>Редактировать</th>
                                         <th>Удалить</th>
+                                        {% endif %}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -248,6 +266,7 @@
                                             <td>{{ good.good.marking }}</td>
                                             <td>{{ good.quantity }} {{ good.qualifier.russian_symbol }}</td>
                                             <td>{{ good.manufacturer.manufacturer }}</td>
+                                            {% if for_customs_officer %}
                                             <td>
                                                 <a href="{% url 'main:update_gtd_good' pk=good.pk %}" class="btn btn-outline-warning">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
@@ -263,6 +282,7 @@
                                                     </svg>
                                                 </a>
                                             </td>
+                                            {% endif %}
 
                                         </tr>
                                     {% endfor %}
@@ -274,7 +294,7 @@
             </div>
 
             </div>
-    </div>
+        </div>
 
  <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script> -->
 

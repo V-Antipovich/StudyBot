@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="added view for creating gtd groups">
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="added nav chaines with modals in views of editing gtd groups and gtd goods">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/create_gtd_good.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/create_gtd_good.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/create_gtd_group.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/create_gtd_group.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/update_gtd_group.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/update_gtd_group.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/customs_declarations_database/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/customs_declarations_database/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/per_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/per_gtd.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/show_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/show_gtd.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -50,7 +51,7 @@
     &quot;database.data.extractors.current.id&quot;: &quot;Comma-separated (CSV)_id&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Vitalii/Desktop/main&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.django.DjangoModulesConfigurable&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   },
   &quot;keyToStringList&quot;: {
     &quot;ChangesTree.GroupingKeys&quot;: [
@@ -186,14 +187,8 @@
       <workItem from="1667033669936" duration="16384000" />
       <workItem from="1667075860388" duration="174085000" />
       <workItem from="1667547576347" duration="2384000" />
-      <workItem from="1667550048133" duration="16927000" />
-    </task>
-    <task id="LOCAL-00022" summary="update gtd view made as function, changing user id who last touched">
-      <created>1662551134700</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
-      <option name="project" value="LOCAL" />
-      <updated>1662551134700</updated>
+      <workItem from="1667550048133" duration="25988000" />
+      <workItem from="1667582233991" duration="10703000" />
     </task>
     <task id="LOCAL-00023" summary="update gtd view made as function, changing user id who last touched">
       <created>1662551144372</created>
@@ -531,7 +526,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667570441563</updated>
     </task>
-    <option name="localTasksCounter" value="71" />
+    <task id="LOCAL-00071" summary="added nav chaines with modals in views of editing gtd groups and gtd goods">
+      <created>1667572574210</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1667572574210</updated>
+    </task>
+    <option name="localTasksCounter" value="72" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -572,7 +574,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="export to erp with no end redirect; added patronymic to user" />
     <MESSAGE value="added page of success after exporting to erp" />
     <MESSAGE value="fixed major bug of uploading goods in groups" />
     <MESSAGE value="added menu for statistic reports; added report gtds number per exporter; found js scripts for table sorting and searching (filtering)" />
@@ -597,7 +598,8 @@
     <MESSAGE value="added warnings to nav chains in templates of editing gtd groups and gtd goods" />
     <MESSAGE value="made view for adding new gtd good" />
     <MESSAGE value="added view for creating gtd groups" />
-    <option name="LAST_COMMIT_MESSAGE" value="added view for creating gtd groups" />
+    <MESSAGE value="added nav chaines with modals in views of editing gtd groups and gtd goods" />
+    <option name="LAST_COMMIT_MESSAGE" value="added nav chaines with modals in views of editing gtd groups and gtd goods" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />
