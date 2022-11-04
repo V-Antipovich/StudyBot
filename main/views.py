@@ -236,12 +236,12 @@ def update_gtd_good(request, pk):
     obj = get_object_or_404(GtdGood, pk=pk)
     if request.method == 'POST':
         obj.last_edited_user = request.user
-        form = GtdGoodUpdateForm(request.POST, instance=obj)
+        form = GtdGoodUpdateForm(request.POST, gtd=obj.gtd, instance=obj)
         if form.is_valid():
             form.save()
             return redirect('main:per_gtd', pk=obj.gtd.pk)
     else:
-        form = GtdGoodUpdateForm(instance=obj)
+        form = GtdGoodUpdateForm(gtd=obj.gtd, instance=obj)
         context = {
             'form': form,
             'good': obj,

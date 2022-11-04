@@ -5,7 +5,7 @@ from django.contrib.auth import password_validation, get_user_model, authenticat
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 
-from .models import UploadGtd, RegUser, GtdMain, Exporter, Importer, CustomsHouse, GtdGood, GtdGroup
+from .models import UploadGtd, RegUser, GtdMain, Exporter, Importer, CustomsHouse, GtdGood, GtdGroup, TnVed
 from .apps import user_registered
 
 
@@ -92,30 +92,30 @@ class GtdUpdateForm(forms.ModelForm):
 
 
 # Форма редактирования групп ГТД
-class GtdGroupUpdateForm(forms.ModelForm):  # TODO: labels
-    # gtd = forms.ModelChoiceField(GtdMain.objects.all(), required=True,
-    #                              widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+class GtdGroupUpdateForm(forms.ModelForm):
 
     class Meta:
         model = GtdGroup
         exclude = ('last_edited_user',)
+        labels = {
+            'tn_ved': 'Код ТН ВЭД',
+            'country': 'Страна',
+            'procedure': 'Таможенная процедура',
+            'prev_procedure': 'Предыдущая таможенная процедура',
+        }
         widgets = {
             'gtd': forms.HiddenInput()
         }
+        
+    def __init__(self, *args, **kwargs):
+        super(GtdGroupUpdateForm, self).__init__(*args, **kwargs)
 
-    # def is_valid(self):
-    #     valid = super(GtdGroupUpdateForm, self).is_valid()
-    #     # if valid:
-    #     cd = self.cleaned_data
-    #     gtd, number = cd['gtd'], cd['number']
-    #     print(gtd, number)
-    #     return valid
-    # def clean(self):
-    #     cleaned_data = super(GtdGroupUpdateForm, self).clean()
-    #     gtd = cleaned_data['gtd']
-    #     number = cleaned_data['number']
-    #     if GtdGroup.objects.filter(gtd_id=gtd.pk, number=number).exists():
-    #         raise ValidationError('В этой ГТД группа с таким номером уже существует')
+        # Сортируем для удобства коды ТН ВЭД
+        self.fields['tn_ved'].queryset = TnVed.objects.order_by('code')
+
+        # Убираем у всех ModelChoicefield возможность оставлять пустую строку
+        for fieldname in ('tn_ved', 'country', 'procedure', 'prev_procedure',):
+            self.fields[fieldname].empty_label = None
 
 
 # Форма редактирования товаров ГТД
@@ -123,7 +123,6 @@ class GtdGoodUpdateForm(forms.ModelForm):
 
     class Meta:
         model = GtdGood
-        # fields = '__all__'
         exclude = ('gtd', 'good_num', 'last_edited_user',)
         labels = {
             'good': 'Товар',
@@ -131,6 +130,15 @@ class GtdGoodUpdateForm(forms.ModelForm):
             'qualifier': 'Единица измерения',
             'manufacturer': 'Производитель',
         }
+
+    def __init__(self, gtd, *args, **kwargs):
+        super(GtdGoodUpdateForm, self).__init__(*args, **kwargs)
+        # Фильтруем выбор групп
+        self.fields['group'].queryset = GtdGroup.objects.filter(gtd=gtd.pk)
+
+        # Убираем у всех ModelChoicefield возможность оставлять пустую строку
+        for fieldname in ('group', 'good', 'quantity', 'qualifier', 'manufacturer'):
+            self.fields[fieldname].empty_label = None
 
 
 # Форма для подготовки к формированию xml для WMS
