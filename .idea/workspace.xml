@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="nav chain in gtd groups updating">
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="gtd good editing + nav chain">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/templates/main/update_gtd_good.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/update_gtd_good.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/update_gtd_group.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/update_gtd_group.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -187,14 +184,7 @@
       <workItem from="1667033669936" duration="16384000" />
       <workItem from="1667075860388" duration="174085000" />
       <workItem from="1667547576347" duration="2384000" />
-      <workItem from="1667550048133" duration="8068000" />
-    </task>
-    <task id="LOCAL-00017" summary="lost tablesorting; fully fixed base templates; added user FK in GtdMain">
-      <created>1661887135354</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1661887135354</updated>
+      <workItem from="1667550048133" duration="9829000" />
     </task>
     <task id="LOCAL-00018" summary="added interactive tables with sorting and filter; cleaned up some views, deleted some templates">
       <created>1661928844722</created>
@@ -532,7 +522,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667556569850</updated>
     </task>
-    <option name="localTasksCounter" value="66" />
+    <task id="LOCAL-00066" summary="gtd good editing + nav chain">
+      <created>1667558819399</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1667558819399</updated>
+    </task>
+    <option name="localTasksCounter" value="67" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -573,7 +570,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added decorators for access limiting" />
     <MESSAGE value="minor changes and fixes;&#10;uploaded video with 3 user scripts shown" />
     <MESSAGE value="minor changes and fixes;&#10;uploaded video with 3 user scripts done" />
     <MESSAGE value="export to erp with no end redirect" />
@@ -598,7 +594,8 @@
     <MESSAGE value="temporarily blocked views of editing gtd groups and goods." />
     <MESSAGE value="retrieved gtd groups editing with recount" />
     <MESSAGE value="nav chain in gtd groups updating" />
-    <option name="LAST_COMMIT_MESSAGE" value="nav chain in gtd groups updating" />
+    <MESSAGE value="gtd good editing + nav chain" />
+    <option name="LAST_COMMIT_MESSAGE" value="gtd good editing + nav chain" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />
