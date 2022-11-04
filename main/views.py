@@ -213,6 +213,11 @@ class GtdGroupCreateView(CreateView):
     def get_success_url(self):
         return reverse('main:per_gtd', kwargs={'pk': self.kwargs.get('pk')})
 
+    def get_context_data(self, **kwargs):
+        context = super(GtdGroupCreateView, self).get_context_data(**kwargs)
+        context['gtd'] = get_object_or_404(GtdMain, pk=self.kwargs.get('pk'))
+        return context
+
 
 # Класс добавления нового товара в группу ГТД
 class GtdGoodCreateView(CreateView):
@@ -232,6 +237,10 @@ class GtdGoodCreateView(CreateView):
         group = get_object_or_404(GtdGroup, pk=self.kwargs.get('pk'))
         return reverse('main:per_gtd', kwargs={'pk': group.gtd.pk }) + f'?group={ group.pk }'
 
+    def get_context_data(self, **kwargs):
+        context = super(GtdGoodCreateView, self).get_context_data(**kwargs)
+        context['group'] = get_object_or_404(GtdGroup, pk=self.kwargs.get('pk'))
+        return context
 
 # Функция для редактирования группы товаров
 class GtdGroupUpdateView(UpdateView):

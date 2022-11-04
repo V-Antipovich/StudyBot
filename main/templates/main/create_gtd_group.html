@@ -3,8 +3,52 @@
 {% load static %}
 {% block title %}Добавить группу ГТД{% endblock %}
 {% block content %}
-{#    <h3 class="mb-3"> <a href="{% url 'main:show_gtd' %}">К списку ГТД</a> -> ГТД <a href="{% url 'main:per_gtd' pk=gtd.pk %}">{{ gtd.gtdId }}</a> -> Добавить группу</h3>#}
-    {% if message %} {{ message }}{% endif %}
+    <h3 class="mb-3">
+        <a type="button" data-bs-toggle="modal" data-bs-target="#to_list" href="#" >К списку</a> ->
+        ГТД <a type="button" data-bs-toggle="modal" data-bs-target="#to_gtd" href="#" >{{ gtd.gtdId }}</a> ->
+        Добавить группу
+
+        <div class="modal fade" id="to_list" tabindex="-1" role="dialog" aria-labelledby="to_listLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="to_listLabel">Хотите отменить изменения?</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-label="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Группа не будут сохранена. Нажмите ОК, хотите вернуться на страницу списка
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Назад</button>
+                        <a class="btn btn-primary" href="{% url 'main:show_gtd' %}">ОК </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="to_gtd" tabindex="-1" role="dialog" aria-labelledby="to_gtdLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="to_gtdLabel">Хотите отменить изменения?</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-label="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Группа не будет сохранена. Нажмите ОК, хотите вернуться на страницу ГТД
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Назад</button>
+                        <a class="btn btn-primary" href="{% url 'main:per_gtd' pk=gtd.pk %}">ОК </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </h3>
     <form method="post">
         {% csrf_token %}
         <p>Вы уверены, что хотите добавить группу?</p>

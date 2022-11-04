@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="made view for adding new gtd good">
-      <change afterPath="$PROJECT_DIR$/main/templates/main/create_gtd_good.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/templates/main/create_gtd_group.html" afterDir="false" />
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="added view for creating gtd groups">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/per_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/per_gtd.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/create_gtd_good.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/create_gtd_good.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/create_gtd_group.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/create_gtd_group.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/update_gtd_group.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/update_gtd_group.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -188,21 +186,7 @@
       <workItem from="1667033669936" duration="16384000" />
       <workItem from="1667075860388" duration="174085000" />
       <workItem from="1667547576347" duration="2384000" />
-      <workItem from="1667550048133" duration="15561000" />
-    </task>
-    <task id="LOCAL-00020" summary="added UpdateView for gtds, preparation for changing user model">
-      <created>1662319907433</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1662319907433</updated>
-    </task>
-    <task id="LOCAL-00021" summary="added UpdateView for gtds, preparation for changing user model">
-      <created>1662319917824</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1662319917824</updated>
+      <workItem from="1667550048133" duration="16927000" />
     </task>
     <task id="LOCAL-00022" summary="update gtd view made as function, changing user id who last touched">
       <created>1662551134700</created>
@@ -533,7 +517,21 @@
       <option name="project" value="LOCAL" />
       <updated>1667568430911</updated>
     </task>
-    <option name="localTasksCounter" value="69" />
+    <task id="LOCAL-00069" summary="added view for creating gtd groups">
+      <created>1667570430408</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1667570430408</updated>
+    </task>
+    <task id="LOCAL-00070" summary="added view for creating gtd groups">
+      <created>1667570441563</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1667570441563</updated>
+    </task>
+    <option name="localTasksCounter" value="71" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -574,7 +572,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="export to erp with no end redirect" />
     <MESSAGE value="export to erp with no end redirect; added patronymic to user" />
     <MESSAGE value="added page of success after exporting to erp" />
     <MESSAGE value="fixed major bug of uploading goods in groups" />
@@ -599,7 +596,8 @@
     <MESSAGE value="gtd good editing + nav chain" />
     <MESSAGE value="added warnings to nav chains in templates of editing gtd groups and gtd goods" />
     <MESSAGE value="made view for adding new gtd good" />
-    <option name="LAST_COMMIT_MESSAGE" value="made view for adding new gtd good" />
+    <MESSAGE value="added view for creating gtd groups" />
+    <option name="LAST_COMMIT_MESSAGE" value="added view for creating gtd groups" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />
