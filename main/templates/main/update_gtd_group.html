@@ -4,7 +4,11 @@
 
 {% block title %}Редактировать группу{% endblock %}
 {% block content %}
-
+    <h3 class="mb-3">
+        <a href="{% url 'main:show_gtd' %}">К списку</a> ->
+        ГТД <a href="{% url 'main:per_gtd' pk=group.gtd.pk %}">{{ group.gtd.gtdId }}</a> ->
+        Редактировать группу {{ group.number }}
+    </h3>
 {#    <h3 class="mb-3"> <a href="{% url 'main:show_gtd' %}">К списку ГТД</a> ->#}
 {#        ГТД <a href="{% url 'main:per_gtd' pk=group.gtd.pk %}">{{ group.gtd.gtdId }}</a> ->#}
 {#        Редактировать группу {{ group.number }}</h3>#}

@@ -211,7 +211,7 @@ def update_gtd(request, pk):
 
 
 # Функция для редактирования группы товаров
-class GtdGroupUpdateView(UpdateView):
+class GtdGroupUpdateView(UpdateView): # TODO: ко всем хлебным крошкам модальное меню-предупреждение
     model = GtdGroup
     template_name = 'main/update_gtd_group.html'
     context_object_name = 'group'
@@ -224,7 +224,7 @@ class GtdGroupUpdateView(UpdateView):
     #
 
 
-# def update_gtd_group(request, pk):  # TODO: ко всем хлебным крошкам модальное меню-предупреждение
+# def update_gtd_group(request, pk):
 #     obj = get_object_or_404(GtdGroup, pk=pk)
 #     if request.method == 'POST':
 #         obj.last_edited_user = request.user
