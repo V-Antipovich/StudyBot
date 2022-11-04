@@ -5,8 +5,12 @@ from django.contrib.auth import password_validation, get_user_model, authenticat
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 
-from .models import UploadGtd, RegUser, GtdMain, Exporter, Importer, CustomsHouse, GtdGood, GtdGroup, TnVed
+from .models import UploadGtd, RegUser, GtdMain, Exporter, Importer, CustomsHouse, GtdGood, GtdGroup, TnVed, Country, \
+    Procedure
 from .apps import user_registered
+
+
+value_cannot_be_negative = 'Это значение не может быть отрицательным'
 
 
 class PaginateForm(forms.Form):
@@ -93,37 +97,63 @@ class GtdUpdateForm(forms.ModelForm):
 
 # Форма редактирования групп ГТД
 class GtdGroupUpdateForm(forms.ModelForm):
-    # gtd = forms.ModelChoiceField(disabled=True)
+    tn_ved = forms.ModelChoiceField(queryset=TnVed.objects.all(), label='ТН ВЭД', empty_label=None)
+    gross_weight = forms.FloatField(min_value=0, label='Масса брутто') #, error_messages=value_cannot_be_negative)
+    net_weight = forms.FloatField(min_value=0, label='Масса нетто') #, error_messages=value_cannot_be_negative)
+    country = forms.ModelChoiceField(queryset=Country.objects.all(), label='Страна', empty_label=None)
+    procedure = forms.ModelChoiceField(queryset=Procedure.objects.all(), label='Заявляемая таможенная процедура', empty_label=None)
+    prev_procedure = forms.ModelChoiceField(queryset=Procedure.objects.all(), label='Предыдущая таможенная процедура')
+    customs_cost = forms.FloatField(min_value=0, label='Таможенная стоимость') #, error_messages=value_cannot_be_negative)
+    fee = forms.FloatField(min_value=0, label='Сумма пошлины') #, error_messages=value_cannot_be_negative)
+    fee_percent = forms.FloatField(min_value=0, label='Процентная ставка пошлины') #, error_messages=value_cannot_be_negative)
+    ndc = forms.FloatField(min_value=0, label='Сумма НДС')  #, error_messages=value_cannot_be_negative)
+    ndc_percent = forms.FloatField(min_value=0, label='Процент НДС')  #, error_messages=value_cannot_be_negative)
 
     class Meta:
         model = GtdGroup
-        exclude = ('last_edited_user',)
-        labels = {
-            # 'gtd': 'ГТД',
-            'tn_ved': 'Код ТН ВЭД',
-            'country': 'Страна',
-            'procedure': 'Таможенная процедура',
-            'prev_procedure': 'Предыдущая таможенная процедура',
-        }
-        widgets = {
-            # 'gtd': forms.TextInput(attrs={'disabled': True})
-            # 'gtd': forms.HiddenInput()  # forms.TextInput(attrs={'readonly': 'read'})
-        }
-        
-    def __init__(self, gtd=None, *args, **kwargs):
-        super(GtdGroupUpdateForm, self).__init__(*args, **kwargs)
+        exclude = ('gtd', 'last_edited_user')
+    
+    # def __init__(self):
+    #     super(GtdGroupUpdateForm, self).__init__()
+    #     # Сортируем для удобства коды ТН ВЭД
+    #     self.fields['tn_ved'].queryset = TnVed.objects.order_by('code')
+    #
+    #     # Убираем у всех ModelChoicefield возможность оставлять пустую строку
+    #     for fieldname in ('tn_ved', 'country', 'procedure', 'prev_procedure',):
+    #         self.fields[fieldname].empty_label = None
 
-        if gtd:
-            self.fields['gtd'] = forms.ModelChoiceField(
-                GtdMain.objects.all(), initial=gtd, disabled=True, label='ГТД'
-            )
-            # self.fields['gtd'].
-        # Сортируем для удобства коды ТН ВЭД
-        self.fields['tn_ved'].queryset = TnVed.objects.order_by('code')
-
-        # Убираем у всех ModelChoicefield возможность оставлять пустую строку
-        for fieldname in ('tn_ved', 'country', 'procedure', 'prev_procedure',):
-            self.fields[fieldname].empty_label = None
+# class GtdGroupUpdateForm(forms.ModelForm):
+#     # gtd = forms.ModelChoiceField(disabled=True)
+#
+#     class Meta:
+#         model = GtdGroup
+#         exclude = ('last_edited_user',)
+#         labels = {
+#             # 'gtd': 'ГТД',
+#             'tn_ved': 'Код ТН ВЭД',
+#             'country': 'Страна',
+#             'procedure': 'Таможенная процедура',
+#             'prev_procedure': 'Предыдущая таможенная процедура',
+#         }
+#         widgets = {
+#             # 'gtd': forms.TextInput(attrs={'disabled': True})
+#             # 'gtd': forms.HiddenInput()  # forms.TextInput(attrs={'readonly': 'read'})
+#         }
+#
+#     def __init__(self, gtd=None, *args, **kwargs):
+#         super(GtdGroupUpdateForm, self).__init__(*args, **kwargs)
+#
+#         if gtd:
+#             self.fields['gtd'] = forms.ModelChoiceField(
+#                 GtdMain.objects.all(), initial=gtd, disabled=True, label='ГТД'
+#             )
+#             # self.fields['gtd'].
+#         # Сортируем для удобства коды ТН ВЭД
+#         self.fields['tn_ved'].queryset = TnVed.objects.order_by('code')
+#
+#         # Убираем у всех ModelChoicefield возможность оставлять пустую строку
+#         for fieldname in ('tn_ved', 'country', 'procedure', 'prev_procedure',):
+#             self.fields[fieldname].empty_label = None
 
 
 # class GtdGroupCreateForm(forms.ModelForm):

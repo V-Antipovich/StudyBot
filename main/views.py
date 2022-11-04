@@ -12,8 +12,8 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormMixin
 from django.http import FileResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from .forms import UploadGtdfilesForm, GtdUpdateForm, GtdGoodUpdateForm, GtdGroupUpdateForm,\
-    CalendarDate, ExportComment, ChangeUserInfoForm, RegisterUserForm, PaginateForm
+from .forms import UploadGtdfilesForm, GtdUpdateForm, GtdGoodUpdateForm, \
+    CalendarDate, ExportComment, ChangeUserInfoForm, RegisterUserForm, PaginateForm, GtdGroupUpdateForm
 from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType,\
     Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType,\
     UploadGtdFile, Handbook
@@ -165,6 +165,8 @@ class GtdDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        gtd = GtdMain.objects.filter(pk=self.kwargs.get('pk'))[0]
+        gtd.recount()
         groups = GtdGroup.objects.filter(gtd_id=self.kwargs.get('pk'))
         context['groups'] = groups
         open_goods = self.request.GET.get('group')
@@ -209,6 +211,19 @@ def update_gtd(request, pk):
 
 
 # Функция для редактирования группы товаров
+class GtdGroupUpdateView(UpdateView):
+    model = GtdGroup
+    template_name = 'main/update_gtd_group.html'
+    context_object_name = 'group'
+    form_class = GtdGroupUpdateForm
+
+    def get_success_url(self):
+        return reverse('main:per_gtd', kwargs={'pk': self.object.gtd.pk}) # self.object.gtd.pk
+
+    # def post(self, request, *args, **kwargs):
+    #
+
+
 # def update_gtd_group(request, pk):  # TODO: ко всем хлебным крошкам модальное меню-предупреждение
 #     obj = get_object_or_404(GtdGroup, pk=pk)
 #     if request.method == 'POST':
@@ -269,7 +284,7 @@ class GtdGroupDeleteView(DeleteView):
         gtd = obj.gtd
         self.success_url = reverse('main:per_gtd', kwargs={'pk': gtd.pk})  # reverse_lazy('main:per_gtd', pk=gtd.pk)
         # Пересчитываем суммы в родительской гтд
-        gtd.recount_deleted(obj.pk)
+        # gtd.recount_deleted(obj.pk)
         return obj
 
 

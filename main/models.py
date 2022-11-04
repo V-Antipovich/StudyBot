@@ -1,10 +1,11 @@
 import os
 from datetime import timedelta
 
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.template.defaultfilters import slugify
-
+from decimal import Decimal
 import xml.etree.ElementTree as ET
 
 # Create your models here.
@@ -79,13 +80,21 @@ class GtdMain(models.Model):  # TODO: при любом изменении по�
         ordering = ['-date']
         unique_together = ('gtdId', 'customs_house', 'date', 'order_num')
 
-    # Пересчет общей суммы без учета группы, которую сейчас удалят
-    def recount_deleted(self, deleted_pk):
+    def recount(self):
         groups = GtdGroup.objects.filter(gtd_id=self.pk)
-        self.total_cost = sum(group.customs_cost for group in groups if group.pk != deleted_pk)
+
+        self.total_cost = sum(group.customs_cost for group in groups)
         self.total_invoice_amount = self.total_cost / self.currency_rate
-        self.total_goods_number -= 1
+        self.total_goods_number = groups.count()
         self.save()
+
+    # Пересчет общей суммы без учета группы, которую сейчас удалят
+    # def recount_deleted(self, deleted_pk):
+    #     groups = GtdGroup.objects.filter(gtd_id=self.pk)
+    #     self.total_cost = sum(group.customs_cost for group in groups if group.pk != deleted_pk)
+    #     self.total_invoice_amount = self.total_cost / self.currency_rate
+    #     self.total_goods_number -= 1
+    #     self.save()
 
     def export_to_erp(self, comment, user):
         goods = GtdGood.objects.filter(gtd_id=self.pk)
