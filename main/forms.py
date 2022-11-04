@@ -102,14 +102,14 @@ class GtdUpdateForm(forms.ModelForm):
 
 
 # Форма редактирования групп ГТД
-class GtdGroupUpdateForm(forms.ModelForm):
+class GtdGroupCreateUpdateForm(forms.ModelForm):
     tn_ved = forms.ModelChoiceField(queryset=TnVed.objects.order_by('code'), label='ТН ВЭД', empty_label=None)
     number = forms.IntegerField(min_value=1, label='Номер товарной группы')
     gross_weight = forms.FloatField(min_value=0, label='Масса брутто') #, error_messages=value_cannot_be_negative)
     net_weight = forms.FloatField(min_value=0, label='Масса нетто') #, error_messages=value_cannot_be_negative)
     country = forms.ModelChoiceField(queryset=Country.objects.all(), label='Страна', empty_label=None)
     procedure = forms.ModelChoiceField(queryset=Procedure.objects.all(), label='Заявляемая таможенная процедура', empty_label=None)
-    prev_procedure = forms.ModelChoiceField(queryset=Procedure.objects.all(), label='Предыдущая таможенная процедура')
+    prev_procedure = forms.ModelChoiceField(queryset=Procedure.objects.all(), label='Предыдущая таможенная процедура', empty_label=None)
     customs_cost = forms.FloatField(min_value=0, label='Таможенная стоимость') #, error_messages=value_cannot_be_negative)
     fee = forms.FloatField(min_value=0, label='Сумма пошлины') #, error_messages=value_cannot_be_negative)
     fee_percent = forms.FloatField(min_value=0, label='Процентная ставка пошлины') #, error_messages=value_cannot_be_negative)
@@ -122,7 +122,7 @@ class GtdGroupUpdateForm(forms.ModelForm):
 
 
 # Форма для редактирования товаров ГТД
-class GtdGoodUpdateForm(forms.ModelForm):
+class GtdGoodCreateUpdateForm(forms.ModelForm):
     good = forms.ModelChoiceField(queryset=Good.objects.all(), label='Товар', empty_label=None)
     good_num = forms.IntegerField(min_value=1, label='Номер товара в группе')
     quantity = forms.FloatField(min_value=0, label='Количество')

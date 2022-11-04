@@ -12,8 +12,8 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormMixin
 from django.http import FileResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from .forms import UploadGtdfilesForm, GtdUpdateForm, GtdGoodUpdateForm, \
-    CalendarDate, ExportComment, ChangeUserInfoForm, RegisterUserForm, PaginateForm, GtdGroupUpdateForm
+from .forms import UploadGtdfilesForm, GtdUpdateForm, GtdGoodCreateUpdateForm, \
+    CalendarDate, ExportComment, ChangeUserInfoForm, RegisterUserForm, PaginateForm, GtdGroupCreateUpdateForm
 from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType,\
     Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType,\
     UploadGtdFile, Handbook
@@ -178,20 +178,7 @@ class GtdDetailView(DetailView):
         return context
 
 
-# Класс создания новой группы в ГТД
-# class CreateGtdGroup(CreateView):
-#     model = GtdGroup
-#     template_name = 'main/create_gtd_group.html'
-#     context_object_name = 'group'
-    # fields = ('')
-    # def get_object(self, queryset=None):
-    #     obj = super(CreateGtdGroup, self).get_object(queryset)
-    #     self.success_url = reverse('main:per_gtd', kwargs={'pk': obj.gtd.pk})
-    # def get_context_data(self, **kwargs):
-    #     context = super(CreateGtdGroup, self).get_context_data(**kwargs)
-    #     context[]
-
-
+# TODO: ограничение доступа для классов CUD гтд
 # Представление редактирования шапки ГТД
 def update_gtd(request, pk):
     obj = get_object_or_404(GtdMain, pk=pk)
@@ -210,11 +197,29 @@ def update_gtd(request, pk):
     return render(request, 'main/update_gtd.html', context)
 
 
+# Класс добавления новой группы в ГТД # TODO: верстка при больших значениях
+class GtdGroupCreateView(CreateView):
+    model = GtdGroup
+    template_name = 'main/create_gtd_group.html'
+    context_object_name = 'group'
+    form_class = GtdGroupCreateUpdateForm
+
+    def form_valid(self, form):
+        new_group = form.save(commit=False)
+        gtd = get_object_or_404(GtdMain, pk=self.kwargs.get('pk'))
+        new_group.gtd = gtd
+        return super(GtdGroupCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse('main:per_gtd', kwargs={'pk': self.kwargs.get('pk')})
+
+
+# Класс добавления нового товара в группу ГТД
 class GtdGoodCreateView(CreateView):
     model = GtdGood
     template_name = 'main/create_gtd_good.html'
     context_object_name = 'good'
-    form_class = GtdGoodUpdateForm
+    form_class = GtdGoodCreateUpdateForm
 
     def form_valid(self, form):
         group = get_object_or_404(GtdGroup, pk=self.kwargs.get('pk'))  # self.kwargs.get('pk')
@@ -233,7 +238,7 @@ class GtdGroupUpdateView(UpdateView):
     model = GtdGroup
     template_name = 'main/update_gtd_group.html'
     context_object_name = 'group'
-    form_class = GtdGroupUpdateForm
+    form_class = GtdGroupCreateUpdateForm
 
     def get_success_url(self):
         return reverse('main:per_gtd', kwargs={'pk': self.object.gtd.pk}) # self.object.gtd.pk
@@ -243,7 +248,7 @@ class GtdGoodUpdateView(UpdateView):
     model = GtdGood
     template_name = 'main/update_gtd_good.html'
     context_object_name = 'good'
-    form_class = GtdGoodUpdateForm
+    form_class = GtdGoodCreateUpdateForm
 
     def get_success_url(self):
         return reverse('main:per_gtd', kwargs={'pk': self.object.gtd.pk}) + f'?group={ self.object.group.pk }'

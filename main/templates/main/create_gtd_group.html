@@ -1,0 +1,15 @@
+{% extends 'layout/base.html' %}
+{% load bootstrap5 %}
+{% load static %}
+{% block title %}Добавить группу ГТД{% endblock %}
+{% block content %}
+{#    <h3 class="mb-3"> <a href="{% url 'main:show_gtd' %}">К списку ГТД</a> -> ГТД <a href="{% url 'main:per_gtd' pk=gtd.pk %}">{{ gtd.gtdId }}</a> -> Добавить группу</h3>#}
+    {% if message %} {{ message }}{% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <p>Вы уверены, что хотите добавить группу?</p>
+        {% bootstrap_form form layout='horizontal' %}
+        {% buttons submit='Ок' %}{% endbuttons %}
+{#        <input type="submit" value="Подтвердить">#}
+    </form>
+{% endblock %}
