@@ -209,44 +209,44 @@ def update_gtd(request, pk):
 
 
 # Функция для редактирования группы товаров
-def update_gtd_group(request, pk):  # TODO: ко всем хлебным крошкам модальное меню-предупреждение
-    obj = get_object_or_404(GtdGroup, pk=pk)
-    if request.method == 'POST':
-        obj.last_edited_user = request.user
-        form = GtdGroupUpdateForm(request.POST, instance=obj)
-        if form.is_valid():
-            form.save()
-            return redirect('main:per_gtd', pk=obj.gtd.pk)
-        else:
-            message = 'Проверьте корректность формы. Возможно, вы указали номер группы, ' \
-                      'который уже существует в этой ГТД.'
-    else:
-        message = ''
-    form = GtdGroupUpdateForm(instance=obj)
-    context = {
-        'form': form,
-        'group': obj,
-        'message': message,
-    }
-    return render(request, 'main/update_gtd_group.html', context)
+# def update_gtd_group(request, pk):  # TODO: ко всем хлебным крошкам модальное меню-предупреждение
+#     obj = get_object_or_404(GtdGroup, pk=pk)
+#     if request.method == 'POST':
+#         obj.last_edited_user = request.user
+#         form = GtdGroupUpdateForm(request.POST, instance=obj)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('main:per_gtd', pk=obj.gtd.pk)
+#         else:
+#             message = 'Проверьте корректность формы. Возможно, вы указали номер группы, ' \
+#                       'который уже существует в этой ГТД.'
+#     else:
+#         message = ''
+#     form = GtdGroupUpdateForm(instance=obj)
+#     context = {
+#         'form': form,
+#         'group': obj,
+#         'message': message,
+#     }
+#     return render(request, 'main/update_gtd_group.html', context)
 
 
-# Редактировать товар из группы ГТД
-def update_gtd_good(request, pk):
-    obj = get_object_or_404(GtdGood, pk=pk)
-    if request.method == 'POST':
-        obj.last_edited_user = request.user
-        form = GtdGoodUpdateForm(request.POST, gtd=obj.gtd, instance=obj)
-        if form.is_valid():
-            form.save()
-            return redirect('main:per_gtd', pk=obj.gtd.pk)
-    else:
-        form = GtdGoodUpdateForm(gtd=obj.gtd, instance=obj)
-        context = {
-            'form': form,
-            'good': obj,
-        }
-        return render(request, 'main/update_gtd_good.html', context)
+# # Редактировать товар из группы ГТД
+# def update_gtd_good(request, pk):
+#     obj = get_object_or_404(GtdGood, pk=pk)
+#     if request.method == 'POST':
+#         obj.last_edited_user = request.user
+#         form = GtdGoodUpdateForm(request.POST, gtd=obj.gtd, instance=obj)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('main:per_gtd', pk=obj.gtd.pk)
+#     else:
+#         form = GtdGoodUpdateForm(gtd=obj.gtd, instance=obj)
+#         context = {
+#             'form': form,
+#             'good': obj,
+#         }
+#         return render(request, 'main/update_gtd_good.html', context)
 
 
 # Страница удаления ГТД

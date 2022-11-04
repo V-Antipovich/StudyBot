@@ -1,10 +1,10 @@
 from django.urls import path
 from .views import index, upload_gtd, show_gtd_file, CDDLogin, CDDLogout, handbook, GtdGoodDeleteView,\
-    GtdDetailView, update_gtd, GtdDeleteView, Profile, update_gtd_good, update_gtd_group,\
+    GtdDetailView, update_gtd, GtdDeleteView, Profile, \
     eco_fee, to_wms, AccessDeniedView, to_erp, SuccessfulOutcome, StatisticsMenu, GtdGroupDeleteView, \
     statistics_report_gtd_per_exporter, statistics_report_goods_imported, report_xlsx, ChangeUserInfoView,\
     RegUserPasswordChangeView, RegisterUserView, RegisterDoneView, user_activate, show_gtd_list, handbook_xlsx
-# CreateGtdGroupView
+# CreateGtdGroupView, update_gtd_good, update_gtd_group,\
 
 app_name = 'main'
 urlpatterns = [
@@ -25,9 +25,9 @@ urlpatterns = [
     path('report_xlsx/<path:folder>/<path:filename>', report_xlsx, name='report_xlsx'),
     path('documents/delete_gtd_good/<int:pk>', GtdGoodDeleteView.as_view(), name='delete_gtd_good'),
     path('documents/delete_gtd_group/<int:pk>', GtdGroupDeleteView.as_view(), name='delete_gtd_group'),
-    path('documents/update_gtd_group/<int:pk>', update_gtd_group, name='update_gtd_group'),
-    path('documents/update_gtd_good/<int:pk>', update_gtd_good, name='update_gtd_good'),
-    # path('documents/create_gtd_group/<int:pk>', CreateGtdGroup.as_view(), name='create_gtd_group'),
+    # path('documents/update_gtd_group/<int:pk>', update_gtd_group, name='update_gtd_group'),
+    # path('documents/update_gtd_good/<int:pk>', update_gtd_good, name='update_gtd_good'),
+    # path('documents/create_gtd_group/<int:pk>', create_gtd_group, name='create_gtd_group'),
     path('documents/update_gtd/<int:pk>', update_gtd, name='update_gtd'),
     path('documents/delete_gtd/<int:pk>', GtdDeleteView.as_view(), name='delete_gtd'),
     path('documents/show_gtd/file/<path:filename>', show_gtd_file, name='show_gtd_file'),

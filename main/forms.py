@@ -93,29 +93,54 @@ class GtdUpdateForm(forms.ModelForm):
 
 # Форма редактирования групп ГТД
 class GtdGroupUpdateForm(forms.ModelForm):
+    # gtd = forms.ModelChoiceField(disabled=True)
 
     class Meta:
         model = GtdGroup
         exclude = ('last_edited_user',)
         labels = {
+            # 'gtd': 'ГТД',
             'tn_ved': 'Код ТН ВЭД',
             'country': 'Страна',
             'procedure': 'Таможенная процедура',
             'prev_procedure': 'Предыдущая таможенная процедура',
         }
         widgets = {
-            'gtd': forms.HiddenInput()
+            # 'gtd': forms.TextInput(attrs={'disabled': True})
+            # 'gtd': forms.HiddenInput()  # forms.TextInput(attrs={'readonly': 'read'})
         }
         
-    def __init__(self, *args, **kwargs):
+    def __init__(self, gtd=None, *args, **kwargs):
         super(GtdGroupUpdateForm, self).__init__(*args, **kwargs)
 
+        if gtd:
+            self.fields['gtd'] = forms.ModelChoiceField(
+                GtdMain.objects.all(), initial=gtd, disabled=True, label='ГТД'
+            )
+            # self.fields['gtd'].
         # Сортируем для удобства коды ТН ВЭД
         self.fields['tn_ved'].queryset = TnVed.objects.order_by('code')
 
         # Убираем у всех ModelChoicefield возможность оставлять пустую строку
         for fieldname in ('tn_ved', 'country', 'procedure', 'prev_procedure',):
             self.fields[fieldname].empty_label = None
+
+
+# class GtdGroupCreateForm(forms.ModelForm):
+#
+#     class Meta:
+#         model = GtdGroup
+#         exclude = ('last_edited_user',)
+#         widgets = {
+#             'gtd': forms.HiddenInput()
+#         }
+#
+#     def __init__(self, *args, **kwargs):
+#         super(GtdGroupCreateForm, self).__init__(*args, **kwargs)
+#         # if gtd_pk:
+#         #     self.fields['gtd'] = forms.ModelChoiceField(GtdMain.objects.filter(pk=gtd_pk), disabled=True, empty_label=None)
+#         for fieldname in ('tn_ved', 'country', 'procedure', 'prev_procedure',):
+#             self.fields[fieldname].empty_label = None
 
 
 # Форма редактирования товаров ГТД
