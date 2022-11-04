@@ -220,9 +220,15 @@ class GtdGroupUpdateView(UpdateView): # TODO: ко всем хлебным кр�
     def get_success_url(self):
         return reverse('main:per_gtd', kwargs={'pk': self.object.gtd.pk}) # self.object.gtd.pk
 
-    # def post(self, request, *args, **kwargs):
-    #
 
+class GtdGoodUpdateView(UpdateView):
+    model = GtdGood
+    template_name = 'main/update_gtd_good.html'
+    context_object_name = 'good'
+    form_class = GtdGoodUpdateForm
+
+    def get_success_url(self):
+        return reverse('main:per_gtd', kwargs={'pk': self.object.gtd.pk}) + f'?group={ self.object.group.pk }'
 
 # def update_gtd_group(request, pk):
 #     obj = get_object_or_404(GtdGroup, pk=pk)

@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 
 from .models import UploadGtd, RegUser, GtdMain, Exporter, Importer, CustomsHouse, GtdGood, GtdGroup, TnVed, Country, \
-    Procedure
+    Procedure, Good, MeasureQualifier, Manufacturer
 from .apps import user_registered
 
 
@@ -97,7 +97,8 @@ class GtdUpdateForm(forms.ModelForm):
 
 # Форма редактирования групп ГТД
 class GtdGroupUpdateForm(forms.ModelForm):
-    tn_ved = forms.ModelChoiceField(queryset=TnVed.objects.all(), label='ТН ВЭД', empty_label=None)
+    tn_ved = forms.ModelChoiceField(queryset=TnVed.objects.order_by('code'), label='ТН ВЭД', empty_label=None)
+    number = forms.IntegerField(min_value=1, label='Номер товарной группы')
     gross_weight = forms.FloatField(min_value=0, label='Масса брутто') #, error_messages=value_cannot_be_negative)
     net_weight = forms.FloatField(min_value=0, label='Масса нетто') #, error_messages=value_cannot_be_negative)
     country = forms.ModelChoiceField(queryset=Country.objects.all(), label='Страна', empty_label=None)
@@ -111,8 +112,22 @@ class GtdGroupUpdateForm(forms.ModelForm):
 
     class Meta:
         model = GtdGroup
-        exclude = ('gtd', 'last_edited_user')
-    
+        exclude = ('gtd', 'last_edited_user',)
+
+
+# Форма для редактирования товаров ГТД
+class GtdGoodUpdateForm(forms.ModelForm):
+    good = forms.ModelChoiceField(queryset=Good.objects.all(), label='Товар', empty_label=None)
+    good_num = forms.IntegerField(min_value=1, label='Номер товара в группе')
+    quantity = forms.FloatField(min_value=0, label='Количество')
+    qualifier = forms.ModelChoiceField(queryset=MeasureQualifier.objects.all(), label='Единица измерения', empty_label=None)
+    manufacturer = forms.ModelChoiceField(queryset=Manufacturer.objects.all(), label='Производитель (завод)', empty_label=None)
+
+    class Meta:
+        model = GtdGood
+        exclude = ('gtd', 'group', 'last_edited_user',)
+
+
     # def __init__(self):
     #     super(GtdGroupUpdateForm, self).__init__()
     #     # Сортируем для удобства коды ТН ВЭД
@@ -174,26 +189,26 @@ class GtdGroupUpdateForm(forms.ModelForm):
 
 
 # Форма редактирования товаров ГТД
-class GtdGoodUpdateForm(forms.ModelForm):
-
-    class Meta:
-        model = GtdGood
-        exclude = ('gtd', 'good_num', 'last_edited_user',)
-        labels = {
-            'good': 'Товар',
-            'group': 'Группа товаров',
-            'qualifier': 'Единица измерения',
-            'manufacturer': 'Производитель',
-        }
-
-    def __init__(self, gtd, *args, **kwargs):
-        super(GtdGoodUpdateForm, self).__init__(*args, **kwargs)
-        # Фильтруем выбор групп
-        self.fields['group'].queryset = GtdGroup.objects.filter(gtd=gtd.pk)
-
-        # Убираем у всех ModelChoicefield возможность оставлять пустую строку
-        for fieldname in ('group', 'good', 'quantity', 'qualifier', 'manufacturer'):
-            self.fields[fieldname].empty_label = None
+# class GtdGoodUpdateForm(forms.ModelForm):
+#
+#     class Meta:
+#         model = GtdGood
+#         exclude = ('gtd', 'good_num', 'last_edited_user',)
+#         labels = {
+#             'good': 'Товар',
+#             'group': 'Группа товаров',
+#             'qualifier': 'Единица измерения',
+#             'manufacturer': 'Производитель',
+#         }
+#
+#     def __init__(self, gtd, *args, **kwargs):
+#         super(GtdGoodUpdateForm, self).__init__(*args, **kwargs)
+#         # Фильтруем выбор групп
+#         self.fields['group'].queryset = GtdGroup.objects.filter(gtd=gtd.pk)
+#
+#         # Убираем у всех ModelChoicefield возможность оставлять пустую строку
+#         for fieldname in ('group', 'good', 'quantity', 'qualifier', 'manufacturer'):
+#             self.fields[fieldname].empty_label = None
 
 
 # Форма для подготовки к формированию xml для WMS

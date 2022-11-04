@@ -358,7 +358,7 @@ class GtdGroup(models.Model):
     class Meta:
         verbose_name = 'Группа товаров в ГТД'
         verbose_name_plural = 'Группы товаров в ГТД'
-        unique_together = ('gtd', 'number')
+        # unique_together = ('gtd', 'number')
 
     def __str__(self):
         return str(self.number)

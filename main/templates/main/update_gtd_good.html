@@ -4,10 +4,14 @@
 
 {% block title %}Редактировать товар{% endblock %}
 {% block content %}
-    <h3 class="mb-3"> <a href="{% url 'main:show_gtd' %}">К списку ГТД</a> -> ГТД <a href="{% url 'main:per_gtd' pk=good.gtd.pk %}">{{ good.gtd.gtdId }}</a> -> Редактировать товар {{ good.good.marking }}</h3>
+    <h3 class="mb-3"> <a href="{% url 'main:show_gtd' %}">К списку ГТД</a> ->
+        ГТД <a href="{% url 'main:per_gtd' pk=good.gtd.pk %}?group={{ good.group.pk }}">{{ good.gtd.gtdId }}</a> ->
+        Редактировать товар {{ good.good.marking }}</h3>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Сохранить">
+{#        {{ form.as_p }}#}
+        {% bootstrap_form form %}
+{#        <input type="submit" value="Сохранить">#}
+        {% buttons submit='Ок' %}{% endbuttons %}
     </form>
 {% endblock %}
