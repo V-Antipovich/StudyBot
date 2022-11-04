@@ -173,7 +173,7 @@ class GtdDetailView(DetailView):
         context['are_goods_shown'] = open_goods
         if open_goods:
             context['goods'] = GtdGood.objects.filter(gtd_id=self.kwargs.get('pk'), group=open_goods)
-            context['number'] = GtdGroup.objects.filter(pk=open_goods)[0].number
+            context['current_group'] = GtdGroup.objects.filter(pk=open_goods)[0]
             # context['user'] = self.request.user.f
         return context
 
@@ -210,8 +210,26 @@ def update_gtd(request, pk):
     return render(request, 'main/update_gtd.html', context)
 
 
+class GtdGoodCreateView(CreateView):
+    model = GtdGood
+    template_name = 'main/create_gtd_good.html'
+    context_object_name = 'good'
+    form_class = GtdGoodUpdateForm
+
+    def form_valid(self, form):
+        group = get_object_or_404(GtdGroup, pk=self.kwargs.get('pk'))  # self.kwargs.get('pk')
+        new_good = form.save(commit=False)
+        new_good.gtd = group.gtd
+        new_good.group = group
+        return super(GtdGoodCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        group = get_object_or_404(GtdGroup, pk=self.kwargs.get('pk'))
+        return reverse('main:per_gtd', kwargs={'pk': group.gtd.pk }) + f'?group={ group.pk }'
+
+
 # Функция для редактирования группы товаров
-class GtdGroupUpdateView(UpdateView): # TODO: ко всем хлебным крошкам модальное меню-предупреждение
+class GtdGroupUpdateView(UpdateView):
     model = GtdGroup
     template_name = 'main/update_gtd_group.html'
     context_object_name = 'group'
@@ -229,45 +247,6 @@ class GtdGoodUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse('main:per_gtd', kwargs={'pk': self.object.gtd.pk}) + f'?group={ self.object.group.pk }'
-
-# def update_gtd_group(request, pk):
-#     obj = get_object_or_404(GtdGroup, pk=pk)
-#     if request.method == 'POST':
-#         obj.last_edited_user = request.user
-#         form = GtdGroupUpdateForm(request.POST, instance=obj)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('main:per_gtd', pk=obj.gtd.pk)
-#         else:
-#             message = 'Проверьте корректность формы. Возможно, вы указали номер группы, ' \
-#                       'который уже существует в этой ГТД.'
-#     else:
-#         message = ''
-#     form = GtdGroupUpdateForm(instance=obj)
-#     context = {
-#         'form': form,
-#         'group': obj,
-#         'message': message,
-#     }
-#     return render(request, 'main/update_gtd_group.html', context)
-
-
-# # Редактировать товар из группы ГТД
-# def update_gtd_good(request, pk):
-#     obj = get_object_or_404(GtdGood, pk=pk)
-#     if request.method == 'POST':
-#         obj.last_edited_user = request.user
-#         form = GtdGoodUpdateForm(request.POST, gtd=obj.gtd, instance=obj)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('main:per_gtd', pk=obj.gtd.pk)
-#     else:
-#         form = GtdGoodUpdateForm(gtd=obj.gtd, instance=obj)
-#         context = {
-#             'form': form,
-#             'good': obj,
-#         }
-#         return render(request, 'main/update_gtd_good.html', context)
 
 
 # Страница удаления ГТД
@@ -302,7 +281,7 @@ class GtdGoodDeleteView(DeleteView):
 
     def get_object(self, queryset=None):
         obj = super(GtdGoodDeleteView, self).get_object(queryset)
-        self.success_url = reverse('main:per_gtd', kwargs={'pk': obj.gtd.pk})
+        self.success_url = reverse('main:per_gtd', kwargs={'pk': obj.gtd.pk}) + f'?group={ obj.group.pk }'
         return obj
 
 

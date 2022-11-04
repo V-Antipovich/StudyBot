@@ -4,7 +4,7 @@ from .views import index, upload_gtd, show_gtd_file, CDDLogin, CDDLogout, handbo
     eco_fee, to_wms, AccessDeniedView, to_erp, SuccessfulOutcome, StatisticsMenu, GtdGroupDeleteView, \
     statistics_report_gtd_per_exporter, statistics_report_goods_imported, report_xlsx, ChangeUserInfoView,\
     RegUserPasswordChangeView, RegisterUserView, RegisterDoneView, user_activate, show_gtd_list, handbook_xlsx,\
-    GtdGroupUpdateView, GtdGoodUpdateView
+    GtdGroupUpdateView, GtdGoodUpdateView, GtdGoodCreateView
 # CreateGtdGroupView, update_gtd_good,\ update_gtd_group,
 
 app_name = 'main'
@@ -28,6 +28,7 @@ urlpatterns = [
     path('documents/delete_gtd_group/<int:pk>', GtdGroupDeleteView.as_view(), name='delete_gtd_group'),
     path('documents/update_gtd_group/<int:pk>', GtdGroupUpdateView.as_view(), name='update_gtd_group'),
     path('documents/update_gtd_good/<int:pk>', GtdGoodUpdateView.as_view(), name='update_gtd_good'),
+    path('documents/create_good/<int:pk>', GtdGoodCreateView.as_view(), name='create_gtd_good'),
     # path('documents/create_gtd_group/<int:pk>', create_gtd_group, name='create_gtd_group'),
     path('documents/update_gtd/<int:pk>', update_gtd, name='update_gtd'),
     path('documents/delete_gtd/<int:pk>', GtdDeleteView.as_view(), name='delete_gtd'),

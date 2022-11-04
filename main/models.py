@@ -455,7 +455,10 @@ class MeasureQualifier(models.Model):
         verbose_name_plural = 'Единицы измерения'
 
     def __str__(self):
-        return str(self.russian_code)
+        if self.russian_code:
+            return str(self.russian_code)
+        else:
+            return str(self.name)
 
 
 # Товары из ГТД
@@ -478,7 +481,6 @@ class GtdGood(models.Model):
     class Meta:
         verbose_name = 'Товар в ГТД'
         verbose_name_plural = 'Товары в ГТД'
-        unique_together = ('gtd', 'group', 'good_num')
 
 
 # Документы - Справочник

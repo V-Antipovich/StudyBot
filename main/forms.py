@@ -77,6 +77,12 @@ class UploadGtdfilesForm(forms.Form):
                                                'объекты с номерами, уже присутствующими в базе:')
 
 
+# class GtdGoodCreateForm(forms.ModelForm):
+#
+#     class Meta:
+#         model = GtdGood
+
+
 # Форма редактирования шапки ГТД
 class GtdUpdateForm(forms.ModelForm):
 
@@ -120,7 +126,7 @@ class GtdGoodUpdateForm(forms.ModelForm):
     good = forms.ModelChoiceField(queryset=Good.objects.all(), label='Товар', empty_label=None)
     good_num = forms.IntegerField(min_value=1, label='Номер товара в группе')
     quantity = forms.FloatField(min_value=0, label='Количество')
-    qualifier = forms.ModelChoiceField(queryset=MeasureQualifier.objects.all(), label='Единица измерения', empty_label=None)
+    qualifier = forms.ModelChoiceField(queryset=MeasureQualifier.objects.order_by('russian_code'), label='Единица измерения', empty_label=None)
     manufacturer = forms.ModelChoiceField(queryset=Manufacturer.objects.all(), label='Производитель (завод)', empty_label=None)
 
     class Meta:
