@@ -1,6 +1,7 @@
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.signing import BadSignature
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -211,6 +212,7 @@ class GtdDetailView(DetailView):
         return context
 
 
+# TODO: страницы для неправильных форм (типа bad request или message.error)
 # Представление редактирования шапки ГТД
 @login_required
 @groups_required(allowed_roles=['Сотрудник таможенного отдела', 'Администратор'])
@@ -221,6 +223,7 @@ def update_gtd(request, pk):
         form = GtdUpdateForm(request.POST, instance=obj)
         if form.is_valid():
             form.save()
+            messages.success(request, 'ГТД успешно обновлена')
             return redirect('main:per_gtd', pk=pk)
 
     form = GtdUpdateForm(instance=obj)
@@ -322,7 +325,6 @@ class GtdGoodCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):  #
 
 
 # Функция для редактирования группы товаров
-# @method_decorator(login_required, name='dispatch')
 @method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdGroupUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = GtdGroup
@@ -340,7 +342,6 @@ class GtdGroupUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         return super(GtdGroupUpdateView, self).post(request, *args, **kwargs)
 
 
-# @method_decorator(login_required, name='dispatch')
 @method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdGoodUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = GtdGood
@@ -359,7 +360,6 @@ class GtdGoodUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
 
 # Страница удаления ГТД
-# @method_decorator(login_required, name='dispatch')
 @method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = GtdMain
@@ -375,7 +375,6 @@ class GtdDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
 class GtdGroupDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = GtdGroup
     template_name = 'main/delete_gtd_group.html'
-    # success_url = reverse_lazy('main:per_gtd')
     context_object_name = 'group'
     success_message = 'Группа успешно удалена'
 

@@ -15,6 +15,9 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/env" />
+      <excludeFolder url="file://$MODULE_DIR$/USER/erp" />
+      <excludeFolder url="file://$MODULE_DIR$/media/gtd" />
+      <excludeFolder url="file://$MODULE_DIR$/USER/wms" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.10 (customs_declarations_database)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

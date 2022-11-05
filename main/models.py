@@ -74,6 +74,7 @@ class GtdMain(models.Model):  # TODO: при любом изменении по�
         self.total_goods_number = groups.count()
         self.save()
 
+    # TODO: Guid это id из базы; ПТиУ это номер ГТД
     def export_to_erp(self, comment, user):
         goods = GtdGood.objects.filter(gtd_id=self.pk)
         gtd_id = self.gtdId
@@ -164,6 +165,7 @@ class GtdMain(models.Model):  # TODO: при любом изменении по�
         self.save()
 
     def export_to_wms(self, comment, user):
+        # TODO: дата в формате Г_М_д
         gtd_id = self.gtdId.replace('/', '_')
 
         gtd_date = self.date
@@ -540,12 +542,12 @@ class UploadGtdFile(models.Model):
         verbose_name_plural = 'Загруженные файлы ГТД'
 
 
-class WmsExport(models.Model):
+class WmsExport(models.Model): #TODO: добавить поле юзера
     gtd = models.ForeignKey('GtdMain', on_delete=models.CASCADE, verbose_name='id ГТД', related_name='+')
     comment = models.TextField(verbose_name='Комментарий', null=True, blank=True)
     filename = models.CharField(verbose_name='Имя файла', max_length=255)
     date = models.DateTimeField(auto_now_add=True)
-
+# TODO: добавить модель для ERP
 
 class Handbook(models.Model):
     name = models.CharField(verbose_name='Название', max_length=255, unique=True)

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="splited create and update; added deleteview for handbooks">
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="added decorators and messages mixins">
+      <change beforePath="$PROJECT_DIR$/.idea/customs_declarations_database.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/customs_declarations_database.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/layout/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/layout/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/customs_declarations_database/Constant.py" beforeDir="false" afterPath="$PROJECT_DIR$/customs_declarations_database/Constant.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/handbook.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/handbook.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -187,14 +189,7 @@
       <workItem from="1667547576347" duration="2384000" />
       <workItem from="1667550048133" duration="25988000" />
       <workItem from="1667582233991" duration="34749000" />
-      <workItem from="1667647402293" duration="10509000" />
-    </task>
-    <task id="LOCAL-00036" summary="added xlsx files download for eco fee">
-      <created>1666592655897</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1666592655897</updated>
+      <workItem from="1667647402293" duration="14362000" />
     </task>
     <task id="LOCAL-00037" summary="wms export (no modal window)">
       <created>1666642310121</created>
@@ -532,7 +527,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667656519233</updated>
     </task>
-    <option name="localTasksCounter" value="85" />
+    <task id="LOCAL-00085" summary="added decorators and messages mixins">
+      <created>1667658425674</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1667658425674</updated>
+    </task>
+    <option name="localTasksCounter" value="86" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -573,7 +575,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added gtdgroup detete with recounting the total summ feature" />
     <MESSAGE value="added gtd good delete view" />
     <MESSAGE value="fixed view of updating gtd group" />
     <MESSAGE value="done with forms of editing (updating) gtd, grt groups and gtd objects" />
@@ -598,7 +599,8 @@
     <MESSAGE value="small styling update handbook view" />
     <MESSAGE value="united Create and Update of handbook entries" />
     <MESSAGE value="splited create and update; added deleteview for handbooks" />
-    <option name="LAST_COMMIT_MESSAGE" value="splited create and update; added deleteview for handbooks" />
+    <MESSAGE value="added decorators and messages mixins" />
+    <option name="LAST_COMMIT_MESSAGE" value="added decorators and messages mixins" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />
