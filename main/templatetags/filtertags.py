@@ -31,3 +31,10 @@ def cut_id(array):
 
 
 register.filter('cut_id', cut_id)
+
+
+def mid(a, b):
+    return int((a+b)/2)
+
+
+register.filter('mid', mid)
