@@ -175,14 +175,14 @@ class ExporterHandbookCreateUpdateForm(forms.ModelForm):
 
 class ImporterHandbookCreateUpdateForm(forms.ModelForm):
     country = forms.ModelChoiceField(queryset=Country.objects.order_by('russian_name'), label='Страна', empty_label=None)
-    postal_code = forms.IntegerField(min_value=1000, max_value=9999999999999999999, required=True)
+    postal_code = forms.CharField(min_length=3, max_length=20, widget=forms.TextInput(attrs={'type': 'number'})) #IntegerField(min_value=1000, max_value=9999999999999999999, required=True)
     inn = forms.CharField(max_length=15, widget=forms.TextInput(attrs={'type': 'number'}))
-    orgn = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'type': 'number'}))
+    # orgn = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'type': 'number'}))
     kpp = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'type': 'number'}))
 
     class Meta:
         model = Importer
-        fields = '__all__'
+        exclude = ('orgn',)
 
 
 class CountryHandbookCreateUpdateForm(forms.ModelForm):

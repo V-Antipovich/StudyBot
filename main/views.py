@@ -428,7 +428,6 @@ def eco_fee(request):
             cd = form.cleaned_data
             start = cd['start_date']
             end = cd['end_date']
-            print(type(start), type(end))
 
             if start <= end:
                 gtds_range = GtdMain.objects.filter(date__range=[start, end])
@@ -494,8 +493,9 @@ def eco_fee(request):
         form = CalendarDate()
         context = {
             'form': form,
-            'message': 'Некорректный диапазон. Попробуйте ещё раз.',
+            # 'message': 'Некорректный диапазон. Попробуйте ещё раз.',
         }
+        messages.error(request, 'Что-то пошло не так. Проверьте правильность заполнения формы')
         return render(request, 'main/ecological_fee.html', context)
 
 
@@ -564,13 +564,13 @@ def to_erp(request, pk):
         return render(request, 'main/erp.html', context)
 
 
-class SuccessfulOutcome(LoginRequiredMixin, TemplateView):
-    template_name = 'main/successful_outcome.html'
-
-    def get_context_data(self, pk, **kwargs):
-        context_data = super(SuccessfulOutcome, self).get_context_data(**kwargs)
-        context_data['gtd'] = GtdMain.objects.filter(pk=pk)[0]
-        return context_data
+# class SuccessfulOutcome(LoginRequiredMixin, TemplateView):
+#     template_name = 'main/successful_outcome.html'
+#
+#     def get_context_data(self, pk, **kwargs):
+#         context_data = super(SuccessfulOutcome, self).get_context_data(**kwargs)
+#         context_data['gtd'] = GtdMain.objects.filter(pk=pk)[0]
+#         return context_data
 
 
 # Меню отчетов
@@ -587,8 +587,9 @@ def statistics_report_gtd_per_exporter(request):
     if request.method == 'POST':
         form = CalendarDate(request.POST)
         if form.is_valid():
-            start = datetime.strptime(form.data['start_date'], "%Y-%m-%d")
-            end = datetime.strptime(form.data['end_date'], "%Y-%m-%d")
+            cd = form.cleaned_data
+            start = cd['start_date']  # datetime.strptime(cd['start_date'], "%Y-%m-%d")
+            end = cd['end_date']  # datetime.strptime(cd['end_date'], "%Y-%m-%d")
             gtds_range = GtdMain.objects.filter(date__range=[start, end])
             exporters = {}
             for gtd in gtds_range:
@@ -624,16 +625,16 @@ def statistics_report_gtd_per_exporter(request):
             form = CalendarDate()
             context = {
                 'form': form,
-                'message': 'Некорректный диапазон. Попробуйте ещё раз.',
             }
+            messages.error(request, 'Что-то пошло не так, проверьте правильность заполнения формы')
             return render(request, 'main/statistics_report_gtd_per_exporter.html', context)
     else:
         form = CalendarDate()
         context = {
             'form': form,
-            'message': '',
         }
         return render(request, 'main/statistics_report_gtd_per_exporter.html', context)
+
 
 @login_required
 @groups_required(allowed_roles=['Администратор', 'Аналитик'])
@@ -641,8 +642,9 @@ def statistics_report_goods_imported(request):
     if request.method == 'POST':
         form = CalendarDate(request.POST)
         if form.is_valid():
-            start = datetime.strptime(form.data['start_date'], "%Y-%m-%d")
-            end = datetime.strptime(form.data['end_date'], "%Y-%m-%d")
+            cd = form.cleaned_data
+            start = cd['start_date']  # datetime.strptime(cd['start_date'], "%Y-%m-%d")
+            end = cd['end_date']  # datetime.strptime(cd['end_date'], "%Y-%m-%d")
 
             gtds = GtdMain.objects.filter(date__range=[start, end])
             goods = GtdGood.objects.filter(gtd__in=gtds)
@@ -677,21 +679,18 @@ def statistics_report_goods_imported(request):
                 'show': True,
                 'goods': unique_goods,
                 'filename': filename,
-                # 'goods': goods,
-                # 'gtds': gtds,
             }
             return render(request, 'main/statistics_report_goods_imported.html', context)
         else:
             context = {
                 'form': CalendarDate(),
-                'message': 'Некорректный диапазон. Попробуйте ещё раз.',
             }
+            messages.error(request, 'Что-то пошло не так, убедитесь в правильности заполнения формы')
             return render(request, 'main/statistics_report_goods_imported.html', context)
     else:
         form = CalendarDate()
         context = {
             'form': form,
-            'message': '',
         }
         return render(request, 'main/statistics_report_goods_imported.html', context)
 
@@ -706,6 +705,7 @@ def report_xlsx(request, folder, filename):
     response = HttpResponse(path, content_type=mime_type)
     response['Content-Disposition'] = f"attachment; filename={filename}"
     return response
+
 
 @login_required
 @groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела'])

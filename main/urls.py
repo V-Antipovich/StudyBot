@@ -1,11 +1,11 @@
 from django.urls import path
 from .views import index, upload_gtd, show_gtd_file, CDDLogin, CDDLogout, GtdGoodDeleteView,\
     GtdDetailView, update_gtd, GtdDeleteView, Profile, handbook_xlsx, HandbookUpdateView,\
-    eco_fee, to_wms, AccessDeniedView, to_erp, SuccessfulOutcome, StatisticsMenu, GtdGroupDeleteView, \
+    eco_fee, to_wms, AccessDeniedView, to_erp, StatisticsMenu, GtdGroupDeleteView, \
     statistics_report_gtd_per_exporter, statistics_report_goods_imported, report_xlsx, ChangeUserInfoView,\
     RegUserPasswordChangeView, RegisterUserView, RegisterDoneView, user_activate, show_gtd_list, HandbookDeleteView,\
     GtdGroupUpdateView, GtdGoodUpdateView, GtdGoodCreateView, GtdGroupCreateView, HandbookListView, HandbookCreateView
-# CreateGtdGroupView, update_gtd_good,\ update_gtd_group,
+# CreateGtdGroupView, update_gtd_good,\ update_gtd_group, SuccessfulOutcome,
 
 app_name = 'main'
 urlpatterns = [

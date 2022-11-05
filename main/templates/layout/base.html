@@ -63,7 +63,7 @@
                 Профиль
             </button>
             <ul class="dropdown-menu" aria-labelledby="profile-dropdown">
-                <li><a class="dropdown-item" href="{% url 'main:profile' %}">Данные пользователя</a> </li>
+                <li><a class="dropdown-item" href="{% url 'main:profile' %}">Мои данные</a> </li>
 {#                <li><a class="dropdown-item" href="#">Изменить пароль</a></li>#}
                 {% if user|has_group:"Администратор" %}
                     <li><a class="dropdown-item" href="{% url 'main:register' %}">Добавить пользователя</a></li>
