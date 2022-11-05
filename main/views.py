@@ -777,6 +777,12 @@ class HandbookUpdateView(BaseHandbookMixin, UpdateView):
             self.success_url = reverse('main:handbook', kwargs={'handbook': self.get_handbook_context_name()})
         return self.success_url
 
+    def form_valid(self, form):
+        handbook_db = get_object_or_404(Handbook, name=self.get_handbook_russian_name())
+        handbook_db.is_actual_table = False
+        handbook_db.save()
+        return super(HandbookUpdateView, self).form_valid(form)
+
 
 @method_decorator(login_required, name='dispatch')
 class HandbookListView(BaseHandbookMixin, ListView):
