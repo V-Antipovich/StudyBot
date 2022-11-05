@@ -21,7 +21,7 @@
     <table id="sortable_searchable">
         <thead>
             <tr>
-                <th>ID check</th>
+{#                <th>ID check</th>#}
                 {% for field in fields|cut_id %}
                     <th>{{ field.verbose_name }}</th>
                 {% endfor %}
@@ -37,7 +37,7 @@
 {#                    {% for field in fields %}#}
 {#                        <td>{{ obj|get_attr:field }}</td>#}
 {#                    {% endfor %}#}
-                    <td>{{ row.0 }}</td>
+{#                    <td>{{ row.0 }}</td>#}
                     {% for item in row|cut_id %}
                         <td>{{ item }}</td>
                     {% endfor %}

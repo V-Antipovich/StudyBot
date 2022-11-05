@@ -15,7 +15,10 @@ from django.http import FileResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from .forms import UploadGtdfilesForm, GtdUpdateForm, GtdGoodCreateUpdateForm, \
     CalendarDate, ExportComment, ChangeUserInfoForm, RegisterUserForm, PaginateForm, GtdGroupCreateUpdateForm, \
-    CustomsHouseHandbookUpdateForm, ExporterHandbookUpdateForm, ImporterHandbookUpdateForm
+    CustomsHouseHandbookUpdateForm, ExporterHandbookUpdateForm, ImporterHandbookUpdateForm, CountryHandbookUpdateForm, \
+    CurrencyHandbookUpdateForm, DealTypeHandbookUpdateForm, TnVedHandbookUpdateForm, ProcedureHandbookUpdateForm, \
+    GoodHandbookUpdateForm, TradeMarkHandbookUpdateForm, GoodsMarkHandbookUpdateForm, ManufacturerHandbookUpdateForm, \
+    MeasureQualifierHandbookUpdateForm, DocumentTypeHandbookUpdateForm
 from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType,\
     Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType,\
     UploadGtdFile, Handbook
@@ -52,17 +55,17 @@ avaliable_handbooks = {
     'customs_houses': (CustomsHouse, 'Отделы таможни', CustomsHouseHandbookUpdateForm),
     'exporters': (Exporter, 'Экспортеры', ExporterHandbookUpdateForm),  # Содержит обращение к другим моделям
     'importers': (Importer, 'Импортеры', ImporterHandbookUpdateForm),  # Содержит обращение к другим моделям
-    'countries': (Country, 'Государства', ('code', 'russian_name', 'english_name')),
-    'currencies': (Currency, 'Валюты', ('digital_code', 'short_name', 'name')),
-    'deal_types': (DealType, 'Классификатор характера сделки'),
-    'tn_ved': (TnVed, 'Классификатор ТН ВЭД'),
-    'procedures': (Procedure, 'Таможенные процедуры'),
-    'goods': (Good, 'Товары'),
-    'trade_marks': (TradeMark, 'Товарные знаки'),  # Содержит обращение к другим моделям
-    'goods_marks': (GoodsMark, 'Торговые марки'),  # Содержит обращение к другим моделям
-    'manufacturers': (Manufacturer, 'Производители (заводы)'),
-    'qualifiers': (MeasureQualifier, 'Единицы измерения'),
-    'doc_types': (DocumentType, 'Классификатор типов документов'),
+    'countries': (Country, 'Государства', CountryHandbookUpdateForm),
+    'currencies': (Currency, 'Валюты', CurrencyHandbookUpdateForm),
+    'deal_types': (DealType, 'Классификатор характера сделки', DealTypeHandbookUpdateForm),
+    'tn_ved': (TnVed, 'Классификатор ТН ВЭД', TnVedHandbookUpdateForm),
+    'procedures': (Procedure, 'Таможенные процедуры', ProcedureHandbookUpdateForm),
+    'goods': (Good, 'Товары', GoodHandbookUpdateForm),
+    'trade_marks': (TradeMark, 'Товарные знаки', TradeMarkHandbookUpdateForm),  # Содержит обращение к другим моделям
+    'goods_marks': (GoodsMark, 'Торговые марки', GoodsMarkHandbookUpdateForm),  # Содержит обращение к другим моделям
+    'manufacturers': (Manufacturer, 'Производители (заводы)', ManufacturerHandbookUpdateForm),
+    'qualifiers': (MeasureQualifier, 'Единицы измерения', MeasureQualifierHandbookUpdateForm),
+    'doc_types': (DocumentType, 'Классификатор типов документов', DocumentTypeHandbookUpdateForm),
 }
 
 # Некоторые справочники содержат FK, которые для фронта надо подменять

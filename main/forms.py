@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 
 from .models import UploadGtd, RegUser, GtdMain, Exporter, Importer, CustomsHouse, GtdGood, GtdGroup, TnVed, Country, \
-    Procedure, Good, MeasureQualifier, Manufacturer, Currency
+    Procedure, Good, MeasureQualifier, Manufacturer, Currency, DealType, TradeMark, GoodsMark, DocumentType
 from .apps import user_registered
 
 
@@ -172,7 +172,7 @@ class CustomsHouseHandbookUpdateForm(forms.ModelForm):
 
     class Meta:
         model = CustomsHouse
-        fields = "__all__"
+        fields = '__all__'
 
 
 class ExporterHandbookUpdateForm(forms.ModelForm):
@@ -180,7 +180,7 @@ class ExporterHandbookUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Exporter
-        fields = "__all__"
+        fields = '__all__'
 
 
 class ImporterHandbookUpdateForm(forms.ModelForm):
@@ -188,4 +188,81 @@ class ImporterHandbookUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Importer
-        fields = "__all__"
+        fields = '__all__'
+
+
+class CountryHandbookUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = Country
+        fields = '__all__'
+
+
+class CurrencyHandbookUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = Currency
+        fields = '__all__'
+
+
+class DealTypeHandbookUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = DealType
+        fields = '__all__'
+
+
+class TnVedHandbookUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = TnVed
+        fields = '__all__'
+
+
+class ProcedureHandbookUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = Procedure
+        fields = '__all__'
+
+
+class GoodHandbookUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = Good
+        fields = '__all__'
+
+
+class TradeMarkHandbookUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = TradeMark
+        fields = '__all__'
+
+
+class GoodsMarkHandbookUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = GoodsMark
+        fields = '__all__'
+
+
+class ManufacturerHandbookUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = Manufacturer
+        fields = '__all__'
+
+
+class MeasureQualifierHandbookUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = MeasureQualifier
+        fields = '__all__'
+
+
+class DocumentTypeHandbookUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = DocumentType
+        fields = '__all__'
