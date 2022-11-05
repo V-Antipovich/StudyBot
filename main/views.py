@@ -32,52 +32,24 @@ import mimetypes
 import pandas as pd
 from datetime import datetime
 
-# handbook_forms = {
-#     'customs_houses': CustomsHouseHandbookUpdateForm,
-#     'exporters': ExporterHandbookUpdateForm, # Содержит обращение к другим моделям
-#     'importers': ImporterHandbookUpdateForm,  # Содержит обращение к другим моделям
-#     # 'countries': ,
-#     # 'currencies': ,
-#     # 'deal_types': ,
-#     # 'tn_ved': ,
-#     # 'procedures': ,
-#     # 'goods': ,
-#     # 'trade_marks': ,  # Содержит обращение к другим моделям
-#     # 'goods_marks': ,  # Содержит обращение к другим моделям
-#     # 'manufacturers': ,
-#     # 'qualifiers': ,
-#     # 'doc_types': ,
-# }
 
 # Словарь со всеми справочниками системы
-# Ключ - параметр url, Значение - (<Модель этого справочника>, <Название справочника для пользователей>, <Список полей> )
+# Ключ - параметр url, Значение - (<Модель этого справочника>, <Название справочника для пользователей>, <Форма> )
 avaliable_handbooks = {
     'customs_houses': (CustomsHouse, 'Отделы таможни', CustomsHouseHandbookCreateUpdateForm),
-    'exporters': (Exporter, 'Экспортеры', ExporterHandbookCreateUpdateForm),  # Содержит обращение к другим моделям
-    'importers': (Importer, 'Импортеры', ImporterHandbookCreateUpdateForm),  # Содержит обращение к другим моделям
+    'exporters': (Exporter, 'Экспортеры', ExporterHandbookCreateUpdateForm),
+    'importers': (Importer, 'Импортеры', ImporterHandbookCreateUpdateForm),
     'countries': (Country, 'Государства', CountryHandbookCreateUpdateForm),
     'currencies': (Currency, 'Валюты', CurrencyHandbookCreateUpdateForm),
     'deal_types': (DealType, 'Классификатор характера сделки', DealTypeHandbookCreateUpdateForm),
     'tn_ved': (TnVed, 'Классификатор ТН ВЭД', TnVedHandbookCreateUpdateForm),
     'procedures': (Procedure, 'Таможенные процедуры', ProcedureHandbookCreateUpdateForm),
     'goods': (Good, 'Товары', GoodHandbookCreateUpdateForm),
-    'trade_marks': (TradeMark, 'Товарные знаки', TradeMarkHandbookCreateUpdateForm),  # Содержит обращение к другим моделям
-    'goods_marks': (GoodsMark, 'Торговые марки', GoodsMarkHandbookCreateUpdateForm),  # Содержит обращение к другим моделям
+    'trade_marks': (TradeMark, 'Товарные знаки', TradeMarkHandbookCreateUpdateForm),
+    'goods_marks': (GoodsMark, 'Торговые марки', GoodsMarkHandbookCreateUpdateForm),
     'manufacturers': (Manufacturer, 'Производители (заводы)', ManufacturerHandbookCreateUpdateForm),
     'qualifiers': (MeasureQualifier, 'Единицы измерения', MeasureQualifierHandbookCreateUpdateForm),
     'doc_types': (DocumentType, 'Классификатор типов документов', DocumentTypeHandbookCreateUpdateForm),
-}
-
-# Некоторые справочники содержат FK, которые для фронта надо подменять
-# Словарь с зависимыми моделями
-# Ключи - поля FK, которые встречаются в моделях из avaliable_handbooks
-# Значения - (<Модель, с которой через FK отношение m2o>,
-#             <Поле из этой модели, чье значение требуется>,
-#             <Порядковый номер поля в списке полей этой модели>)
-dependent_models = {
-    'country_id': (Country, 'russian_name', 2),
-    'goodsmark_id': (GoodsMark, 'goodsmark', 1),
-    'trademark_id': (TradeMark, 'trademark', 1),
 }
 
 
@@ -142,11 +114,12 @@ class RegUserPasswordChangeView(LoginRequiredMixin, SuccessMessageMixin, Passwor
 # Контроллер для добавления нового пользователя
 @method_decorator(login_required, name='dispatch')
 @method_decorator(groups_required(allowed_roles=['Администратор']), name='dispatch')
-class RegisterUserView(CreateView):
+class RegisterUserView(SuccessMessageMixin, CreateView):
     model = RegUser
     template_name = 'main/register_user.html'
     form_class = RegisterUserForm
     success_url = reverse_lazy('main:register_done')
+    success_message = 'Пользователь добавлен'
 
 
 # Страница сообщения об успешной регистрации
@@ -238,7 +211,6 @@ class GtdDetailView(DetailView):
         return context
 
 
-# TODO: ограничение доступа для классов CUD гтд
 # Представление редактирования шапки ГТД
 @login_required
 @groups_required(allowed_roles=['Сотрудник таможенного отдела', 'Администратор'])
@@ -259,9 +231,9 @@ def update_gtd(request, pk):
     return render(request, 'main/update_gtd.html', context)
 
 
-@method_decorator(login_required, name='dispatch')
+# @method_decorator(login_required, name='dispatch')
 @method_decorator(groups_required(allowed_roles=['Сотрудник таможенного отдела', 'Администратор']), name='dispatch')
-class GtdGroupCreateView(CreateView):
+class GtdGroupCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     """
     Класс, реализующий добавление новой группы товаров в ГТД
     """
@@ -270,6 +242,7 @@ class GtdGroupCreateView(CreateView):
     context_object_name = 'group'
     form_class = GtdGroupCreateUpdateForm
     gtd = None
+    success_message = 'Группа успешно добавлена'
 
     def get_gtd(self):
         if not self.gtd:
@@ -311,14 +284,15 @@ class GtdGroupCreateView(CreateView):
 
 
 # Класс добавления нового товара в группу ГТД
-@method_decorator(login_required, name='dispatch')
+# @method_decorator(login_required, name='dispatch')
 @method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
-class GtdGoodCreateView(CreateView):  # TODO: last_edited
+class GtdGoodCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):  # TODO: last_edited
     model = GtdGood
     template_name = 'main/create_gtd_good.html'
     context_object_name = 'good'
     form_class = GtdGoodCreateUpdateForm
     group = None
+    success_message = 'Товар успешно добавлен'
 
     def get_group(self):
         if not self.group:
@@ -347,15 +321,15 @@ class GtdGoodCreateView(CreateView):  # TODO: last_edited
         return super(GtdGoodCreateView, self).post(request, *args, **kwargs)
 
 
-# TODO: в шаблонах для CUD сделать кнопку отмены
 # Функция для редактирования группы товаров
-@method_decorator(login_required, name='dispatch')
+# @method_decorator(login_required, name='dispatch')
 @method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
-class GtdGroupUpdateView(UpdateView):
+class GtdGroupUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = GtdGroup
     template_name = 'main/update_gtd_group.html'
     context_object_name = 'group'
     form_class = GtdGroupCreateUpdateForm
+    success_message = 'Группа успешно обновлена'
 
     def get_success_url(self):
         return reverse('main:per_gtd', kwargs={'pk': self.object.gtd.pk})
@@ -366,13 +340,14 @@ class GtdGroupUpdateView(UpdateView):
         return super(GtdGroupUpdateView, self).post(request, *args, **kwargs)
 
 
-@method_decorator(login_required, name='dispatch')
+# @method_decorator(login_required, name='dispatch')
 @method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
-class GtdGoodUpdateView(UpdateView):
+class GtdGoodUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = GtdGood
     template_name = 'main/update_gtd_good.html'
     context_object_name = 'good'
     form_class = GtdGoodCreateUpdateForm
+    success_message = 'Товар успешно обновлен'
 
     def get_success_url(self):
         return reverse('main:per_gtd', kwargs={'pk': self.object.gtd.pk}) + f'?group={ self.object.group.pk }'
@@ -384,23 +359,25 @@ class GtdGoodUpdateView(UpdateView):
 
 
 # Страница удаления ГТД
-@method_decorator(login_required, name='dispatch')
+# @method_decorator(login_required, name='dispatch')
 @method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
-class GtdDeleteView(DeleteView):
+class GtdDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = GtdMain
     template_name = 'main/delete_gtd.html'
     success_url = reverse_lazy('main:show_gtd')
     context_object_name = 'gtd'
+    success_message = 'ГТД успешно удалена'
 
 
 # Страница удаления группы товаров
 @method_decorator(login_required, name='dispatch')
 @method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
-class GtdGroupDeleteView(DeleteView):
+class GtdGroupDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = GtdGroup
     template_name = 'main/delete_gtd_group.html'
     # success_url = reverse_lazy('main:per_gtd')
     context_object_name = 'group'
+    success_message = 'Группа успешно удалена'
 
     def get_object(self, queryset=None):
         obj = super(GtdGroupDeleteView, self).get_object(queryset)
@@ -415,12 +392,13 @@ class GtdGroupDeleteView(DeleteView):
 
 
 # Страница удаления товара
-@method_decorator(login_required, name='dispatch')
+# @method_decorator(login_required, name='dispatch')
 @method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
-class GtdGoodDeleteView(DeleteView):
+class GtdGoodDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = GtdGood
     template_name = 'main/delete_gtd_good.html'
     context_object_name = 'good'
+    success_message = 'Товар успешно удален'
 
     def get_object(self, queryset=None):
         obj = super(GtdGoodDeleteView, self).get_object(queryset)
@@ -570,7 +548,7 @@ def to_erp(request, pk):
         return render(request, 'main/erp.html', context)
 
 
-class SuccessfulOutcome(TemplateView):
+class SuccessfulOutcome(LoginRequiredMixin, TemplateView):
     template_name = 'main/successful_outcome.html'
 
     def get_context_data(self, pk, **kwargs):
@@ -580,12 +558,15 @@ class SuccessfulOutcome(TemplateView):
 
 
 # Меню отчетов
-class StatisticsMenu(TemplateView):
+# @login_required
+@method_decorator(groups_required(allowed_roles=['Администратор', 'Аналитик']), name='dispatch')
+class StatisticsMenu(LoginRequiredMixin, TemplateView):
     template_name = 'main/statistic_reports_menu.html'
 
 
 # Отчет - ГТД по поставщикам
-@groups_required('Аналитик')
+@login_required
+@groups_required(allowed_roles=['Администратор', 'Аналитик'])
 def statistics_report_gtd_per_exporter(request):
     if request.method == 'POST':
         form = CalendarDate(request.POST)
@@ -638,8 +619,8 @@ def statistics_report_gtd_per_exporter(request):
         }
         return render(request, 'main/statistics_report_gtd_per_exporter.html', context)
 
-
-@groups_required('Аналитик')
+@login_required
+@groups_required(allowed_roles=['Администратор', 'Аналитик'])
 def statistics_report_goods_imported(request):
     if request.method == 'POST':
         form = CalendarDate(request.POST)
@@ -700,7 +681,8 @@ def statistics_report_goods_imported(request):
 
 
 # Файл xlsx отчета
-@groups_required('Аналитик')
+@login_required
+@groups_required(allowed_roles=['Администратор', 'Аналитик'])
 def report_xlsx(request, folder, filename):
     filepath = os.path.join(MEDIA_ROOT, 'reports/', folder, filename)
     path = open(filepath, 'rb')
@@ -709,7 +691,7 @@ def report_xlsx(request, folder, filename):
     response['Content-Disposition'] = f"attachment; filename={filename}"
     return response
 
-
+@login_required
 @groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела'])
 def handbook_xlsx(request, filename):
     filepath = os.path.join(MEDIA_ROOT, 'handbooks/', filename)
@@ -721,7 +703,7 @@ def handbook_xlsx(request, filename):
 
 
 # class HandbookCreateView(CreateView):
-class BaseHandbookMixin:  # TODO: хлебные крошки, кнопки отмены выбора, пагинатор.
+class BaseHandbookMixin:  # TODO: пагинатор.
     handbook_context_name = None
     handbook_properties = None
     handbook_model = None
@@ -759,8 +741,11 @@ class BaseHandbookMixin:  # TODO: хлебные крошки, кнопки от
         handbook_db.save()
 
 
-class HandbookCreateView(BaseHandbookMixin, CreateView):
+@method_decorator(login_required, name='dispatch')
+@method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
+class HandbookCreateView(BaseHandbookMixin, SuccessMessageMixin, CreateView):
     template_name = 'main/create_handbook_entry.html'
+    success_message = 'Запись успешно добавлена'
 
     def get_form_class(self):
         if not self.form_class:
@@ -779,8 +764,11 @@ class HandbookCreateView(BaseHandbookMixin, CreateView):
         return self.success_url
 
 
-class HandbookUpdateView(BaseHandbookMixin, UpdateView):
+@method_decorator(login_required, name='dispatch')
+@method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
+class HandbookUpdateView(BaseHandbookMixin, SuccessMessageMixin, UpdateView):
     template_name = 'main/update_handbook_entry.html'
+    success_message = 'Запись успешно обновлена'
 
     def get_queryset(self):
         model = avaliable_handbooks[self.get_handbook_context_name()][0]
@@ -807,8 +795,11 @@ class HandbookUpdateView(BaseHandbookMixin, UpdateView):
         return super(HandbookUpdateView, self).form_valid(form)
 
 
-class HandbookDeleteView(BaseHandbookMixin, DeleteView):
+@method_decorator(login_required, name='dispatch')
+@method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
+class HandbookDeleteView(BaseHandbookMixin, SuccessMessageMixin, DeleteView):
     template_name = 'main/delete_handbook_entry.html'
+    success_message = 'Запись успешно удалена'
 
     def get_context_data(self, **kwargs):
         context = super(HandbookDeleteView, self).get_context_data(**kwargs)
@@ -824,6 +815,7 @@ class HandbookDeleteView(BaseHandbookMixin, DeleteView):
         if not self.success_url:
             self.success_url = reverse('main:handbook', kwargs={'handbook': self.get_handbook_context_name()})
         return self.success_url
+
 
 @method_decorator(login_required, name='dispatch')
 class HandbookListView(BaseHandbookMixin, ListView):
@@ -947,15 +939,6 @@ def upload_gtd(request):
 
                 # Обновим справочник экспортеров если требуется
                 exporter_info = get_gtdmain["exporter"]
-                # add_exporter, exp_created = Exporter.objects.update_or_create(
-                #     name=exporter_info["name"],
-                #     postal_code=exporter_info["postal_code"],
-                #     country=Country.objects.get(code=exporter_info["country"]),
-                #     city=exporter_info["city"],
-                #     street_house=exporter_info['street_house'],
-                #     house=exporter_info["house"],
-                #     region=exporter_info['region']
-                # )
                 add_exporter = Exporter.objects.filter(name=exporter_info["name"], postal_code=exporter_info["postal_code"])
                 if add_exporter.exists():
                     add_exporter = add_exporter[0]

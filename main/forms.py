@@ -85,12 +85,6 @@ class UploadGtdfilesForm(forms.Form):
                                                'объекты с номерами, уже присутствующими в базе:')
 
 
-# class GtdGoodCreateForm(forms.ModelForm):
-#
-#     class Meta:
-#         model = GtdGood
-
-
 # Форма редактирования шапки ГТД
 class GtdUpdateForm(forms.ModelForm):
 
@@ -113,16 +107,16 @@ class GtdUpdateForm(forms.ModelForm):
 class GtdGroupCreateUpdateForm(forms.ModelForm):
     tn_ved = forms.ModelChoiceField(queryset=TnVed.objects.order_by('code'), label='ТН ВЭД', empty_label=None)
     number = forms.IntegerField(min_value=1, label='Номер товарной группы')
-    gross_weight = forms.FloatField(min_value=0, label='Масса брутто') #, error_messages=value_cannot_be_negative)
-    net_weight = forms.FloatField(min_value=0, label='Масса нетто') #, error_messages=value_cannot_be_negative)
+    gross_weight = forms.FloatField(min_value=0, label='Масса брутто')
+    net_weight = forms.FloatField(min_value=0, label='Масса нетто')
     country = forms.ModelChoiceField(queryset=Country.objects.all(), label='Страна', empty_label=None)
     procedure = forms.ModelChoiceField(queryset=Procedure.objects.all(), label='Заявляемая таможенная процедура', empty_label=None)
     prev_procedure = forms.ModelChoiceField(queryset=Procedure.objects.all(), label='Предыдущая таможенная процедура', empty_label=None)
-    customs_cost = forms.FloatField(min_value=0, label='Таможенная стоимость') #, error_messages=value_cannot_be_negative)
-    fee = forms.FloatField(min_value=0, label='Сумма пошлины') #, error_messages=value_cannot_be_negative)
-    fee_percent = forms.FloatField(min_value=0, label='Процентная ставка пошлины') #, error_messages=value_cannot_be_negative)
-    ndc = forms.FloatField(min_value=0, label='Сумма НДС')  #, error_messages=value_cannot_be_negative)
-    ndc_percent = forms.FloatField(min_value=0, label='Процент НДС')  #, error_messages=value_cannot_be_negative)
+    customs_cost = forms.FloatField(min_value=0, label='Таможенная стоимость')
+    fee = forms.FloatField(min_value=0, label='Сумма пошлины')
+    fee_percent = forms.FloatField(min_value=0, label='Процентная ставка пошлины')
+    ndc = forms.FloatField(min_value=0, label='Сумма НДС')
+    ndc_percent = forms.FloatField(min_value=0, label='Процент НДС')
 
     class Meta:
         model = GtdGroup
