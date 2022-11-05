@@ -162,13 +162,8 @@ class CalendarDate(forms.Form):
                                                       ))
 
 
-# class CurrencyHandbookUpdateForm(forms.ModelForm):
-#     # digital_code = forms.CharField(max_length=3)
-#     class Meta:
-#         model = Currency
-#         fields = '__all__'
-
 class CustomsHouseHandbookUpdateForm(forms.ModelForm):
+    house_num = forms.CharField(min_length=6, max_length=8, required=True)
 
     class Meta:
         model = CustomsHouse
@@ -177,6 +172,7 @@ class CustomsHouseHandbookUpdateForm(forms.ModelForm):
 
 class ExporterHandbookUpdateForm(forms.ModelForm):
     country = forms.ModelChoiceField(queryset=Country.objects.all(), label='Страна', empty_label=None)
+    postal_code = forms.IntegerField(min_value=1000, max_value=9999999999999999999, required=True)
 
     class Meta:
         model = Exporter
@@ -185,6 +181,10 @@ class ExporterHandbookUpdateForm(forms.ModelForm):
 
 class ImporterHandbookUpdateForm(forms.ModelForm):
     country = forms.ModelChoiceField(queryset=Country.objects.all(), label='Страна', empty_label=None)
+    postal_code = forms.IntegerField(min_value=1000, max_value=9999999999999999999, required=True)
+    inn = forms.CharField(max_length=15, widget=forms.TextInput(attrs={'type': 'number'}))
+    orgn = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'type': 'number'}))
+    kpp = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'type': 'number'}))
 
     class Meta:
         model = Importer
@@ -192,6 +192,7 @@ class ImporterHandbookUpdateForm(forms.ModelForm):
 
 
 class CountryHandbookUpdateForm(forms.ModelForm):
+    code = forms.CharField(max_length=2)
 
     class Meta:
         model = Country

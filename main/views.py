@@ -721,7 +721,7 @@ def handbook_xlsx(request, filename):
 
 
 # class HandbookCreateView(CreateView):
-class BaseHandbookMixin:
+class BaseHandbookMixin: # TODO: хлебные крошки, кнопки отмены выбора, пагинатор.
     handbook_context_name = None
     handbook_properties = None
     handbook_model = None
@@ -753,6 +753,11 @@ class BaseHandbookMixin:
             self.handbook_fields = self.get_handbook_model()._meta.get_fields()  # [1:]
         return self.handbook_fields
 
+    def handbook_needs_renovation(self):
+        handbook_db = get_object_or_404(Handbook, name=self.get_handbook_russian_name())
+        handbook_db.is_actual_table = False
+        handbook_db.save()
+
 
 class HandbookUpdateView(BaseHandbookMixin, UpdateView):
     template_name = 'main/update_handbook.html'
@@ -778,9 +783,7 @@ class HandbookUpdateView(BaseHandbookMixin, UpdateView):
         return self.success_url
 
     def form_valid(self, form):
-        handbook_db = get_object_or_404(Handbook, name=self.get_handbook_russian_name())
-        handbook_db.is_actual_table = False
-        handbook_db.save()
+        self.handbook_needs_renovation()
         return super(HandbookUpdateView, self).form_valid(form)
 
 
