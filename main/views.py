@@ -845,15 +845,28 @@ class HandbookListView(BaseHandbookMixin, ListView):
         condition = user.groups.filter(name__in=['Администратор', 'Сотрудник таможенного отдела']).exists()
         if condition:
             self.check_xlsx()
+        raw_data = self.get_queryset()
+
+        paginate_by = 200
+        page = self.request.GET.get('page', 1)
+        paginator = Paginator(raw_data, paginate_by)
+        try:
+            data = paginator.page(page)
+        except PageNotAnInteger:
+            data = paginator.page(1)
+        except EmptyPage:
+            data = paginator.page(paginator.num_pages)
+
         context = {
             'fields': self.get_handbook_fields(),
-            'data': self.get_queryset(),
-            'crop_data': self.get_cut_queryset(),
+            # 'data': self.get_queryset(),
             'russian_name': self.get_handbook_russian_name(),
             'user': user,
             'for_customs_officer': condition,
             'filename': filename,
             'handbook': self.get_handbook_context_name(),
+            'paginate_by': paginate_by,
+            'data': data,
         }
         return context
 
@@ -869,6 +882,7 @@ class HandbookListView(BaseHandbookMixin, ListView):
                 queryset.append(row)
             self.queryset = queryset
         return self.queryset
+        # return super(HandbookListView, self).get_queryset()
 
     def get_cut_queryset(self):
         if not self.cut_queryset:

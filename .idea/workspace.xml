@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="made little changes to erp and wms export logic">
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="made some small fixes">
       <change afterPath="$PROJECT_DIR$/media/handbooks/Валюты.xlsx" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/media/handbooks/Государства.xlsx" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/media/handbooks/Единицы измерения.xlsx" afterDir="false" />
@@ -18,12 +18,7 @@
       <change afterPath="$PROJECT_DIR$/media/reports/eco/eco 25 02-05-2022-01-11-2022.xlsx" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/media/reports/eco/eco 25 05-11-2022-23-11-2022.xlsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/layout/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/layout/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/ecological_fee.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/ecological_fee.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/statistics_report_goods_imported.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/statistics_report_goods_imported.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/statistics_report_gtd_per_exporter.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/statistics_report_gtd_per_exporter.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/handbook.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/handbook.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -56,29 +51,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;database.data.extractors.current.export.id&quot;: &quot;XML-Groovy.xml.groovy&quot;,
-    &quot;database.data.extractors.current.id&quot;: &quot;Comma-separated (CSV)_id&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Customs_declarations_dbbackups&quot;,
-    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "database.data.extractors.current.export.id": "XML-Groovy.xml.groovy",
+    "database.data.extractors.current.id": "Comma-separated (CSV)_id",
+    "last_opened_file_path": "C:/Users/Vitalii/Desktop/new 3.py",
+    "list.type.of.created.stylesheet": "CSS",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;ChangesTree.GroupingKeys&quot;: [
+  "keyToStringList": {
+    "ChangesTree.GroupingKeys": [
     ],
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;azure&quot;,
-      &quot;mysql&quot;
+    "DatabaseDriversLRU": [
+      "azure",
+      "mysql"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Programming\Python\Django\customs_declarations_database\main\templates\main" />
@@ -207,13 +202,6 @@
       <workItem from="1667550048133" duration="25988000" />
       <workItem from="1667582233991" duration="34749000" />
       <workItem from="1667647402293" duration="14362000" />
-    </task>
-    <task id="LOCAL-00039" summary="WMS export with modal window">
-      <created>1666645267021</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1666645267021</updated>
     </task>
     <task id="LOCAL-00040" summary="added decorators for access limiting">
       <created>1666713192038</created>
@@ -551,7 +539,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667675773348</updated>
     </task>
-    <option name="localTasksCounter" value="88" />
+    <task id="LOCAL-00088" summary="made some small fixes">
+      <created>1667680039316</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
+      <option name="project" value="LOCAL" />
+      <updated>1667680039316</updated>
+    </task>
+    <option name="localTasksCounter" value="89" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -592,7 +587,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="done with forms of editing (updating) gtd, grt groups and gtd objects" />
     <MESSAGE value="temporarily blocked views of editing gtd groups and goods." />
     <MESSAGE value="retrieved gtd groups editing with recount" />
     <MESSAGE value="nav chain in gtd groups updating" />
@@ -617,7 +611,8 @@
     <MESSAGE value="added decorators and messages mixins" />
     <MESSAGE value="tiny fixes" />
     <MESSAGE value="made little changes to erp and wms export logic" />
-    <option name="LAST_COMMIT_MESSAGE" value="made little changes to erp and wms export logic" />
+    <MESSAGE value="made some small fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="made some small fixes" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />
