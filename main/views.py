@@ -21,14 +21,14 @@ from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporte
 import os
 from .utilities import parse_gtd, get_tnved_name, signer
 from .models import RegUser
-from customs_declarations_database.settings import MEDIA_ROOT, USER_DIR
+from customs_declarations_database.settings import MEDIA_ROOT
 from customs_declarations_database.Constant import under
 import xlsxwriter
 import mimetypes
-from datetime import datetime, timedelta
-from braces.views import GroupRequiredMixin
+from datetime import datetime
 
 
+# TODO: docstrings!!!
 # TODO: all todo in extra staff
 # Вспомогательные функции контроля доступа - проверка пользователя, является ли он суперпользователем
 def superuser_check(user):
@@ -44,53 +44,6 @@ def groups_required(allowed_roles=[]):
                 return HttpResponseRedirect(reverse_lazy('main:access_denied'))
         return wrap
     return decorator
-
-# Декоратор, разрешающий доступ определенным группам
-# def groups_required(*group_names):
-#
-   # """ Requires user membership in at least one of the groups passed in. """
-
-   # def in_groups(u):
-   #     if u.is_authenticated():
-   #         if bool(u.groups.filter(name__in=group_names)) | u.is_superuser:
-   #             return True
-   #     return False
-   # return user_passes_test(in_groups, login_url=)
-# def groups_required(*group_names):
-#     # print('шаг 2')
-#     def in_group(u):
-#         # print('шаг 2')
-#         return u.is_active and (u.is_superuser or u.groups.filter(name='Администратор').exists() or bool(u.groups.filter(name__in=group_names)))
-#     return user_passes_test(in_group, login_url=reverse_lazy('main:access_denied'))
-
-
-# class MyGroupRequiredMixin(GroupRequiredMixin):
-#
-#     def get_login_url(self):
-#         user = self.request.user #.is_authenticated
-#         if user.is_authenticated:
-#             self.login_url = reverse_lazy('main:access_denied')
-        # else:
-        #     self.login_url = reverse_lazy('main:login')
-        # self.login_url = reverse_lazy('main:access_denied')
-        # return super(MyGroupRequiredMixin, self).get_login_url()
-#
-# class UserHasRoleMixin(LoginRequiredMixin, UserPassesTestMixin):
-#     groups = None
-#
-#     def get_test_func(self):
-#         if self.groups:
-#             return groups_required(*self.groups)
-#         else:
-#             # print('шаг 1')
-#             return groups_required()
-#
-#     def test_func(self):
-#         super(UserHasRoleMixin, self).test_func()
-#
-#     def dispatch(self, request, *args, **kwargs):
-#         return super(UserHasRoleMixin, self).dispatch(request, *args, **kwargs)
-#
 
 
 # Страница уведомляющая об отсутствии нужных прав
@@ -207,7 +160,8 @@ def show_gtd_list(request):
 
 
 # Представление персональной страницы ГТД
-class GtdDetailView(LoginRequiredMixin, DetailView):
+@method_decorator(login_required, name='dispatch')
+class GtdDetailView(DetailView):
     model = GtdMain
     template_name = 'main/per_gtd.html'
     context_object_name = 'gtd'
@@ -233,6 +187,7 @@ class GtdDetailView(LoginRequiredMixin, DetailView):
 
 # TODO: ограничение доступа для классов CUD гтд
 # Представление редактирования шапки ГТД
+@login_required
 @groups_required(allowed_roles=['Сотрудник таможенного отдела', 'Администратор'])
 def update_gtd(request, pk):
     obj = get_object_or_404(GtdMain, pk=pk)
@@ -251,55 +206,98 @@ def update_gtd(request, pk):
     return render(request, 'main/update_gtd.html', context)
 
 
-# Класс добавления новой группы в ГТД # TODO: верстка при больших значениях
+@method_decorator(login_required, name='dispatch')
 @method_decorator(groups_required(allowed_roles=['Сотрудник таможенного отдела', 'Администратор']), name='dispatch')
-class GtdGroupCreateView(LoginRequiredMixin, CreateView):
+class GtdGroupCreateView(CreateView):
+    """
+    Класс, реализующий добавление новой группы товаров в ГТД
+    """
     model = GtdGroup
     template_name = 'main/create_gtd_group.html'
     context_object_name = 'group'
     form_class = GtdGroupCreateUpdateForm
+    gtd = None
 
+    def get_gtd(self):
+        if not self.gtd:
+            self.gtd = get_object_or_404(GtdMain, pk=self.kwargs.get('pk'))
+        return self.gtd
+
+    # Переопределение работы метода, вызываемого при валидности формы
     def form_valid(self, form):
+        """
+        Функция, вызываемая если форма заполнена корректно.
+        Заполняет оставшееся поле и позволяет сохранить новый объект
+        """
         new_group = form.save(commit=False)
-        gtd = get_object_or_404(GtdMain, pk=self.kwargs.get('pk'))
+        gtd = self.get_gtd() #get_object_or_404(GtdMain, pk=self.kwargs.get('pk'))
         new_group.gtd = gtd
         return super(GtdGroupCreateView, self).form_valid(form)
 
     def get_success_url(self):
+        """
+        Получение ссылки, по которой пользователь перенаправляется
+        после успешного заполнения формы
+        """
         return reverse('main:per_gtd', kwargs={'pk': self.kwargs.get('pk')})
 
     def get_context_data(self, **kwargs):
+        """
+        Получение контекста шаблона, добавление объекта ГТД,
+        с которым добавляемая группа связана
+        """
         context = super(GtdGroupCreateView, self).get_context_data(**kwargs)
         context['gtd'] = get_object_or_404(GtdMain, pk=self.kwargs.get('pk'))
 
         return context
 
+    def post(self, request, *args, **kwargs):
+        gtd = self.get_gtd()
+        gtd.new_version()
+        return super(GtdGroupCreateView, self).post(request, *args, **kwargs)
+
 
 # Класс добавления нового товара в группу ГТД
-class GtdGoodCreateView(CreateView):
+@method_decorator(login_required, name='dispatch')
+@method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
+class GtdGoodCreateView(CreateView):  # TODO: last_edited
     model = GtdGood
     template_name = 'main/create_gtd_good.html'
     context_object_name = 'good'
     form_class = GtdGoodCreateUpdateForm
+    group = None
+
+    def get_group(self):
+        if not self.group:
+            self.group = get_object_or_404(GtdGroup, pk=self.kwargs.get('pk'))
+        return self.group
 
     def form_valid(self, form):
-        group = get_object_or_404(GtdGroup, pk=self.kwargs.get('pk'))  # self.kwargs.get('pk')
+        group = self.get_group()
         new_good = form.save(commit=False)
         new_good.gtd = group.gtd
         new_good.group = group
         return super(GtdGoodCreateView, self).form_valid(form)
 
     def get_success_url(self):
-        group = get_object_or_404(GtdGroup, pk=self.kwargs.get('pk'))
-        return reverse('main:per_gtd', kwargs={'pk': group.gtd.pk }) + f'?group={ group.pk }'
+        group = self.get_group()
+        return reverse('main:per_gtd', kwargs={'pk': group.gtd.pk}) + f'?group={ group.pk }'
 
     def get_context_data(self, **kwargs):
         context = super(GtdGoodCreateView, self).get_context_data(**kwargs)
-        context['group'] = get_object_or_404(GtdGroup, pk=self.kwargs.get('pk'))
+        context['group'] = self.get_group()
         return context
 
+    def post(self, request, *args, **kwargs):
+        obj = self.get_group()
+        obj.gtd.new_version()
+        return super(GtdGoodCreateView, self).post(request, *args, **kwargs)
 
+
+# TODO: в шаблонах для CUD сделать кнопку отмены
 # Функция для редактирования группы товаров
+@method_decorator(login_required, name='dispatch')
+@method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdGroupUpdateView(UpdateView):
     model = GtdGroup
     template_name = 'main/update_gtd_group.html'
@@ -307,9 +305,16 @@ class GtdGroupUpdateView(UpdateView):
     form_class = GtdGroupCreateUpdateForm
 
     def get_success_url(self):
-        return reverse('main:per_gtd', kwargs={'pk': self.object.gtd.pk}) # self.object.gtd.pk
+        return reverse('main:per_gtd', kwargs={'pk': self.object.gtd.pk})
+
+    def post(self, request, *args, **kwargs):
+        obj = self.get_object()
+        obj.gtd.new_version()
+        return super(GtdGroupUpdateView, self).post(request, *args, **kwargs)
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdGoodUpdateView(UpdateView):
     model = GtdGood
     template_name = 'main/update_gtd_good.html'
@@ -319,8 +324,15 @@ class GtdGoodUpdateView(UpdateView):
     def get_success_url(self):
         return reverse('main:per_gtd', kwargs={'pk': self.object.gtd.pk}) + f'?group={ self.object.group.pk }'
 
+    def post(self, request, *args, **kwargs):
+        obj = self.get_object()
+        obj.gtd.new_version()
+        return super(GtdGoodUpdateView, self).post(request, *args, **kwargs)
+
 
 # Страница удаления ГТД
+@method_decorator(login_required, name='dispatch')
+@method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdDeleteView(DeleteView):
     model = GtdMain
     template_name = 'main/delete_gtd.html'
@@ -329,6 +341,8 @@ class GtdDeleteView(DeleteView):
 
 
 # Страница удаления группы товаров
+@method_decorator(login_required, name='dispatch')
+@method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdGroupDeleteView(DeleteView):
     model = GtdGroup
     template_name = 'main/delete_gtd_group.html'
@@ -338,13 +352,18 @@ class GtdGroupDeleteView(DeleteView):
     def get_object(self, queryset=None):
         obj = super(GtdGroupDeleteView, self).get_object(queryset)
         gtd = obj.gtd
-        self.success_url = reverse('main:per_gtd', kwargs={'pk': gtd.pk})  # reverse_lazy('main:per_gtd', pk=gtd.pk)
-        # Пересчитываем суммы в родительской гтд
-        # gtd.recount_deleted(obj.pk)
+        self.success_url = reverse('main:per_gtd', kwargs={'pk': gtd.pk})
         return obj
+
+    def post(self, request, *args, **kwargs):
+        obj = self.get_object()
+        obj.gtd.new_version()
+        return super(GtdGroupDeleteView, self).post(request, *args, **kwargs)
 
 
 # Страница удаления товара
+@method_decorator(login_required, name='dispatch')
+@method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdGoodDeleteView(DeleteView):
     model = GtdGood
     template_name = 'main/delete_gtd_good.html'
@@ -355,9 +374,15 @@ class GtdGoodDeleteView(DeleteView):
         self.success_url = reverse('main:per_gtd', kwargs={'pk': obj.gtd.pk}) + f'?group={ obj.group.pk }'
         return obj
 
+    def post(self, request, *args, **kwargs):
+        obj = self.get_object()
+        obj.gtd.new_version()
+        return super(GtdGoodDeleteView, self).post(request, *args, *kwargs)
+
 
 # Экологический сбор: выбор периода, сбор данных о ГТД из этого периода, содержащих ТН ВЭД, подлежащие эко сбору
-@groups_required('Бухгалтер')
+@login_required
+@groups_required(allowed_roles=['Администратор', 'Бухгалтер'])
 def eco_fee(request):
     if request.method == 'GET':
         form = CalendarDate()
@@ -370,8 +395,6 @@ def eco_fee(request):
         form = CalendarDate(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            # start = datetime.strptime(cd['start_date'], "%d-%m-%Y")
-            # end = datetime.strptime(cd['end_date'], "%d-%m-%Y")
             start = cd['start_date']
             end = cd['end_date']
             print(type(start), type(end))
@@ -426,7 +449,7 @@ def eco_fee(request):
                 workbook.close()
                 newform = CalendarDate({'start_date': start, 'end_date': end})
                 context = {
-                    'form': newform, # CalendarDate(data=request.POST), #initial=request.POST), #CalendarDate( )# initial={'start_date': start, 'end_date': end}),
+                    'form': newform,
                     'show': True,
                     'start': start,
                     'end': end,
@@ -453,7 +476,8 @@ def show_gtd_file(request, filename):
 
 
 # Представление для генерации xml-файла
-@groups_required('Сотрудник таможенного отдела')
+@login_required
+@groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела'])
 def to_wms(request, pk):
     gtd = GtdMain.objects.filter(pk=pk)[0]
     if request.method == 'POST':
@@ -465,7 +489,6 @@ def to_wms(request, pk):
 
     else:
         form = ExportComment()
-
         context = {
             'form': form,
             'gtd': gtd,
@@ -474,7 +497,8 @@ def to_wms(request, pk):
 
 
 # Формирование файла для ERP
-@groups_required('Бухгалтер')
+@login_required
+@groups_required(allowed_roles=['Администратор', 'Бухгалтер'])
 def to_erp(request, pk):
     gtd = GtdMain.objects.filter(pk=pk)[0]
     if request.method == 'POST':

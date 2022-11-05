@@ -6,7 +6,7 @@
 {% block content %}
     <h3 class="mb-3">
         <a href="#" type="button" data-bs-toggle="modal" data-bs-target="#to_list" >К списку ГТД</a> ->
-        ГТД <a href="#" type="button" data-bs-toggle="modal" data-bs-target="#to_gtd" >{{ good.gtd.gtdId }}</a> ->
+        К ГТД <a href="#" type="button" data-bs-toggle="modal" data-bs-target="#to_gtd" >{{ good.gtd.gtdId }}</a> ->
         Редактировать товар {{ good.good.marking }}
 
         <div class="modal fade" id="to_list" tabindex="-1" role="dialog" aria-labelledby="to_listLabel" aria-hidden="true">
@@ -19,7 +19,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        Изменения не будут сохранены. Нажмите ОК, хотите вернуться на страницу списка
+                        Изменения не будут сохранены. Нажмите ОК, если хотите вернуться на страницу списка
                     </div>
                     <div class="modal-footer justify-content-center">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Назад</button>
@@ -39,7 +39,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        Изменения не будут сохранены. Нажмите ОК, хотите вернуться на страницу ГТД
+                        Изменения не будут сохранены. Нажмите ОК, если хотите вернуться на страницу ГТД
                     </div>
                     <div class="modal-footer justify-content-center">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Назад</button>

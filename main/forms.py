@@ -219,7 +219,7 @@ class GtdGoodCreateUpdateForm(forms.ModelForm):
 
 # Форма для подготовки к формированию xml для WMS
 class ExportComment(forms.Form):
-    comment = forms.CharField(widget=forms.Textarea(attrs={'rows': 2, 'cols': 50}), required=False,
+    comment = forms.CharField(widget=forms.Textarea(attrs={'rows': 1, 'cols': 50}), required=False,
                               label='Добавьте комментарий/описание, если требуется')
 
 

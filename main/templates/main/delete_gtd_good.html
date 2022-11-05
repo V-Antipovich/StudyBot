@@ -7,7 +7,7 @@
     Удалить выбранный товар из ГТД?
     <h3 class="mb-3">
         <a href="{% url 'main:show_gtd' %}">К списку ГТД</a> ->
-        ГТД <a href="{% url 'main:per_gtd' pk=good.gtd.pk %}?group={{ good.group.pk }}">{{ good.gtd.gtdId }}</a> ->
+        К ГТД <a href="{% url 'main:per_gtd' pk=good.gtd.pk %}?group={{ good.group.pk }}">{{ good.gtd.gtdId }}</a> ->
         Удалить товар {{ good.good.marking }}
     </h3>
     <form method="post">

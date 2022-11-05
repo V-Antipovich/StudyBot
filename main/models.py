@@ -229,8 +229,14 @@ class GtdMain(models.Model):  # TODO: при любом изменении по�
         self.exported_to_wms = True
         self.save()
 
+    def new_version(self):
+        self.exported_to_erp = False
+        self.exported_to_wms = False
+        self.save()
+
     def __str__(self):
         return self.gtdId
+
 
 # Отделы таможни - Справочник
 class CustomsHouse(models.Model):

@@ -9,6 +9,14 @@
     <h2>Экспорт ГТД в WMS</h2>
     <div><b>Номер:</b> {{ gtd.gtdId }}</div>
     <div><b>Дата:</b> {{ gtd.date }}</div>
+    {% if gtd.exported_to_wms %}
+        <div>
+            <b>
+                Эта версия ГТД уже была экспортирована.
+                Данная операция перезапишет уже созданный xml-файл в папке назначения
+            </b>
+        </div>
+    {% endif %}
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}

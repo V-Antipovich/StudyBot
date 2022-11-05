@@ -32,26 +32,26 @@
             <div class="tab-pane" id="gtdmain">
                 <div class="row border g-0 rounded shadow-sm">
                     <div class="col p-4">
-                        <h3>Главная</h3>
-                        <div>Таможенные отдел: {{ gtd.customs_house.house_name }}</div>
-                        <div>Дата: {{ gtd.date|date:"d.m.Y" }}</div>
-                        <div>Всего товаров (групп): {{ gtd.total_goods_number }}</div>
-                        <div>Экспортер: {{ gtd.exporter.name }}</div>
-                        <div>Импортер: {{ gtd.importer.name }}</div>
-                        <div>Торгующая страна: {{ gtd.trading_country.russian_name }}</div>
-                        <div>Общая стоимость: {{ gtd.total_cost }}</div>
-                        <div>Валюта: {{ gtd.currency.short_name }}</div>
-                        <div>Общая стоимость по счёту: {{ gtd.total_invoice_amount }}</div>
-                        <div>Курс валюты {{ gtd.currency_rate }}</div>
-                        <div>Код характера сделки: {{ gtd.deal_type.code }}</div>
+                        <h3>Главная информация</h3>
+                        <div><b>Таможенные отдел: </b> {{ gtd.customs_house.house_name }}</div>
+                        <div><b>Дата: </b>{{ gtd.date|date:"d.m.Y" }}</div>
+                        <div><b>Всего групп (разделов ГТД): </b>{{ gtd.total_goods_number }}</div>
+                        <div><b>Экспортер: </b>{{ gtd.exporter.name }}</div>
+                        <div><b>Импортер: </b>{{ gtd.importer.name }}</div>
+                        <div><b>Торгующая страна: </b>{{ gtd.trading_country.russian_name }}</div>
+                        <div><b>Общая стоимость: </b>{{ gtd.total_cost }}</div>
+                        <div><b>Валюта: </b>{{ gtd.currency.short_name }}</div>
+                        <div><b>Общая стоимость по счёту: </b>{{ gtd.total_invoice_amount }}</div>
+                        <div><b>Курс валюты: </b> {{ gtd.currency_rate }}</div>
+                        <div><b>Код характера сделки: </b>{{ gtd.deal_type.code }}</div>
                         <hr>
                         {% if gtd.last_edited %}
-                            <div>Последний добавил/редактировал: {{ gtd.last_edited.username }}</div>
+                            <div><b>Последний добавил/редактировал: </b> {{ gtd.last_edited.username }}</div>
                             <hr>
                         {% endif %}
                         {% if gtd.gtd_file %}
                             {% url 'main:show_gtd_file' filename=gtd.gtd_file.document as file_url %}
-                            <div>Документ ГТД: <a href="{{ file_url }}" target="_blank" >Посмотреть</a> / <a download href={{ file_url }}>Скачать</a> </div>
+                            <div><b> Документ ГТД: </b><a href="{{ file_url }}" target="_blank" >Посмотреть</a> / <a download href={{ file_url }}>Скачать</a> </div>
                         {% endif %}
 
                         {% if for_customs_officer %}
@@ -66,7 +66,7 @@
                         {% if for_customs_officer %}
                             <div class="mt-lg-1">
                             {% if gtd.exported_to_wms %}
-                                Экспортирован в WMS
+                                <b>Экспортирован в WMS</b>
                                 <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#wmsModal">
                                     Экспорт в WMS
                                 </button>
@@ -90,7 +90,7 @@
                                     </div>
                                 </div>
                             {% else %}
-                                Экспорт в WMS не был выполнен
+                                <b> Экспорт в WMS не был выполнен</b>
                                 <a class="btn btn-outline-info" href="{% url 'main:to_wms' pk=gtd.pk %}">
                                     Экспорт в WMS
                                 </a>
@@ -102,7 +102,7 @@
                             <div class="mt-lg-1">
                                 {% if user.first_name and user.last_name and user.patronymic %}
                                     {% if gtd.exported_to_erp %}
-                                        Экспортирован в ERP
+                                        <b>Экспортирован в ERP</b>
                                         <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#wmsModal">
                                             Экспорт в ERP
                                         </button>
@@ -126,10 +126,10 @@
                                             </div>
                                         </div>
                                     {% else %}
-                                        Экспорт в ERP не был выполнен
-{#                                        <button type="button" class="btn btn-outline-info">#}
+                                        <b>Экспорт в ERP не был выполнен</b>
+
                                             <a class="btn btn-outline-info" href="{% url 'main:to_erp' pk=gtd.pk %}">Экспорт в ERP</a>
-{#                                        </button>#}
+
                                     {% endif %}
                                 {% else %}
                                     {% if gtd.exported_to_erp %}
