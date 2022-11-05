@@ -281,13 +281,16 @@ class GtdGroupCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         return context
 
     def post(self, request, *args, **kwargs):
+        """
+        Перед отправкой модифицируется ГТД: были внесены изменения, поэтому требуется
+        поменять статус некоторых полей
+        """
         gtd = self.get_gtd()
         gtd.new_version()
         return super(GtdGroupCreateView, self).post(request, *args, **kwargs)
 
 
 # Класс добавления нового товара в группу ГТД
-# @method_decorator(login_required, name='dispatch')
 @method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdGoodCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):  # TODO: last_edited
     model = GtdGood
@@ -370,7 +373,6 @@ class GtdDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
 
 
 # Страница удаления группы товаров
-@method_decorator(login_required, name='dispatch')
 @method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdGroupDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = GtdGroup
@@ -391,7 +393,6 @@ class GtdGroupDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
 
 
 # Страница удаления товара
-# @method_decorator(login_required, name='dispatch')
 @method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdGoodDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = GtdGood
@@ -515,8 +516,16 @@ def to_wms(request, pk):
         if form.is_valid():
             comment = form.cleaned_data.get('comment', '')
             gtd.export_to_wms(comment, request.user)
-            return redirect('main:success', pk=pk)
-
+            messages.success(request, 'XML-файл успешно сгенерирован')
+            return redirect('main:per_gtd', pk=pk)
+        else:
+            form = ExportComment()
+            context = {
+                'form': form,
+                'gtd': gtd,
+            }
+            messages.error(request, 'Что-то пошло не так, попробуйте ещё раз')
+            return render(request, 'main/wms.html', context)
     else:
         form = ExportComment()
         context = {
@@ -536,8 +545,16 @@ def to_erp(request, pk):
         if form.is_valid():
             comment = request.POST.get('comment', '')
             gtd.export_to_erp(comment, request.user)
-            return redirect('main:success', pk=pk)
-            # return render(request, 'main/successful_outcome.html', context)
+            messages.success(request, 'XML-файл успешно сгенерирован')
+            return redirect('main:per_gtd', pk=pk)
+        else:
+            form = ExportComment()
+            context = {
+                'form': form,
+                'gtd': gtd,
+            }
+            messages.error(request, 'Что-то пошло не так, попробуйте ещё раз')
+            return render(request, 'main/wms.html', context)
     else:
         form = ExportComment()
         context = {

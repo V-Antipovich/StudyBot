@@ -1,28 +1,18 @@
 import os
 from datetime import timedelta
-
-from django.core.validators import MinValueValidator
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.template.defaultfilters import slugify
-from decimal import Decimal
+
 import xml.etree.ElementTree as ET
-
-# Create your models here.
-
-# Роли реализованы в виде групп (уже существующей структуры)
-# Пользователи базы
-
-
 from customs_declarations_database.settings import USER_DIR
 
+
+# Роли реализованы в виде групп (уже существующей структуры)
 
 class RegUser(AbstractUser):
     is_activated = models.BooleanField(verbose_name='Завершил регистрацию?', default=False)
     email = models.EmailField(verbose_name='Электронная почта', unique=True)
     patronymic = models.CharField(verbose_name='Отчество', max_length=255, null=True, blank=True)
-    # email_verified = models.BooleanField(default=False)
-    # roles = models.ManyToManyField("JobTitle", verbose_name='Должность', related_name='+', blank=True)
 
     class Meta(AbstractUser.Meta):
         pass
@@ -84,23 +74,23 @@ class GtdMain(models.Model):  # TODO: при любом изменении по�
         struct.set('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
 
         prop_guid = ET.SubElement(struct, 'Property')
-        prop_guid.set('name', 'prop_guid')
+        prop_guid.set('name', 'GIUD')
 
         value_guid = ET.SubElement(prop_guid, 'Value')
         value_guid.set('xsi:type', 'xs:string')
-        value_guid.text = '937d9e95-5519-11ed-8070-00155db05a26'
+        value_guid.text = str(self.pk)
 
         prop_ptiu = ET.SubElement(struct, 'Property')
         prop_ptiu.set('name', 'НомерПТиУ')
         value_ptiu = ET.SubElement(prop_ptiu, 'Value')
         value_ptiu.set('xsi:type', 'xs:string')
-        value_ptiu.text = 'ER-00061362'
+        value_ptiu.text = gtd_id
 
         prop_date = ET.SubElement(struct, 'Property')
         prop_date.set('name', 'Дата')
         value_date = ET.SubElement(prop_date, 'Value')
         value_date.set('xsi:type', 'xs:string')
-        value_date.text = self.date.strftime("%d-%m-%Y %H-%M-%S")  # gtd.date.strftime("%d-%m-%Y %H-%M-%S")
+        value_date.text = self.date.strftime("%d-%m-%Y %H-%M-%S")
 
         prop_warehouse = ET.SubElement(struct, 'Property')
         prop_warehouse.set('name', 'Склад')
@@ -159,15 +149,19 @@ class GtdMain(models.Model):  # TODO: при любом изменении по�
 
         with open(filepath, 'wb') as erp_file:
             erp_file.write(erp_data)
-        # gtd.exported_to_erp = True
-        # gtd.save()
         self.exported_to_erp = True
         self.save()
 
-    def export_to_wms(self, comment, user):
-        # TODO: дата в формате Г_М_д
-        gtd_id = self.gtdId.replace('/', '_')
+        erp_exp = ErpExport.objects.create(
+            gtd=self,
+            user=user,
+            comment=comment,
+            filename=filename
+        )
+        erp_exp.save()
 
+    def export_to_wms(self, comment, user):
+        gtd_id = self.gtdId.replace('/', '_')
         gtd_date = self.date
         goods = GtdGood.objects.filter(gtd_id=self.pk)
 
@@ -186,9 +180,9 @@ class GtdMain(models.Model):  # TODO: при любом изменении по�
         number = ET.SubElement(doc_in, 'NUMBER')
         number.text = gtd_id
         date = ET.SubElement(doc_in, 'DATE')
-        date.text = gtd_date.strftime("%d-%m-%Y")
+        date.text = gtd_date.strftime("%Y-%m-%d")
         in_date = ET.SubElement(doc_in, 'IN_DATE')
-        in_date.text = (gtd_date + timedelta(days=5)).strftime("%d-%m-%Y T%H-%M-%S")
+        in_date.text = (gtd_date + timedelta(days=5)).strftime("%Y-%m-%d T%H-%M-%S")
         description = ET.SubElement(doc_in, 'DSC')
         description.text = comment
         for good, good_attrs in unique_goods.items():
@@ -208,6 +202,14 @@ class GtdMain(models.Model):  # TODO: при любом изменении по�
 
         self.exported_to_wms = True
         self.save()
+
+        wms_exp = WmsExport.objects.create(
+            gtd=self,
+            user=user,
+            comment=comment,
+            filename=filename
+        )
+        wms_exp.save()
 
     def new_version(self):
         self.exported_to_erp = False
@@ -542,12 +544,22 @@ class UploadGtdFile(models.Model):
         verbose_name_plural = 'Загруженные файлы ГТД'
 
 
-class WmsExport(models.Model): #TODO: добавить поле юзера
+class WmsExport(models.Model):
     gtd = models.ForeignKey('GtdMain', on_delete=models.CASCADE, verbose_name='id ГТД', related_name='+')
     comment = models.TextField(verbose_name='Комментарий', null=True, blank=True)
     filename = models.CharField(verbose_name='Имя файла', max_length=255)
     date = models.DateTimeField(auto_now_add=True)
-# TODO: добавить модель для ERP
+    user = models.ForeignKey('RegUser', on_delete=models.SET_NULL, verbose_name='Пользователь, выполнивший экспорт',
+                             related_name='+', null=True)
+
+
+class ErpExport(models.Model):
+    gtd = models.ForeignKey('GtdMain', on_delete=models.CASCADE, verbose_name='id ГТД', related_name='+')
+    comment = models.TextField(verbose_name='Комментарий', default='')
+    filename = models.CharField(verbose_name='Имя файла', max_length=255)
+    datetime = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey('RegUser', on_delete=models.SET_NULL, verbose_name='Пользователь, выполнивший экспорт', null=True)
+
 
 class Handbook(models.Model):
     name = models.CharField(verbose_name='Название', max_length=255, unique=True)
