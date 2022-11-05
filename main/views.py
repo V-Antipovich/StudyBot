@@ -760,7 +760,7 @@ class BaseHandbookMixin:  # TODO: хлебные крошки, кнопки от
 
 
 class HandbookCreateView(BaseHandbookMixin, CreateView):
-    template_name = 'main/create_update_handbook_entry.html'
+    template_name = 'main/create_handbook_entry.html'
 
     def get_form_class(self):
         if not self.form_class:
@@ -780,7 +780,7 @@ class HandbookCreateView(BaseHandbookMixin, CreateView):
 
 
 class HandbookUpdateView(BaseHandbookMixin, UpdateView):
-    template_name = 'main/create_update_handbook_entry.html'
+    template_name = 'main/update_handbook_entry.html'
 
     def get_queryset(self):
         model = avaliable_handbooks[self.get_handbook_context_name()][0]
@@ -806,6 +806,24 @@ class HandbookUpdateView(BaseHandbookMixin, UpdateView):
         self.handbook_needs_renovation()
         return super(HandbookUpdateView, self).form_valid(form)
 
+
+class HandbookDeleteView(BaseHandbookMixin, DeleteView):
+    template_name = 'main/delete_handbook_entry.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(HandbookDeleteView, self).get_context_data(**kwargs)
+        context['handbook'] = self.get_handbook_context_name()
+        context['handbook_name'] = self.get_handbook_russian_name()
+        return context
+
+    def get_queryset(self):
+        model = self.get_handbook_model()
+        return model.objects.filter(pk=self.kwargs.get('pk'))
+
+    def get_success_url(self):
+        if not self.success_url:
+            self.success_url = reverse('main:handbook', kwargs={'handbook': self.get_handbook_context_name()})
+        return self.success_url
 
 @method_decorator(login_required, name='dispatch')
 class HandbookListView(BaseHandbookMixin, ListView):

@@ -1,0 +1,17 @@
+{% extends 'layout/base.html' %}
+
+{% load bootstrap5 %}
+{% load static %}
+
+{% block title %}Удалить запись справочника{% endblock %}
+
+{% block content %}
+    <h3>Справочник - <a href="{% url 'main:handbook' handbook=handbook %}"> {{ handbook_name }} </a>- Удалить запись</h3>
+    <form method="post">
+        {% csrf_token %}
+        <div style="font-size: large">Вы уверены, что хотите удалить эту запись?</div>
+        {% bootstrap_form form layout='horizontal' %}
+        {% buttons submit='ОК' %}{% endbuttons %}
+        <a class="btn btn-secondary" href="{% url 'main:handbook' handbook=handbook %}">Назад</a>
+    </form>
+{% endblock %}

@@ -3,7 +3,7 @@ from .views import index, upload_gtd, show_gtd_file, CDDLogin, CDDLogout, GtdGoo
     GtdDetailView, update_gtd, GtdDeleteView, Profile, handbook_xlsx, HandbookUpdateView,\
     eco_fee, to_wms, AccessDeniedView, to_erp, SuccessfulOutcome, StatisticsMenu, GtdGroupDeleteView, \
     statistics_report_gtd_per_exporter, statistics_report_goods_imported, report_xlsx, ChangeUserInfoView,\
-    RegUserPasswordChangeView, RegisterUserView, RegisterDoneView, user_activate, show_gtd_list, \
+    RegUserPasswordChangeView, RegisterUserView, RegisterDoneView, user_activate, show_gtd_list, HandbookDeleteView,\
     GtdGroupUpdateView, GtdGoodUpdateView, GtdGoodCreateView, GtdGroupCreateView, HandbookListView, HandbookCreateView
 # CreateGtdGroupView, update_gtd_good,\ update_gtd_group,
 
@@ -11,6 +11,7 @@ app_name = 'main'
 urlpatterns = [
     path('handbook_xlsx/<path:filename>', handbook_xlsx, name='handbook_xlsx'),
     # path('handbook/<str:choice>', handbook, name='handbook'),
+    path('handbook/<str:handbook>/delete/<int:pk>', HandbookDeleteView.as_view(), name='delete_handbook_entry'),
     path('handbook/<str:handbook>/create', HandbookCreateView.as_view(), name='create_handbook_entry'),
     path('handbook/<str:handbook>/update/<int:pk>', HandbookUpdateView.as_view(), name='update_handbook'),
     path('handbook/<str:handbook>/', HandbookListView.as_view(), name='handbook'),
