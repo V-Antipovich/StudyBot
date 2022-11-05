@@ -720,27 +720,46 @@ def handbook_xlsx(request, filename):
     return response
 
 
-# class HandbookFieldUpdateView(UpdateView):
-#     pass
-#
-# class CurrencyHandbookListView(ListView):
-#     # def get_queryset(self):
-#     #     self.get_
-#     def get(self, request, *args, **kwargs):
-
-class HandbookUpdateView(UpdateView):
+# class HandbookCreateView(CreateView):
+class BaseHandbookMixin:
     handbook_context_name = None
-    template_name = 'main/update_handbook.html'
-
-    def get_queryset(self):
-        model = avaliable_handbooks[self.get_handbook_context_name()][0]
-        # return get_object_or_404(model, pk=self.kwargs.get('pk'))
-        return model.objects.filter(pk=self.kwargs.get('pk'))
+    handbook_properties = None
+    handbook_model = None
+    handbook_russian_name = None
+    handbook_fields = None
 
     def get_handbook_context_name(self):
         if not self.handbook_context_name:
             self.handbook_context_name = self.kwargs.get('handbook')
         return self.handbook_context_name
+
+    def get_handbook_properties(self):
+        if not self.handbook_properties:
+            self.handbook_properties = avaliable_handbooks[self.get_handbook_context_name()]
+        return self.handbook_properties
+
+    def get_handbook_model(self):
+        if not self.handbook_model:
+            self.handbook_model = self.get_handbook_properties()[0]
+        return self.handbook_model
+
+    def get_handbook_russian_name(self):
+        if not self.handbook_russian_name:
+            self.handbook_russian_name = self.get_handbook_properties()[1]
+        return self.handbook_russian_name
+
+    def get_handbook_fields(self):
+        if not self.handbook_fields:
+            self.handbook_fields = self.get_handbook_model()._meta.get_fields()  # [1:]
+        return self.handbook_fields
+
+
+class HandbookUpdateView(BaseHandbookMixin, UpdateView):
+    template_name = 'main/update_handbook.html'
+
+    def get_queryset(self):
+        model = avaliable_handbooks[self.get_handbook_context_name()][0]
+        return model.objects.filter(pk=self.kwargs.get('pk'))
 
     def get_form_class(self):
         if not self.form_class:
@@ -757,19 +776,11 @@ class HandbookUpdateView(UpdateView):
         if not self.success_url:
             self.success_url = reverse('main:handbook', kwargs={'handbook': self.get_handbook_context_name()})
         return self.success_url
-    # def get_form_kwargs(self):
-    #     return super(HandbookUpdateView, self).get_form_kwargs()
 
 
 @method_decorator(login_required, name='dispatch')
-class HandbookListView(ListView):
-    handbook_context_name = None
-    handbook_properties = None
-    handbook_model = None
-    handbook_russian_name = None
-    handbook_fields = None
+class HandbookListView(BaseHandbookMixin, ListView):
     filename = None
-    queryset = None
     cut_queryset = None
     template_name = 'main/handbook.html'
 
@@ -816,31 +827,6 @@ class HandbookListView(ListView):
                 cut_queryset.append(row)
             self.cut_queryset = cut_queryset
         return self.cut_queryset
-
-    def get_handbook_context_name(self):
-        if not self.handbook_context_name:
-            self.handbook_context_name = self.kwargs.get('handbook')
-        return self.handbook_context_name
-
-    def get_handbook_properties(self):
-        if not self.handbook_properties:
-            self.handbook_properties = avaliable_handbooks[self.get_handbook_context_name()]
-        return self.handbook_properties
-
-    def get_handbook_model(self):
-        if not self.handbook_model:
-            self.handbook_model = self.get_handbook_properties()[0]
-        return self.handbook_model
-
-    def get_handbook_russian_name(self):
-        if not self.handbook_russian_name:
-            self.handbook_russian_name = self.get_handbook_properties()[1]
-        return self.handbook_russian_name
-
-    def get_handbook_fields(self):
-        if not self.handbook_fields:
-            self.handbook_fields = self.get_handbook_model()._meta.get_fields()  # [1:]
-        return self.handbook_fields
 
     def get_filename(self):
         if not self.filename:
