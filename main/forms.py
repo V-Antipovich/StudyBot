@@ -162,7 +162,7 @@ class CalendarDate(forms.Form):
                                                       ))
 
 
-class CustomsHouseHandbookUpdateForm(forms.ModelForm):
+class CustomsHouseHandbookCreateUpdateForm(forms.ModelForm):
     house_num = forms.CharField(min_length=6, max_length=8, required=True)
 
     class Meta:
@@ -170,8 +170,8 @@ class CustomsHouseHandbookUpdateForm(forms.ModelForm):
         fields = '__all__'
 
 
-class ExporterHandbookUpdateForm(forms.ModelForm):
-    country = forms.ModelChoiceField(queryset=Country.objects.all(), label='Страна', empty_label=None)
+class ExporterHandbookCreateUpdateForm(forms.ModelForm):
+    country = forms.ModelChoiceField(queryset=Country.objects.order_by('russian_name'), label='Страна', empty_label=None)
     postal_code = forms.IntegerField(min_value=1000, max_value=9999999999999999999, required=True)
 
     class Meta:
@@ -179,8 +179,8 @@ class ExporterHandbookUpdateForm(forms.ModelForm):
         fields = '__all__'
 
 
-class ImporterHandbookUpdateForm(forms.ModelForm):
-    country = forms.ModelChoiceField(queryset=Country.objects.all(), label='Страна', empty_label=None)
+class ImporterHandbookCreateUpdateForm(forms.ModelForm):
+    country = forms.ModelChoiceField(queryset=Country.objects.order_by('russian_name'), label='Страна', empty_label=None)
     postal_code = forms.IntegerField(min_value=1000, max_value=9999999999999999999, required=True)
     inn = forms.CharField(max_length=15, widget=forms.TextInput(attrs={'type': 'number'}))
     orgn = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'type': 'number'}))
@@ -191,7 +191,7 @@ class ImporterHandbookUpdateForm(forms.ModelForm):
         fields = '__all__'
 
 
-class CountryHandbookUpdateForm(forms.ModelForm):
+class CountryHandbookCreateUpdateForm(forms.ModelForm):
     code = forms.CharField(max_length=2)
 
     class Meta:
@@ -199,70 +199,72 @@ class CountryHandbookUpdateForm(forms.ModelForm):
         fields = '__all__'
 
 
-class CurrencyHandbookUpdateForm(forms.ModelForm):
+class CurrencyHandbookCreateUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Currency
         fields = '__all__'
 
 
-class DealTypeHandbookUpdateForm(forms.ModelForm):
+class DealTypeHandbookCreateUpdateForm(forms.ModelForm):
 
     class Meta:
         model = DealType
         fields = '__all__'
 
 
-class TnVedHandbookUpdateForm(forms.ModelForm):
+class TnVedHandbookCreateUpdateForm(forms.ModelForm):
 
     class Meta:
         model = TnVed
         fields = '__all__'
 
 
-class ProcedureHandbookUpdateForm(forms.ModelForm):
+class ProcedureHandbookCreateUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Procedure
         fields = '__all__'
 
 
-class GoodHandbookUpdateForm(forms.ModelForm):
+class GoodHandbookCreateUpdateForm(forms.ModelForm):
+    goodsmark = forms.ModelChoiceField(queryset=GoodsMark.objects.order_by('goodsmark'), empty_label=None)
+    trademark = forms.ModelChoiceField(queryset=TradeMark.objects.order_by('trademark'), empty_label=None)
 
     class Meta:
         model = Good
         fields = '__all__'
 
 
-class TradeMarkHandbookUpdateForm(forms.ModelForm):
+class TradeMarkHandbookCreateUpdateForm(forms.ModelForm):
 
     class Meta:
         model = TradeMark
         fields = '__all__'
 
 
-class GoodsMarkHandbookUpdateForm(forms.ModelForm):
+class GoodsMarkHandbookCreateUpdateForm(forms.ModelForm):
 
     class Meta:
         model = GoodsMark
         fields = '__all__'
 
 
-class ManufacturerHandbookUpdateForm(forms.ModelForm):
+class ManufacturerHandbookCreateUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Manufacturer
         fields = '__all__'
 
 
-class MeasureQualifierHandbookUpdateForm(forms.ModelForm):
+class MeasureQualifierHandbookCreateUpdateForm(forms.ModelForm):
 
     class Meta:
         model = MeasureQualifier
         fields = '__all__'
 
 
-class DocumentTypeHandbookUpdateForm(forms.ModelForm):
+class DocumentTypeHandbookCreateUpdateForm(forms.ModelForm):
 
     class Meta:
         model = DocumentType

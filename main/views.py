@@ -15,10 +15,10 @@ from django.http import FileResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from .forms import UploadGtdfilesForm, GtdUpdateForm, GtdGoodCreateUpdateForm, \
     CalendarDate, ExportComment, ChangeUserInfoForm, RegisterUserForm, PaginateForm, GtdGroupCreateUpdateForm, \
-    CustomsHouseHandbookUpdateForm, ExporterHandbookUpdateForm, ImporterHandbookUpdateForm, CountryHandbookUpdateForm, \
-    CurrencyHandbookUpdateForm, DealTypeHandbookUpdateForm, TnVedHandbookUpdateForm, ProcedureHandbookUpdateForm, \
-    GoodHandbookUpdateForm, TradeMarkHandbookUpdateForm, GoodsMarkHandbookUpdateForm, ManufacturerHandbookUpdateForm, \
-    MeasureQualifierHandbookUpdateForm, DocumentTypeHandbookUpdateForm
+    CustomsHouseHandbookCreateUpdateForm, ExporterHandbookCreateUpdateForm, ImporterHandbookCreateUpdateForm, CountryHandbookCreateUpdateForm, \
+    CurrencyHandbookCreateUpdateForm, DealTypeHandbookCreateUpdateForm, TnVedHandbookCreateUpdateForm, ProcedureHandbookCreateUpdateForm, \
+    GoodHandbookCreateUpdateForm, TradeMarkHandbookCreateUpdateForm, GoodsMarkHandbookCreateUpdateForm, ManufacturerHandbookCreateUpdateForm, \
+    MeasureQualifierHandbookCreateUpdateForm, DocumentTypeHandbookCreateUpdateForm
 from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType,\
     Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType,\
     UploadGtdFile, Handbook
@@ -52,20 +52,20 @@ from datetime import datetime
 # Словарь со всеми справочниками системы
 # Ключ - параметр url, Значение - (<Модель этого справочника>, <Название справочника для пользователей>, <Список полей> )
 avaliable_handbooks = {
-    'customs_houses': (CustomsHouse, 'Отделы таможни', CustomsHouseHandbookUpdateForm),
-    'exporters': (Exporter, 'Экспортеры', ExporterHandbookUpdateForm),  # Содержит обращение к другим моделям
-    'importers': (Importer, 'Импортеры', ImporterHandbookUpdateForm),  # Содержит обращение к другим моделям
-    'countries': (Country, 'Государства', CountryHandbookUpdateForm),
-    'currencies': (Currency, 'Валюты', CurrencyHandbookUpdateForm),
-    'deal_types': (DealType, 'Классификатор характера сделки', DealTypeHandbookUpdateForm),
-    'tn_ved': (TnVed, 'Классификатор ТН ВЭД', TnVedHandbookUpdateForm),
-    'procedures': (Procedure, 'Таможенные процедуры', ProcedureHandbookUpdateForm),
-    'goods': (Good, 'Товары', GoodHandbookUpdateForm),
-    'trade_marks': (TradeMark, 'Товарные знаки', TradeMarkHandbookUpdateForm),  # Содержит обращение к другим моделям
-    'goods_marks': (GoodsMark, 'Торговые марки', GoodsMarkHandbookUpdateForm),  # Содержит обращение к другим моделям
-    'manufacturers': (Manufacturer, 'Производители (заводы)', ManufacturerHandbookUpdateForm),
-    'qualifiers': (MeasureQualifier, 'Единицы измерения', MeasureQualifierHandbookUpdateForm),
-    'doc_types': (DocumentType, 'Классификатор типов документов', DocumentTypeHandbookUpdateForm),
+    'customs_houses': (CustomsHouse, 'Отделы таможни', CustomsHouseHandbookCreateUpdateForm),
+    'exporters': (Exporter, 'Экспортеры', ExporterHandbookCreateUpdateForm),  # Содержит обращение к другим моделям
+    'importers': (Importer, 'Импортеры', ImporterHandbookCreateUpdateForm),  # Содержит обращение к другим моделям
+    'countries': (Country, 'Государства', CountryHandbookCreateUpdateForm),
+    'currencies': (Currency, 'Валюты', CurrencyHandbookCreateUpdateForm),
+    'deal_types': (DealType, 'Классификатор характера сделки', DealTypeHandbookCreateUpdateForm),
+    'tn_ved': (TnVed, 'Классификатор ТН ВЭД', TnVedHandbookCreateUpdateForm),
+    'procedures': (Procedure, 'Таможенные процедуры', ProcedureHandbookCreateUpdateForm),
+    'goods': (Good, 'Товары', GoodHandbookCreateUpdateForm),
+    'trade_marks': (TradeMark, 'Товарные знаки', TradeMarkHandbookCreateUpdateForm),  # Содержит обращение к другим моделям
+    'goods_marks': (GoodsMark, 'Торговые марки', GoodsMarkHandbookCreateUpdateForm),  # Содержит обращение к другим моделям
+    'manufacturers': (Manufacturer, 'Производители (заводы)', ManufacturerHandbookCreateUpdateForm),
+    'qualifiers': (MeasureQualifier, 'Единицы измерения', MeasureQualifierHandbookCreateUpdateForm),
+    'doc_types': (DocumentType, 'Классификатор типов документов', DocumentTypeHandbookCreateUpdateForm),
 }
 
 # Некоторые справочники содержат FK, которые для фронта надо подменять
@@ -721,7 +721,7 @@ def handbook_xlsx(request, filename):
 
 
 # class HandbookCreateView(CreateView):
-class BaseHandbookMixin: # TODO: хлебные крошки, кнопки отмены выбора, пагинатор.
+class BaseHandbookMixin:  # TODO: хлебные крошки, кнопки отмены выбора, пагинатор.
     handbook_context_name = None
     handbook_properties = None
     handbook_model = None
@@ -760,11 +760,27 @@ class BaseHandbookMixin: # TODO: хлебные крошки, кнопки от�
 
 
 class HandbookCreateView(BaseHandbookMixin, CreateView):
-    template_name = 'main/create_handbook_entry.html'
+    template_name = 'main/create_update_handbook_entry.html'
+
+    def get_form_class(self):
+        if not self.form_class:
+            self.form_class = avaliable_handbooks[self.get_handbook_context_name()][2]
+        return self.form_class
+
+    def get_context_data(self, **kwargs):
+        context = super(HandbookCreateView, self).get_context_data(**kwargs)
+        context['handbook'] = self.get_handbook_context_name()
+        context['handbook_name'] = self.get_handbook_russian_name()
+        return context
+
+    def get_success_url(self):
+        if not self.success_url:
+            self.success_url = reverse('main:handbook', kwargs={'handbook': self.get_handbook_context_name()})
+        return self.success_url
 
 
 class HandbookUpdateView(BaseHandbookMixin, UpdateView):
-    template_name = 'main/update_handbook.html'
+    template_name = 'main/create_update_handbook_entry.html'
 
     def get_queryset(self):
         model = avaliable_handbooks[self.get_handbook_context_name()][0]
@@ -781,7 +797,6 @@ class HandbookUpdateView(BaseHandbookMixin, UpdateView):
         context['handbook_name'] = self.get_handbook_russian_name()
         return context
 
-    # TODO: сохранение - сделать запись справочной таблицы неактуальной
     def get_success_url(self):
         if not self.success_url:
             self.success_url = reverse('main:handbook', kwargs={'handbook': self.get_handbook_context_name()})
