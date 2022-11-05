@@ -40,19 +40,19 @@
                 Справочники
             </button>
             <ul class="dropdown-menu" aria-labelledby="handbooks-dropdown">
-                <li><a class="dropdown-item" href="{% url 'main:handbook' choice='currencies' %}">Валюты</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' choice='countries' %}">Государства</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' choice='qualifiers' %}">Единицы измерения</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' choice='importers'%}">Импортеры</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' choice='tn_ved' %}">Классификатор ТН ВЭД</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' choice='doc_types' %}">Классификатор типов документов</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' choice='deal_types' %}">Классификатор характера сделки</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' choice='customs_houses' %}">Отделы таможни</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' choice='manufacturers' %}">Производители (заводы)</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' choice='procedures' %}">Таможенные процедуры</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' choice='trade_marks' %}">Товарные знаки</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' choice='goods' %}">Товары</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' choice='goods_marks' %}">Торговые марки</a></li>
+                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='currencies' %}">Валюты</a></li>
+                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='countries' %}">Государства</a></li>
+                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='qualifiers' %}">Единицы измерения</a></li>
+                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='importers'%}">Импортеры</a></li>
+                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='tn_ved' %}">Классификатор ТН ВЭД</a></li>
+                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='doc_types' %}">Классификатор типов документов</a></li>
+                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='deal_types' %}">Классификатор характера сделки</a></li>
+                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='customs_houses' %}">Отделы таможни</a></li>
+                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='manufacturers' %}">Производители (заводы)</a></li>
+                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='procedures' %}">Таможенные процедуры</a></li>
+                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='trade_marks' %}">Товарные знаки</a></li>
+                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='goods' %}">Товары</a></li>
+                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='goods_marks' %}">Торговые марки</a></li>
             </ul>
 
             <a class="btn btn-outline-primary" type="button" id="settings" href="#">Настройки</a>

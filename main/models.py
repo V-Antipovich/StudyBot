@@ -558,5 +558,5 @@ class WmsExport(models.Model):
 
 
 class Handbook(models.Model):
-    name = models.CharField(verbose_name='Название', max_length=255)
+    name = models.CharField(verbose_name='Название', max_length=255, unique=True)
     is_actual_table = models.BooleanField(verbose_name='Актуальная таблица', default=False)

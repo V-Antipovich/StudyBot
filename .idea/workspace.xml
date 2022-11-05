@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="done with restricting content decorator; modified pages of gtd list and detailed gtd view - hid buttons not for certain groups; started adding decorators to views.py file">
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="continued with adding decorators; fixed minor features of restricting content; new method for gtd - renewing after some changes">
+      <change afterPath="$PROJECT_DIR$/main/templates/main/unused_handbook.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/create_gtd_good.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/create_gtd_good.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/create_gtd_group.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/create_gtd_group.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/delete_gtd_good.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/delete_gtd_good.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/delete_gtd_group.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/delete_gtd_group.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/per_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/per_gtd.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/update_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/update_gtd.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/update_gtd_good.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/update_gtd_good.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/update_gtd_group.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/update_gtd_group.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/wms.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/wms.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/layout/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/layout/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/handbook.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/handbook.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templatetags/filtertags.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/templatetags/filtertags.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -195,14 +191,7 @@
       <workItem from="1667075860388" duration="174085000" />
       <workItem from="1667547576347" duration="2384000" />
       <workItem from="1667550048133" duration="25988000" />
-      <workItem from="1667582233991" duration="17132000" />
-    </task>
-    <task id="LOCAL-00024" summary="added log after uploading gtd files">
-      <created>1662922285017</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1662922285017</updated>
+      <workItem from="1667582233991" duration="25036000" />
     </task>
     <task id="LOCAL-00025" summary="added updating goods in group">
       <created>1663439099544</created>
@@ -540,7 +529,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667597526131</updated>
     </task>
-    <option name="localTasksCounter" value="73" />
+    <task id="LOCAL-00073" summary="continued with adding decorators; fixed minor features of restricting content; new method for gtd - renewing after some changes">
+      <created>1667628004564</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1667628004564</updated>
+    </task>
+    <option name="localTasksCounter" value="74" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -581,7 +577,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixed major bug of uploading goods in groups" />
     <MESSAGE value="added menu for statistic reports; added report gtds number per exporter; found js scripts for table sorting and searching (filtering)" />
     <MESSAGE value="added xlsx file for report gtds number per exporter" />
     <MESSAGE value="added report of goods imported" />
@@ -606,7 +601,8 @@
     <MESSAGE value="added view for creating gtd groups" />
     <MESSAGE value="added nav chaines with modals in views of editing gtd groups and gtd goods" />
     <MESSAGE value="done with restricting content decorator; modified pages of gtd list and detailed gtd view - hid buttons not for certain groups; started adding decorators to views.py file" />
-    <option name="LAST_COMMIT_MESSAGE" value="done with restricting content decorator; modified pages of gtd list and detailed gtd view - hid buttons not for certain groups; started adding decorators to views.py file" />
+    <MESSAGE value="continued with adding decorators; fixed minor features of restricting content; new method for gtd - renewing after some changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="continued with adding decorators; fixed minor features of restricting content; new method for gtd - renewing after some changes" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />

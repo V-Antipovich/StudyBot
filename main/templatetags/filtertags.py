@@ -17,3 +17,10 @@ def has_group(user, group_name):
 
 
 register.filter('has_group', has_group)
+
+
+def get_attr(instance, field):
+    return getattr(instance, field.name)
+
+
+register.filter('get_attr', get_attr)

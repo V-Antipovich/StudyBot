@@ -28,6 +28,38 @@ import mimetypes
 from datetime import datetime
 
 
+# Словарь со всеми справочниками системы
+# Ключ - параметр url, Значение - (<Модель этого справочника>, <Название справочника для пользователей>, <Список полей> )
+avaliable_handbooks = {
+    'customs_houses': (CustomsHouse, 'Отделы таможни'),
+    'exporters': (Exporter, 'Экспортеры'),  # Содержит обращение к другим моделям
+    'importers': (Importer, 'Импортеры'),  # Содержит обращение к другим моделям
+    'countries': (Country, 'Государства', ('code', 'russian_name', 'english_name')),
+    'currencies': (Currency, 'Валюты', ('digital_code', 'short_name', 'name')),
+    'deal_types': (DealType, 'Классификатор характера сделки'),
+    'tn_ved': (TnVed, 'Классификатор ТН ВЭД'),
+    'procedures': (Procedure, 'Таможенные процедуры'),
+    'goods': (Good, 'Товары'),
+    'trade_marks': (TradeMark, 'Товарные знаки'),  # Содержит обращение к другим моделям
+    'goods_marks': (GoodsMark, 'Торговые марки'),  # Содержит обращение к другим моделям
+    'manufacturers': (Manufacturer, 'Производители (заводы)'),
+    'qualifiers': (MeasureQualifier, 'Единицы измерения'),
+    'doc_types': (DocumentType, 'Классификатор типов документов'),
+}
+
+# Некоторые справочники содержат FK, которые для фронта надо подменять
+# Словарь с зависимыми моделями
+# Ключи - поля FK, которые встречаются в моделях из avaliable_handbooks
+# Значения - (<Модель, с которой через FK отношение m2o>,
+#             <Поле из этой модели, чье значение требуется>,
+#             <Порядковый номер поля в списке полей этой модели>)
+dependent_models = {
+    'country_id': (Country, 'russian_name', 2),
+    'goodsmark_id': (GoodsMark, 'goodsmark', 1),
+    'trademark_id': (TradeMark, 'trademark', 1),
+}
+
+
 # TODO: docstrings!!!
 # TODO: all todo in extra staff
 # Вспомогательные функции контроля доступа - проверка пользователя, является ли он суперпользователем
@@ -667,41 +699,63 @@ def handbook_xlsx(request, filename):
     return response
 
 
+# class HandbookFieldUpdateView(UpdateView):
+#     pass
+#
+# class CurrencyHandbookListView(ListView):
+#     # def get_queryset(self):
+#     #     self.get_
+#     def get(self, request, *args, **kwargs):
+
+class CurrencyHandbookListView(ListView):
+    handbook_context_name = None
+    handbook_properties = None
+    handbook_model = None
+    handbook_russian_name = None
+    handbook_fields = None
+    template_name = 'main/handbook.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = {
+            'fields': self.get_handbook_fields(),
+            'data': self.get_queryset(),
+            'russian_name': self.get_handbook_russian_name(),
+        }
+        return context
+
+    def get_queryset(self):
+        return self.get_handbook_model().objects.all()
+
+    def get_handbook_context_name(self):
+        if not self.handbook_context_name:
+            self.handbook_context_name = self.kwargs.get('handbook')
+        return self.handbook_context_name
+
+    def get_handbook_properties(self):
+        if not self.handbook_properties:
+            self.handbook_properties = avaliable_handbooks[self.get_handbook_context_name()]
+        return self.handbook_properties
+
+    def get_handbook_model(self):
+        if not self.handbook_model:
+            self.handbook_model = self.get_handbook_properties()[0]
+        return self.handbook_model
+
+    def get_handbook_russian_name(self):
+        if not self.handbook_russian_name:
+            self.handbook_russian_name = self.get_handbook_properties()[1]
+        return self.handbook_russian_name
+
+    def get_handbook_fields(self):
+        if not self.handbook_fields:
+            self.handbook_fields = self.get_handbook_model()._meta.get_fields()[1:]
+        return self.handbook_fields
+
+
 # Представление обработки справочников
+@login_required
 def handbook(request, choice):  # TODO: edit, delete
     # choice = request.GET.get('choice', 'default')
-
-    # Словарь со всеми справочниками системы
-    # Ключ - параметр url, Значение - (<Модель этого справочника>, <Название справочника для пользователей>)
-    avaliable_handbooks = {
-        'customs_houses': (CustomsHouse, 'Отделы таможни'),
-        'exporters': (Exporter, 'Экспортеры'),  # Содержит обращение к другим моделям
-        'importers': (Importer, 'Импортеры'),  # Содержит обращение к другим моделям
-        'countries': (Country, 'Государства'),
-        'currencies': (Currency, 'Валюты'),
-        'deal_types': (DealType, 'Классификатор характера сделки'),
-        'tn_ved': (TnVed, 'Классификатор ТН ВЭД'),
-        'procedures': (Procedure, 'Таможенные процедуры'),
-        'goods': (Good, 'Товары'),
-        'trade_marks': (TradeMark, 'Товарные знаки'),  # Содержит обращение к другим моделям
-        'goods_marks': (GoodsMark, 'Торговые марки'),  # Содержит обращение к другим моделям
-        'manufacturers': (Manufacturer, 'Производители (заводы)'),
-        'qualifiers': (MeasureQualifier, 'Единицы измерения'),
-        'doc_types': (DocumentType, 'Классификатор типов документов'),
-    }
-
-    # Некоторые справочники содержат FK, которые для фронта надо подменять
-    # Словарь с зависимыми моделями
-    # Ключи - поля FK, которые встречаются в моделях из avaliable_handbooks
-    # Значения - (<Модель, с которой через FK отношение m2o>,
-    #             <Поле из этой модели, чье значение требуется>,
-    #             <Порядковый номер поля в списке полей этой модели>)
-    dependent_models = {
-        'country_id': (Country, 'russian_name', 2),
-        'goodsmark_id': (GoodsMark, 'goodsmark', 1),
-        'trademark_id': (TradeMark, 'trademark', 1),
-      #  'doc_type_id': (DocumentType, 'code', 1),
-    }
     # По умолчанию на странице справочников будет открыт справочник товаров
     if choice == 'default':
         choice = 'goods'
@@ -821,13 +875,15 @@ def handbook(request, choice):  # TODO: edit, delete
         'values': values,
         'avaliable_handbooks': list(avaliable_handbooks.items()),
         'filename': filename,
-        'paginate_by': paginate_by
+        'paginate_by': paginate_by,
+        'for_customs_officer': request.user.groups.filter(name__in=['Администратор',
+                                                                    'Сотрудник таможенного отдела']).exists()
         }
-    return render(request, 'main/handbook.html', context)
+    return render(request, 'main/unused_handbook.html', context)
 
 
 # Загрузка файлов ГТД в формате .xml
-@groups_required('Сотрудник таможенного отдела')
+@groups_required(allowed_roles=['Сотрудник таможенного отдела', 'Администратор'])
 def upload_gtd(request):
     if request.method == 'POST':
         form = UploadGtdfilesForm(request.POST, request.FILES)
