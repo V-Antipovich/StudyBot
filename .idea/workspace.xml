@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="bad pagination to handbooks">
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="bearable paginator">
       <change afterPath="$PROJECT_DIR$/media/handbooks/Валюты.xlsx" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/media/handbooks/Государства.xlsx" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/media/handbooks/Единицы измерения.xlsx" afterDir="false" />
@@ -19,7 +19,6 @@
       <change afterPath="$PROJECT_DIR$/media/reports/eco/eco 25 05-11-2022-23-11-2022.xlsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/templates/main/handbook.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/handbook.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templatetags/filtertags.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/templatetags/filtertags.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -202,13 +201,6 @@
       <workItem from="1667550048133" duration="25988000" />
       <workItem from="1667582233991" duration="34749000" />
       <workItem from="1667647402293" duration="14362000" />
-    </task>
-    <task id="LOCAL-00041" summary="added decorators for access limiting">
-      <created>1666713206123</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1666713206123</updated>
     </task>
     <task id="LOCAL-00042" summary="minor changes and fixes;&#10;uploaded video with 3 user scripts shown">
       <created>1666725642244</created>
@@ -546,7 +538,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667687480662</updated>
     </task>
-    <option name="localTasksCounter" value="90" />
+    <task id="LOCAL-00090" summary="bearable paginator">
+      <created>1667690721426</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1667690721426</updated>
+    </task>
+    <option name="localTasksCounter" value="91" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -587,7 +586,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="retrieved gtd groups editing with recount" />
     <MESSAGE value="nav chain in gtd groups updating" />
     <MESSAGE value="gtd good editing + nav chain" />
     <MESSAGE value="added warnings to nav chains in templates of editing gtd groups and gtd goods" />
@@ -612,7 +610,8 @@
     <MESSAGE value="made little changes to erp and wms export logic" />
     <MESSAGE value="made some small fixes" />
     <MESSAGE value="bad pagination to handbooks" />
-    <option name="LAST_COMMIT_MESSAGE" value="bad pagination to handbooks" />
+    <MESSAGE value="bearable paginator" />
+    <option name="LAST_COMMIT_MESSAGE" value="bearable paginator" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />

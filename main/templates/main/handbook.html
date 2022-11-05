@@ -97,36 +97,19 @@
     {% if data.has_other_pages %}
         <nav>
             <ul class="pagination justify-content-center">
-{#                {% if data.has_previous %}#}
-{#                    {% if data.number > 2 %}#}
-{#                        <li class="page-item">#}
-{#                            <a class="page-link" href="?paginate_by={{ paginate_by }}&page=1">#}
-{#                                <span aria-hidden="true">1</span>#}
-{#                            </a>#}
-{#                        </li>#}
-{#                    {% endif %}#}
-{#                        <li class="page-item">#}
-{#                            <a class="page-link" href="?paginate_by={{ paginate_by }}&page={{ data.previous_page_number }}">#}
-{#                                <span aria-hidden="true">{{ data.previous_page_number }}</span> {# &laquo; #}
-{#                            </a>#}
-{#                        </li>#}
-{#                {% endif %}#}
-{#                <li class="page-item">#}
-{#                    <a class="page-link" style="color: red;" disabled="true">{{ data.number }}</a>#}
-{#                </li>#}
-{#                {% if data.has_next %}#}
-{#                    <li class="page-item">#}
-{#                        <a class="page-link" href="?paginate_by={{ paginate_by }}&page={{ data.next_page_number }}">#}
-{#                            <span aria-hidden="true">{{ data.next_page_number }}</span>#}
-{#                        </a>#}
-{#                    </li>#}
-{#                    {% if data.next_page_number|add:1 < data.paginator.num_pages %}#}
-{#                        <li class="page-item">#}
-{#                            <a class="page-link" href="?paginate_by={{ paginate_by }}&page={{ data.paginator.num_pages }}">#}
-{#                                <span aria-hidden="true">{{ data.paginator.num_pages }}</span>#}
-{#                            </a>#}
-{#                        </li>#}
-{#                    {% endif %}#}
+
+                {% if data.number > 6 %}
+                    <li class="page-item">
+                        <a class="page-link" href="?paginate_by={{ paginate_by }}&page=1">
+                            <span>1</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" disabled="true">
+                            <span>...</span>
+                        </a>
+                    </li>
+                {% endif %}
                 {% for p in data.paginator.page_range %}
                     {% if p == data.number %}
                     <li class="page-item">
@@ -142,48 +125,19 @@
                         </li>
                     {% endif %}
                 {% endfor %}
+                {% if data.number|add:6 < data.paginator.num_pages %}
+                    <li class="page-item">
+                        <a class="page-link" disabled="true">
+                            <span>...</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?paginate_by={{ paginate_by }}&page={{ data.paginator.num_pages }}">
+                            <span>{{ data.paginator.num_pages }}</span>
+                        </a>
+                    </li>
+                {% endif %}
 
-{#                    <li class="page-item">#}
-{#                        <a class="page-link" href="?paginate_by={{ paginate_by }}&page={{ data.next_page_number }}" aria-label="Далее">#}
-{#                            <span aria-hidden="true">{{ data.next_page_number }}</span> {# &raquo; #}
-{#                        </a>#}
-{#                    </li>#}
-{#                    {% if data.next_page_number < data.paginator.page_range %}#}
-{#                        <li class="page-item">#}
-{#                            <a class="page-link" href="?paginate_by={{ paginate_by }}&page={{ data.paginator.page_range }}" aria-label="В конец">#}
-{#                                <span aria-hidden="true">{{ data.paginator.page_range }}</span>#}
-{#                            </a>#}
-{#                        </li>#}
-{#                    {% endif %}#}
-
-{#                {% endif %}#}
-
-{#                    <li class="page-item">#}
-{#                        <a class="page-link" href="?paginate_by={{ paginate_by }}&page={{ data.previous_page_number }}" aria-label="Назад">#}
-{#                            <span aria-hidden="true">&laquo;</span>#}
-{#                        </a>#}
-{#                    </li>#}
-{#                {% else %}#}
-{#                    <li class="page-item disabled">#}
-{#                    <span class="page-link" aria-hidden="true">&laquo;</span>#}
-{#                    </li>#}
-{#                {% endif %}#}
-{#                    <li class="page-item">#}
-{#                        <a class="page-link" style="color: #f64747" disabled="true" href="#">{{ data.number }}</a>#}
-{#                    </li>#}
-{#                {% for p in data.paginator.page_range %}#}
-{#                    {% if gtds.number == p %}#}
-{#                        <li class="page-item"><a class="page-link" style="color: red;" disabled="true" href="#">{{ p }}</a> </li>#}
-{#                    {% else %}#}
-{#                        <li class="page-item"><a class="page-link" href="?paginate_by={{ paginate_by }}&page={{ p }}">{{ p }}</a> </li>#}
-{#                    {% endif %}#}
-{#                {% endfor %}#}
-
-{#                {% else %}#}
-{#                    <li class="page-item disabled">#}
-{#                        <span class="page-link" aria-hidden="true">&raquo;</span>#}
-{#                    </li>#}
-{#                {% endif %}#}
             </ul>
         </nav>
     {% endif %}
