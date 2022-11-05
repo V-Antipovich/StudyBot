@@ -759,6 +759,10 @@ class BaseHandbookMixin: # TODO: хлебные крошки, кнопки от�
         handbook_db.save()
 
 
+class HandbookCreateView(BaseHandbookMixin, CreateView):
+    template_name = 'main/create_handbook_entry.html'
+
+
 class HandbookUpdateView(BaseHandbookMixin, UpdateView):
     template_name = 'main/update_handbook.html'
 
@@ -774,6 +778,7 @@ class HandbookUpdateView(BaseHandbookMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(HandbookUpdateView, self).get_context_data(**kwargs)
         context['handbook'] = self.get_handbook_context_name()
+        context['handbook_name'] = self.get_handbook_russian_name()
         return context
 
     # TODO: сохранение - сделать запись справочной таблицы неактуальной

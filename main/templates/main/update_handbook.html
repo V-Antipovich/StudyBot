@@ -6,10 +6,30 @@
 {% block title %} Редактирование {% endblock %}
 
 {% block content %}
-    <h3>Редактировать объект справочника</h3>
+    <h3>Справочник - <a type="button" data-bs-toggle="modal" data-bs-target="#to_list" href="#"> {{ handbook_name }} </a>- Редактировать запись</h3>
+    <div class="modal fade" id="to_list" tabindex="-1" role="dialog" aria-labelledby="to_listLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="to_listLabel">Хотите отменить изменения?</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-label="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Изменения не будут сохранены. Нажмите ОК, если хотите вернуться на страницу списка
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Назад</button>
+                        <a class="btn btn-primary" href="{% url 'main:handbook' handbook=handbook %}">ОК </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     <form method="post">
         {% csrf_token %}
         {% bootstrap_form form layout='horizontal' %}
         {% buttons submit='ОК' %}{% endbuttons %}
+        <button class="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#to_list">Назад</button>
     </form>
 {% endblock %}

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="added a little feature that makes the handbook get rebuilt after changing">
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="edited few of forms fields parameters of validation">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/update_handbook.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/update_handbook.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -186,14 +186,7 @@
       <workItem from="1667547576347" duration="2384000" />
       <workItem from="1667550048133" duration="25988000" />
       <workItem from="1667582233991" duration="34749000" />
-      <workItem from="1667647402293" duration="3537000" />
-    </task>
-    <task id="LOCAL-00031" summary="added columns for tn_ved, prepared for ecological fee reports">
-      <created>1664771761315</created>
-      <option name="number" value="00031" />
-      <option name="presentableId" value="LOCAL-00031" />
-      <option name="project" value="LOCAL" />
-      <updated>1664771761315</updated>
+      <workItem from="1667647402293" duration="4249000" />
     </task>
     <task id="LOCAL-00032" summary="unfinished eco reports - data in list form (not as calendar)">
       <created>1665726332914</created>
@@ -531,7 +524,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667649124175</updated>
     </task>
-    <option name="localTasksCounter" value="80" />
+    <task id="LOCAL-00080" summary="edited few of forms fields parameters of validation">
+      <created>1667651180468</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1667651180468</updated>
+    </task>
+    <option name="localTasksCounter" value="81" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -572,7 +572,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="full user registration with email confirmation" />
     <MESSAGE value="main page: CBV-&gt;FBV; backend paginator" />
     <MESSAGE value="enhanced detailed gtd view: fixed that broken tab-pane, included cookies to keep the active tab" />
     <MESSAGE value="edited erp &amp; wms: moved funtions to GtdMain model class" />
@@ -597,7 +596,8 @@
     <MESSAGE value="completed forms for all handbooks" />
     <MESSAGE value="created BaseHandbookMixin for inheriting some handbook-only features in CRUD views of handbooks to avoid self-repeating" />
     <MESSAGE value="added a little feature that makes the handbook get rebuilt after changing" />
-    <option name="LAST_COMMIT_MESSAGE" value="added a little feature that makes the handbook get rebuilt after changing" />
+    <MESSAGE value="edited few of forms fields parameters of validation" />
+    <option name="LAST_COMMIT_MESSAGE" value="edited few of forms fields parameters of validation" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />
