@@ -14,8 +14,6 @@ import xml.etree.ElementTree as ET
 # Пользователи базы
 
 
-# SET FOREIGN_KEY_CHECKS = 0; SET FOREIGN_KEY_CHECKS = 1;
-# Или проблема не в модели?
 from customs_declarations_database.settings import USER_DIR
 
 
@@ -28,18 +26,6 @@ class RegUser(AbstractUser):
 
     class Meta(AbstractUser.Meta):
         pass
-
-
-    # def save(self, *args, **kwargs):
-    #     self.is_active = True
-    #     return super(RegUser, self).save(*args, **kwargs)
-
-
-# class JobTitle(models.Model):
-#     name = models.CharField(verbose_name='Должность', unique=True, max_length=255)
-#
-#     def __str__(self):
-#         return self.name
 
 
 # Главная инфа гтд (1 на весь документ)
@@ -87,14 +73,6 @@ class GtdMain(models.Model):  # TODO: при любом изменении по�
         self.total_invoice_amount = self.total_cost / self.currency_rate
         self.total_goods_number = groups.count()
         self.save()
-
-    # Пересчет общей суммы без учета группы, которую сейчас удалят
-    # def recount_deleted(self, deleted_pk):
-    #     groups = GtdGroup.objects.filter(gtd_id=self.pk)
-    #     self.total_cost = sum(group.customs_cost for group in groups if group.pk != deleted_pk)
-    #     self.total_invoice_amount = self.total_cost / self.currency_rate
-    #     self.total_goods_number -= 1
-    #     self.save()
 
     def export_to_erp(self, comment, user):
         goods = GtdGood.objects.filter(gtd_id=self.pk)
@@ -256,7 +234,7 @@ class Exporter(models.Model):
     name = models.CharField(max_length=255, verbose_name='Название компании')
     postal_code = models.CharField(max_length=20, verbose_name='Почтовый индекс', null=True, blank=True)
     country = models.ForeignKey('Country', on_delete=models.SET_NULL,
-                                verbose_name='id страны', related_name="+", null=True, blank=True)
+                                verbose_name='Страна', related_name="+", null=True, blank=True)
     city = models.CharField(max_length=100, verbose_name='Город', null=True, blank=True)
     street_house = models.CharField(max_length=100, verbose_name='Улица (и/или дом)',
                                     null=True, blank=True)
@@ -277,7 +255,7 @@ class Importer(models.Model):
     name = models.CharField(max_length=255, verbose_name='Название компании', unique=True)
     postal_code = models.CharField(max_length=20, verbose_name='Почтовый индекс', null=True, blank=True)
     country = models.ForeignKey('Country', on_delete=models.SET_NULL,
-                                verbose_name='id страны', related_name="+", null=True, blank=True)
+                                verbose_name='Страна', related_name="+", null=True, blank=True)
     city = models.CharField(max_length=100, verbose_name='Город', null=True, blank=True)
     street_house = models.CharField(max_length=100,
                                     verbose_name='Улица (и/или дом)', null=True, blank=True)
@@ -404,9 +382,9 @@ class Procedure(models.Model):
 class Good(models.Model):
     marking = models.CharField(max_length=50, verbose_name='Артикул', unique=True)
     name = models.TextField(verbose_name='Товар')
-    goodsmark = models.ForeignKey('GoodsMark', on_delete=models.SET_NULL, verbose_name='id торговой марки',
+    goodsmark = models.ForeignKey('GoodsMark', on_delete=models.SET_NULL, verbose_name='Торговая марка',
                                   related_name="+", null=True, blank=True)
-    trademark = models.ForeignKey('TradeMark', on_delete=models.SET_NULL, verbose_name='id товарного знака',
+    trademark = models.ForeignKey('TradeMark', on_delete=models.SET_NULL, verbose_name='Товарный знак',
                                   related_name="+", null=True, blank=True)
 
     class Meta:
@@ -425,6 +403,9 @@ class TradeMark(models.Model):
         verbose_name = 'Товарный знак'
         verbose_name_plural = 'Товарные знаки'
 
+    def __str__(self):
+        return self.trademark
+
 
 # Бренд/торговая марка - Справочник
 class GoodsMark(models.Model):
@@ -433,6 +414,9 @@ class GoodsMark(models.Model):
     class Meta:
         verbose_name = 'Торговая марка'
         verbose_name_plural = 'Торговые марки'
+
+    def __str__(self):
+        return self.goodsmark
 
 
 # Заводы (производители) - Справочник
@@ -503,15 +487,21 @@ class Document(models.Model):
         verbose_name = 'Документ'
         verbose_name_plural = 'Документы'
 
+    def __str__(self):
+        return self.name
+
 
 # Тип документов
 class DocumentType(models.Model):
     code = models.CharField(max_length=8, verbose_name='Код типа документа')
-    name = models.TextField(verbose_name='Название документа')
+    name = models.TextField(verbose_name='Тип документа')
 
     class Meta:
         verbose_name = 'Тип документа'
         verbose_name_plural = 'Типы документов'
+
+    def __str__(self):
+        return self.code
 
 
 # Документы группы в гтд
@@ -560,3 +550,6 @@ class WmsExport(models.Model):
 class Handbook(models.Model):
     name = models.CharField(verbose_name='Название', max_length=255, unique=True)
     is_actual_table = models.BooleanField(verbose_name='Актуальная таблица', default=False)
+
+    def __str__(self):
+        return self.name
