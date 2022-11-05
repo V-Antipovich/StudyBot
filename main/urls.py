@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import index, upload_gtd, show_gtd_file, CDDLogin, CDDLogout, GtdGoodDeleteView,\
-    GtdDetailView, update_gtd, GtdDeleteView, Profile, handbook_xlsx,\
+    GtdDetailView, update_gtd, GtdDeleteView, Profile, handbook_xlsx, HandbookUpdateView,\
     eco_fee, to_wms, AccessDeniedView, to_erp, SuccessfulOutcome, StatisticsMenu, GtdGroupDeleteView, \
     statistics_report_gtd_per_exporter, statistics_report_goods_imported, report_xlsx, ChangeUserInfoView,\
     RegUserPasswordChangeView, RegisterUserView, RegisterDoneView, user_activate, show_gtd_list, \
@@ -11,6 +11,7 @@ app_name = 'main'
 urlpatterns = [
     path('handbook_xlsx/<path:filename>', handbook_xlsx, name='handbook_xlsx'),
     # path('handbook/<str:choice>', handbook, name='handbook'),
+    path('handbook/<str:handbook>/update/<int:pk>', HandbookUpdateView.as_view(), name='update_handbook'),
     path('handbook/<str:handbook>/', HandbookListView.as_view(), name='handbook'),
     path('accounts/register/activate/<str:sign>/', user_activate, name='register_activate'),
     path('accounts/register/done/', RegisterDoneView.as_view(), name='register_done'),

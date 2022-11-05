@@ -162,8 +162,30 @@ class CalendarDate(forms.Form):
                                                       ))
 
 
-class CurrencyHandbookUpdateForm(forms.ModelForm):
-    # digital_code = forms.CharField(max_length=3)
+# class CurrencyHandbookUpdateForm(forms.ModelForm):
+#     # digital_code = forms.CharField(max_length=3)
+#     class Meta:
+#         model = Currency
+#         fields = '__all__'
+
+class CustomsHouseHandbookUpdateForm(forms.ModelForm):
+
     class Meta:
-        model = Currency
-        fields = '__all__'
+        model = CustomsHouse
+        fields = "__all__"
+
+
+class ExporterHandbookUpdateForm(forms.ModelForm):
+    country = forms.ModelChoiceField(queryset=Country.objects.all(), label='Страна', empty_label=None)
+
+    class Meta:
+        model = Exporter
+        fields = "__all__"
+
+
+class ImporterHandbookUpdateForm(forms.ModelForm):
+    country = forms.ModelChoiceField(queryset=Country.objects.all(), label='Страна', empty_label=None)
+
+    class Meta:
+        model = Importer
+        fields = "__all__"

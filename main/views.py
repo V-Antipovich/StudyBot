@@ -14,7 +14,8 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormMi
 from django.http import FileResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from .forms import UploadGtdfilesForm, GtdUpdateForm, GtdGoodCreateUpdateForm, \
-    CalendarDate, ExportComment, ChangeUserInfoForm, RegisterUserForm, PaginateForm, GtdGroupCreateUpdateForm
+    CalendarDate, ExportComment, ChangeUserInfoForm, RegisterUserForm, PaginateForm, GtdGroupCreateUpdateForm, \
+    CustomsHouseHandbookUpdateForm, ExporterHandbookUpdateForm, ImporterHandbookUpdateForm
 from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType,\
     Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType,\
     UploadGtdFile, Handbook
@@ -28,13 +29,29 @@ import mimetypes
 import pandas as pd
 from datetime import datetime
 
+# handbook_forms = {
+#     'customs_houses': CustomsHouseHandbookUpdateForm,
+#     'exporters': ExporterHandbookUpdateForm, # Содержит обращение к другим моделям
+#     'importers': ImporterHandbookUpdateForm,  # Содержит обращение к другим моделям
+#     # 'countries': ,
+#     # 'currencies': ,
+#     # 'deal_types': ,
+#     # 'tn_ved': ,
+#     # 'procedures': ,
+#     # 'goods': ,
+#     # 'trade_marks': ,  # Содержит обращение к другим моделям
+#     # 'goods_marks': ,  # Содержит обращение к другим моделям
+#     # 'manufacturers': ,
+#     # 'qualifiers': ,
+#     # 'doc_types': ,
+# }
 
 # Словарь со всеми справочниками системы
 # Ключ - параметр url, Значение - (<Модель этого справочника>, <Название справочника для пользователей>, <Список полей> )
 avaliable_handbooks = {
-    'customs_houses': (CustomsHouse, 'Отделы таможни'),
-    'exporters': (Exporter, 'Экспортеры'),  # Содержит обращение к другим моделям
-    'importers': (Importer, 'Импортеры'),  # Содержит обращение к другим моделям
+    'customs_houses': (CustomsHouse, 'Отделы таможни', CustomsHouseHandbookUpdateForm),
+    'exporters': (Exporter, 'Экспортеры', ExporterHandbookUpdateForm),  # Содержит обращение к другим моделям
+    'importers': (Importer, 'Импортеры', ImporterHandbookUpdateForm),  # Содержит обращение к другим моделям
     'countries': (Country, 'Государства', ('code', 'russian_name', 'english_name')),
     'currencies': (Currency, 'Валюты', ('digital_code', 'short_name', 'name')),
     'deal_types': (DealType, 'Классификатор характера сделки'),
@@ -709,7 +726,36 @@ def handbook_xlsx(request, filename):
 #     def get(self, request, *args, **kwargs):
 
 class HandbookUpdateView(UpdateView):
-    pass
+    handbook_context_name = None
+    template_name = 'main/update_handbook.html'
+
+    def get_queryset(self):
+        model = avaliable_handbooks[self.get_handbook_context_name()][0]
+        # return get_object_or_404(model, pk=self.kwargs.get('pk'))
+        return model.objects.filter(pk=self.kwargs.get('pk'))
+
+    def get_handbook_context_name(self):
+        if not self.handbook_context_name:
+            self.handbook_context_name = self.kwargs.get('handbook')
+        return self.handbook_context_name
+
+    def get_form_class(self):
+        if not self.form_class:
+            self.form_class = avaliable_handbooks[self.get_handbook_context_name()][2]
+        return self.form_class
+
+    def get_context_data(self, **kwargs):
+        context = super(HandbookUpdateView, self).get_context_data(**kwargs)
+        context['handbook'] = self.get_handbook_context_name()
+        return context
+
+    # TODO: сохранение - сделать запись справочной таблицы неактуальной
+    def get_success_url(self):
+        if not self.success_url:
+            self.success_url = reverse('main:handbook', kwargs={'handbook': self.get_handbook_context_name()})
+        return self.success_url
+    # def get_form_kwargs(self):
+    #     return super(HandbookUpdateView, self).get_form_kwargs()
 
 
 @method_decorator(login_required, name='dispatch')
@@ -738,25 +784,21 @@ class HandbookListView(ListView):
             'user': user,
             'for_customs_officer': condition,
             'filename': filename,
+            'handbook': self.get_handbook_context_name(),
         }
         return context
 
     def get_queryset(self):
         if not self.queryset:
-            # self.queryset = self.get_handbook_model().objects.all() # TODO: перенести на бэк
             raw_queryset = self.get_handbook_model().objects.all()
             fields = self.get_handbook_fields()
             queryset = []
-            # cut_queryset = []
             for obj in raw_queryset:
                 row = []
                 for field in fields:
                     row.append(getattr(obj, field.name))
                 queryset.append(row)
-                # cut_queryset.append(row[1:])
             self.queryset = queryset
-            # self.cut_queryset = cut_queryset
-
         return self.queryset
 
     def get_cut_queryset(self):
@@ -1087,6 +1129,4 @@ def upload_gtd(request):
         context = {'form': form}
         return render(request, 'main/upload_gtd.html', context)
 
-# TODO: Обработчик добавления и удаления юзеров
-# TODO: Регистрация пользователей должна производиться только админом
-# TODO: Контроллеры входа, сброса пароля, смены пароля
+# TODO: сброс пароля
