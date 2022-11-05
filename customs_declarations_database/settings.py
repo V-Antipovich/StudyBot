@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'xml',
     'six',
     'braces',
+    'pandas',
 ]
 
 MIDDLEWARE = [

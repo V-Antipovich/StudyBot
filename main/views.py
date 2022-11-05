@@ -25,6 +25,7 @@ from customs_declarations_database.settings import MEDIA_ROOT
 from customs_declarations_database.Constant import under
 import xlsxwriter
 import mimetypes
+import pandas as pd
 from datetime import datetime
 
 
@@ -689,7 +690,7 @@ def report_xlsx(request, folder, filename):
     return response
 
 
-@groups_required('Сотрудник таможенного отдела')
+@groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела'])
 def handbook_xlsx(request, filename):
     filepath = os.path.join(MEDIA_ROOT, 'handbooks/', filename)
     path = open(filepath, 'rb')
@@ -707,24 +708,69 @@ def handbook_xlsx(request, filename):
 #     #     self.get_
 #     def get(self, request, *args, **kwargs):
 
-class CurrencyHandbookListView(ListView):
+class HandbookUpdateView(UpdateView):
+    pass
+
+
+@method_decorator(login_required, name='dispatch')
+class HandbookListView(ListView):
     handbook_context_name = None
     handbook_properties = None
     handbook_model = None
     handbook_russian_name = None
     handbook_fields = None
+    filename = None
+    queryset = None
+    cut_queryset = None
     template_name = 'main/handbook.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
+        user = self.request.user
+        filename = self.get_filename()
+        condition = user.groups.filter(name__in=['Администратор', 'Сотрудник таможенного отдела']).exists()
+        if condition:
+            self.check_xlsx()
         context = {
             'fields': self.get_handbook_fields(),
             'data': self.get_queryset(),
+            'crop_data': self.get_cut_queryset(),
             'russian_name': self.get_handbook_russian_name(),
+            'user': user,
+            'for_customs_officer': condition,
+            'filename': filename,
         }
         return context
 
     def get_queryset(self):
-        return self.get_handbook_model().objects.all()
+        if not self.queryset:
+            # self.queryset = self.get_handbook_model().objects.all() # TODO: перенести на бэк
+            raw_queryset = self.get_handbook_model().objects.all()
+            fields = self.get_handbook_fields()
+            queryset = []
+            # cut_queryset = []
+            for obj in raw_queryset:
+                row = []
+                for field in fields:
+                    row.append(getattr(obj, field.name))
+                queryset.append(row)
+                # cut_queryset.append(row[1:])
+            self.queryset = queryset
+            # self.cut_queryset = cut_queryset
+
+        return self.queryset
+
+    def get_cut_queryset(self):
+        if not self.cut_queryset:
+            raw_queryset = self.get_handbook_model().objects.all()
+            fields = self.get_handbook_fields()[1:]
+            cut_queryset = []
+            for obj in raw_queryset:
+                row = []
+                for field in fields:
+                    row.append(getattr(obj, field.name))
+                cut_queryset.append(row)
+            self.cut_queryset = cut_queryset
+        return self.cut_queryset
 
     def get_handbook_context_name(self):
         if not self.handbook_context_name:
@@ -748,138 +794,26 @@ class CurrencyHandbookListView(ListView):
 
     def get_handbook_fields(self):
         if not self.handbook_fields:
-            self.handbook_fields = self.get_handbook_model()._meta.get_fields()[1:]
+            self.handbook_fields = self.get_handbook_model()._meta.get_fields()  # [1:]
         return self.handbook_fields
 
+    def get_filename(self):
+        if not self.filename:
+            self.filename = f"{ self.get_handbook_russian_name() }.xlsx"
+        return self.filename
 
-# Представление обработки справочников
-@login_required
-def handbook(request, choice):  # TODO: edit, delete
-    # choice = request.GET.get('choice', 'default')
-    # По умолчанию на странице справочников будет открыт справочник товаров
-    if choice == 'default':
-        choice = 'goods'
-    # По параметру ссылки получаем название и модель справочника
-    get_handbook = avaliable_handbooks[choice]
-    handbook_name = get_handbook[1]
-    handbook_class = get_handbook[0]
-
-    handbook_objects = handbook_class.objects.all()
-
-    # Доступ к полям модели справочника
-    meta = handbook_class._meta
-    get_fields = meta.get_fields()
-
-    # Массив для хранения служебной инфы для махинаций с атрибутами
-    fields_system_data = []
-    # Массив для имен колонок таблицы - как они будут отображаться на фронте
-    fields_verbose_names = []
-
-    for field in get_fields:
-        methods = dir(field)
-        # Служебное поле PK не включаем
-        if '_check_primary_key' not in methods:
-            # Обработаем FK - Выведем данные непосредственно из связанной таблицы
-            if '_related_query_name' in methods:
-                # Достаем данные связанной модели
-                dependent_tuple = dependent_models[field.attname]
-
-                dependent_model = dependent_tuple[0]
-                dependent_objects = dependent_model.objects
-
-                # Для имени колонки возьмем один объект из связанной модели
-                dependent_object = dependent_models[field.attname][0].objects.last()
-                needed_field = dependent_tuple[1]
-
-                # Объекты массива служебной инфы
-                # (<Bool: поле внешнего ключа?>, <Имя поля>,
-                # <Объекты связанной модели>, <Нужное поле из связанной модели>)
-                sys_attrs = (True, field.attname, dependent_objects, needed_field)
-
-                # Имя поля для пользователя в связанной модели
-                verbose_name = dependent_object._meta.get_fields()[dependent_tuple[2]].verbose_name
-
-            else:
-                # (<Bool: поле внешнего ключа?>, <имя поля для фронта>)
-                sys_attrs = (False, field.attname)
-
-                verbose_name = field.verbose_name
-
-            fields_system_data.append(sys_attrs)
-            fields_verbose_names.append(verbose_name)
-
-    # Собираем непосредственно данные справочника
-    handbook_data = []
-    for obj in handbook_objects:
-        attrs = []
-        # Для каждого атрибута пройдемся по его полям
-        for field in fields_system_data:
-            if field[0]:
-                needed_pk = getattr(obj, field[1])
-                needed_raw_obj = field[2].filter(pk=needed_pk)
-                if needed_raw_obj.exists():
-                    needed_data = getattr(needed_raw_obj[0], field[3])
-                else:
-                    needed_data = ''
-                # Если поле внешнего ключа, обращаемся к связанной модели и получаем данные оттуда
-                # Временная заглушка
-                #  needed_data = getattr(field[2].filter(pk=getattr(obj, field[1]))[0], field[3])
-            else:
-                # В противном случае просто обращаемся к значению нужного поля
-                needed_data = getattr(obj, field[1])
-                if not needed_data:
-                    needed_data = ''
-            attrs.append(needed_data)
-        handbook_data.append(attrs)
-    # print(handbook_name)
-
-    # TODO: + фильтры, сортировка и пагинация в шаблоне
-    # Если среди файлов справочников нет нужного нам, то мы должны его сейчас создать
-    filename = f"{handbook_name}.xlsx"
-    filepath = os.path.join(MEDIA_ROOT, 'handbooks/', filename)
-    # if not os.path.exists(filepath):
-    handbook_model_obj = Handbook.objects.get(name=handbook_name)
-    if not os.path.exists(filepath) and not handbook_model_obj.is_actual_table:
-        workbook = xlsxwriter.Workbook(filepath)
-        worksheet = workbook.add_worksheet()
-        i, j = 1, 0
-        # j = 0
-        for name in fields_verbose_names:
-            worksheet.write(0, j, name)
-            j += 1
-
-        for value_row in handbook_data:
-            j = 0
-            for value in value_row:
-                worksheet.write(i, j, value)
-                j += 1
-            i += 1
-        workbook.close()
-        handbook_model_obj.is_actual_table = True
-        handbook_model_obj.save()
-
-    paginate_by = request.GET.get('paginate_by', 100)
-    page = request.GET.get('page', 1)
-    paginator = Paginator(handbook_data, paginate_by)
-    try:
-        values = paginator.page(page)
-    except PageNotAnInteger:
-        values = paginator.page(1)
-    except EmptyPage:
-        values = paginator.page(paginator.num_pages)
-
-    context = {
-        'choice': choice,
-        'handbook_name': handbook_name,
-        'verbose_names': fields_verbose_names,
-        'values': values,
-        'avaliable_handbooks': list(avaliable_handbooks.items()),
-        'filename': filename,
-        'paginate_by': paginate_by,
-        'for_customs_officer': request.user.groups.filter(name__in=['Администратор',
-                                                                    'Сотрудник таможенного отдела']).exists()
-        }
-    return render(request, 'main/unused_handbook.html', context)
+    def check_xlsx(self):
+        filepath = os.path.join(MEDIA_ROOT, 'handbooks/', self.get_filename())
+        handbook_db_obj = get_object_or_404(Handbook, name=self.get_handbook_russian_name())
+        if not os.path.exists(filepath) or not handbook_db_obj.is_actual_table:
+            fields = self.get_handbook_fields()[1:]
+            crop_data = self.get_cut_queryset()
+            df = pd.DataFrame(crop_data, columns=[field.verbose_name for field in fields])
+            writer = pd.ExcelWriter(filepath, engine='xlsxwriter')
+            df.to_excel(writer, index=False)
+            writer.save()
+            handbook_db_obj.is_actual_table = True
+            handbook_db_obj.save()
 
 
 # Загрузка файлов ГТД в формате .xml

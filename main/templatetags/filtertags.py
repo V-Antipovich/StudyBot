@@ -24,3 +24,10 @@ def get_attr(instance, field):
 
 
 register.filter('get_attr', get_attr)
+
+
+def cut_id(array):
+    return array[1:]
+
+
+register.filter('cut_id', cut_id)
