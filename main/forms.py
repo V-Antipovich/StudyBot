@@ -55,7 +55,7 @@ class RegisterUserForm(forms.ModelForm):
 
     class Meta:
         model = RegUser
-        fields = ('username', 'email', 'password', 'first_name', 'last_name', 'patronymic', 'groups')
+        fields = ('username', 'email', 'password', 'first_name', 'last_name', 'patronymic')
 
     def clean_password(self):
         psw = self.cleaned_data['password']
@@ -65,12 +65,20 @@ class RegisterUserForm(forms.ModelForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
+        # cd = self.cleaned_data
+        # roles = self.cleaned_data['role']
+        # print(roles)
+        # for role in roles:
+            # user.role.add
         psw = self.cleaned_data['password']
         user.set_password(psw)
         user.is_active = False
         user.is_activated = False
         if commit:
             user.save()
+        # for role in roles:
+        #     user.roles.add(role)
+        # user.save()
         user_registered.send(RegisterUserForm, instance=user, password=psw)  # Сигнал отсылать письмо
         return user
 
