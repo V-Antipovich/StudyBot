@@ -52,7 +52,7 @@ class RegisterUserForm(forms.ModelForm):
     email = forms.EmailField(required=True, label='Адрес электронной почты')
     password = forms.CharField(label='Пароль', widget=forms.PasswordInput,
                                help_text=password_validation.password_validators_help_text_html())
-    role = forms.ModelChoiceField(queryset=Role.objects.all())
+    role = forms.ModelChoiceField(queryset=Role.objects.all(), label='Роль')
 
     class Meta:
         model = RegUser

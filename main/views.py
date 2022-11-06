@@ -149,6 +149,47 @@ def user_activate(request, sign):
     return render(request, template)
 
 
+@login_required
+@roles_required(allowed_roles=['Администратор'])
+def users_list(request):
+    kw = request.GET.get('key', '')
+    q = Q(first_name__icontains=kw) | Q(username__icontains=kw) | Q(last_name__icontains=kw) | \
+        Q(patronymic__icontains=kw) | Q(email__icontains=kw) | Q(role__name__icontains=kw)
+
+    users = RegUser.objects.filter(q)
+
+    paginate_by = request.GET.get('paginate_by', 10)
+    page = request.GET.get('page', 1)
+    paginator = Paginator(users, paginate_by)
+    try:
+        users = paginator.page(page)
+    except PageNotAnInteger:
+        users = paginator.page(1)
+    except EmptyPage:
+        users = paginator.page(paginator.num_pages)
+
+    context = {
+        'users': users,
+        'paginate_by': paginate_by,
+        'form': SearchForm(initial={'key': kw, 'paginate_by': paginate_by}),
+    }
+    return render(request, 'main/users_list.html', context)
+
+
+@method_decorator(roles_required(allowed_roles=['Администратор']), name='dispatch')
+class UserUpdateView(LoginRequiredMixin, UpdateView):
+    model = RegUser
+    success_url = reverse_lazy('main:users')
+    form_class = ChangeUserInfoForm
+    template_name = 'main/update_user.html'
+
+
+@method_decorator(roles_required(allowed_roles=['Администратор']), name='dispatch')
+class UserDeleteView(LoginRequiredMixin, DeleteView):
+    model = RegUser
+    success_url = reverse_lazy('main:users')
+    template_name = 'main/delete_user.html'
+
 # Страница с данными пользователя
 class Profile(LoginRequiredMixin, TemplateView):
     template_name = 'main/profile.html'
