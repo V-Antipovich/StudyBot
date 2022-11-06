@@ -17,64 +17,66 @@
         <h3 class="display-5 text-center">База таможенных деклараций</h3>
     </header>
 {#    <div class="row">#}
-        <div class="dropdown mt-3">
-            {% if user.is_authenticated %}
-                <button class="btn btn-outline-primary dropdown-toggle" type="button"
-                    id="documents-dropdown" data-bs-toggle="dropdown" aria-expanded="true">
-                    Документы
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="documents-dropdown" >
-                    <li><a href="{% url 'main:upload_gtd' %}" class="dropdown-item">Добавить ГТД</a> </li>
-                    <li><a href="{% url 'main:show_gtd' %}" class="dropdown-item">ГТД</a></li>
-                </ul>
+        <div class="dropdown align-content-md-center">
+            <div class="align-content-md-center">
+                    {% if user.is_authenticated %}
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button"
+                            id="documents-dropdown" data-bs-toggle="dropdown" aria-expanded="true">
+                            Документы
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="documents-dropdown" >
+                            <li><a href="{% url 'main:upload_gtd' %}" class="dropdown-item">Добавить ГТД</a> </li>
+                            <li><a href="{% url 'main:show_gtd' %}" class="dropdown-item">ГТД</a></li>
+                        </ul>
 
-            <button class="btn btn-outline-primary dropdown-toggle" type="button" id="reports-dropdown"
-            data-bs-toggle="dropdown">Отчёты</button>
-            <ul class="dropdown-menu" aria-labelledby="reports-dropdown">
-                <li><a href="{% url 'main:statistics_menu' %}" class="dropdown-item">Статистические отчеты</a></li>
-                <li><a href="{% url 'main:eco_fee' %}" class="dropdown-item">Экологический сбор</a> </li>
-            </ul>
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="reports-dropdown"
+                    data-bs-toggle="dropdown">Отчёты</button>
+                    <ul class="dropdown-menu" aria-labelledby="reports-dropdown">
+                        <li><a href="{% url 'main:statistics_menu' %}" class="dropdown-item">Статистические отчеты</a></li>
+                        <li><a href="{% url 'main:eco_fee' %}" class="dropdown-item">Экологический сбор</a> </li>
+                    </ul>
 
-            <button class="btn btn-outline-primary dropdown-toggle" type="button"
-                    id="handbooks-dropdown" data-bs-toggle="dropdown">
-                Справочники
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="handbooks-dropdown">
-                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='currencies' %}">Валюты</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='countries' %}">Государства</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='qualifiers' %}">Единицы измерения</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='importers'%}">Импортеры</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='tn_ved' %}">Классификатор ТН ВЭД</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='doc_types' %}">Классификатор типов документов</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='deal_types' %}">Классификатор характера сделки</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='customs_houses' %}">Отделы таможни</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='manufacturers' %}">Производители (заводы)</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='procedures' %}">Таможенные процедуры</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='trade_marks' %}">Товарные знаки</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='goods' %}">Товары</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='goods_marks' %}">Торговые марки</a></li>
-                <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='exporters' %}">Экспортёры</a> </li>
-            </ul>
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button"
+                            id="handbooks-dropdown" data-bs-toggle="dropdown">
+                        Справочники
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="handbooks-dropdown">
+                        <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='currencies' %}">Валюты</a></li>
+                        <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='countries' %}">Государства</a></li>
+                        <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='qualifiers' %}">Единицы измерения</a></li>
+                        <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='importers'%}">Импортеры</a></li>
+                        <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='tn_ved' %}">Классификатор ТН ВЭД</a></li>
+                        <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='doc_types' %}">Классификатор типов документов</a></li>
+                        <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='deal_types' %}">Классификатор характера сделки</a></li>
+                        <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='customs_houses' %}">Отделы таможни</a></li>
+                        <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='manufacturers' %}">Производители (заводы)</a></li>
+                        <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='procedures' %}">Таможенные процедуры</a></li>
+                        <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='trade_marks' %}">Товарные знаки</a></li>
+                        <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='goods' %}">Товары</a></li>
+                        <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='goods_marks' %}">Торговые марки</a></li>
+                        <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='exporters' %}">Экспортёры</a> </li>
+                    </ul>
 
-{#            <a class="btn btn-outline-primary" type="button" id="settings" href="#">Настройки</a>#}
+        {#            <a class="btn btn-outline-primary" type="button" id="settings" href="#">Настройки</a>#}
 
-            <button class="btn btn-outline-primary dropdown-toggle" type="button"
-                    id="profile-dropdown" data-bs-toggle="dropdown">
-                Профиль
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="profile-dropdown">
-                <li><a class="dropdown-item" href="{% url 'main:profile' %}">Мои данные</a> </li>
-{#                <li><a class="dropdown-item" href="#">Изменить пароль</a></li>#}
-                {% if user|has_group:"Администратор" %}
-                    <li><a class="dropdown-item" href="{% url 'main:register' %}">Добавить пользователя</a></li>
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button"
+                            id="profile-dropdown" data-bs-toggle="dropdown">
+                        Профиль
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="profile-dropdown">
+                        <li><a class="dropdown-item" href="{% url 'main:profile' %}">Мои данные</a> </li>
+        {#                <li><a class="dropdown-item" href="#">Изменить пароль</a></li>#}
+                        {% if user|has_group:"Администратор" %}
+                            <li><a class="dropdown-item" href="{% url 'main:register' %}">Добавить пользователя</a></li>
+                        {% endif %}
+                        <div class="dropdown-divider"></div>
+                        <li><a class="dropdown-item" href={% url 'main:logout' %}>Выйти</a></li>
+                        <div class="dropdown-divider"></div>
+                    </ul>
+                {% else %}
+                    <a class="btn btn-outline-primary" id="login" href={% url 'main:login' %}>Вход</a>
                 {% endif %}
-                <div class="dropdown-divider"></div>
-                <li><a class="dropdown-item" href={% url 'main:logout' %}>Выйти</a></li>
-                <div class="dropdown-divider"></div>
-            </ul>
-        {% else %}
-            <a class="btn btn-outline-primary" id="login" href={% url 'main:login' %}>Вход</a>
-        {% endif %}
+            </div>
         </div>
 {#    </div>#}
 

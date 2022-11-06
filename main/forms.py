@@ -24,17 +24,17 @@ def validate_date_range(start, end):
 class PaginateForm(forms.Form):
     # paginate_by = forms.IntegerField(help_text='Кол-во записей на странице')
     paginate_by = forms.ChoiceField(help_text='По сколько записей располагать на странице', choices=(
-        (1, '10'),
-        (2, '25'),
-        (3, '50'),
-        (4, '100'),
+        (10, '10'),
+        (50, '50'),
+        (100, '100'),
+        (200, '200'),
     ))
 
-    def clean(self):
-        cleaned_data = super().clean()
-        paginate_by = cleaned_data['paginate_by']
-        if type(paginate_by) != int and paginate_by <= 0:
-            self.add_error('paginate_by', 'Число должно быть целым и положительным')
+    # def clean(self):
+    #     cleaned_data = super().clean()
+    #     paginate_by = cleaned_data['paginate_by']
+    #     if type(paginate_by) != int and paginate_by <= 0:
+    #         self.add_error('paginate_by', 'Число должно быть целым и положительным')
 
 
 # TODO: Отдельная форма для админов, где можно редачить и роль
@@ -154,6 +154,17 @@ class CalendarDate(forms.Form):
                                                              'class': 'form-control',
                                                              'placeholder': 'dd-mm-YYYY'}
                                                       ))
+
+
+# Форма для поиска на странице
+class SearchForm(forms.Form):
+    paginate_by = forms.ChoiceField(help_text='По сколько записей располагать на странице', choices=(
+        (10, '10'),
+        (50, '50'),
+        (100, '100'),
+        (200, '200'),
+    ), label='Пагинация')
+    key = forms.CharField(required=False, max_length=100, label='Ключевое слово')
 
 
 class CustomsHouseHandbookCreateUpdateForm(forms.ModelForm):

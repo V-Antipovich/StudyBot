@@ -11,3 +11,12 @@
 .textcols .textcols-item:first-child {
     margin-left: 4%;
 }
+
+.small-head {
+    text-effect: engrave;
+    font-size: larger;
+}
+
+.dropdown{
+    left: 50%;
+}

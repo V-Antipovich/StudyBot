@@ -8,22 +8,30 @@
     Успешно загружены файлы
 {% endblock %}
 
+{% block extra_links %}
+    <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
+{% endblock %}
+
 {% block content %}
 {#    {{ test }}#}
     <h3>Загружены файлы</h3>
-    <div>Отправлено на вход: {{ all }}</div>
+    <div class="small-head"><b> Отправлено на вход:</b> {{ all }}</div>
 
+
+{% if skipped %}
     <div>Пропущено: {{ skipped }}</div>
-        {% if skipped %}
             {% for gtd in log.skip %}
-                <li><a href="{% url 'main:per_gtd' pk=gtd.pk %}">{{ gtd.gtdId }}</a></li>
+                <li class="list-group-item">
+                    <a href="{% url 'main:per_gtd' pk=gtd.pk %}">{{ gtd.gtdId }}</a>
+                </li>
 
             {% endfor %}
         {% endif %}
-    <div>Обновленные: {{ updated }}</div>
+
     {% if updated %}
+        <div>Обновленные: {{ updated }}</div>
         {% for gtd in log.update %}
-            <li>
+            <li class="list-group-item">
                 <a href="{% url 'main:per_gtd' pk=gtd.pk %}">{{ gtd.gtdId }}</a>
             </li>
         {% endfor %}
@@ -32,7 +40,7 @@
 
     {% if new %}
         {% for gtd in log.new %}
-            <li>
+            <li class="list-group-item">
                 <a href="{% url 'main:per_gtd' pk=gtd.pk %}">{{ gtd.gtdId }}</a>
             </li>
         {% endfor %}

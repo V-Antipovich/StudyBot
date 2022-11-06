@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.signing import BadSignature
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
@@ -16,10 +17,13 @@ from django.http import FileResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from .forms import UploadGtdfilesForm, GtdUpdateForm, GtdGoodCreateUpdateForm, \
     CalendarDate, ExportComment, ChangeUserInfoForm, RegisterUserForm, PaginateForm, GtdGroupCreateUpdateForm, \
-    CustomsHouseHandbookCreateUpdateForm, ExporterHandbookCreateUpdateForm, ImporterHandbookCreateUpdateForm, CountryHandbookCreateUpdateForm, \
-    CurrencyHandbookCreateUpdateForm, DealTypeHandbookCreateUpdateForm, TnVedHandbookCreateUpdateForm, ProcedureHandbookCreateUpdateForm, \
-    GoodHandbookCreateUpdateForm, TradeMarkHandbookCreateUpdateForm, GoodsMarkHandbookCreateUpdateForm, ManufacturerHandbookCreateUpdateForm, \
-    MeasureQualifierHandbookCreateUpdateForm, DocumentTypeHandbookCreateUpdateForm
+    CustomsHouseHandbookCreateUpdateForm, ExporterHandbookCreateUpdateForm, ImporterHandbookCreateUpdateForm, \
+    CountryHandbookCreateUpdateForm, \
+    CurrencyHandbookCreateUpdateForm, DealTypeHandbookCreateUpdateForm, TnVedHandbookCreateUpdateForm, \
+    ProcedureHandbookCreateUpdateForm, \
+    GoodHandbookCreateUpdateForm, TradeMarkHandbookCreateUpdateForm, GoodsMarkHandbookCreateUpdateForm, \
+    ManufacturerHandbookCreateUpdateForm, \
+    MeasureQualifierHandbookCreateUpdateForm, DocumentTypeHandbookCreateUpdateForm, SearchForm
 from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType,\
     Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType,\
     UploadGtdFile, Handbook
@@ -165,7 +169,17 @@ def index(request):
 
 @login_required
 def show_gtd_list(request):
-    gtd_list = GtdMain.objects.all()
+    # gtd_list = GtdMain.objects.all()
+
+    # if 'key' in request.GET:
+    kw = request.GET.get('key', '')
+    q = Q(gtdId__icontains=kw) | Q(customs_house__house_name__icontains=kw) | \
+        Q(date__icontains=kw) | Q(order_num__icontains=kw) | Q(total_goods_number__icontains=kw) | \
+        Q(exporter__name__icontains=kw) | Q(importer__name__icontains=kw) | Q(trading_country__russian_name__icontains=kw) | \
+        Q(total_cost__icontains=kw) | Q(currency__short_name__icontains=kw) | Q(total_invoice_amount__icontains=kw) | \
+        Q(currency_rate__icontains=kw) | Q(deal_type__code__icontains=kw)
+    gtd_list = GtdMain.objects.filter(q)
+
     paginate_by = request.GET.get('paginate_by', 10)
     page = request.GET.get('page', 1)
     paginator = Paginator(gtd_list, paginate_by)
@@ -180,7 +194,9 @@ def show_gtd_list(request):
         'gtds': gtds,
         'paginate_by': paginate_by,
         'context': user,
-        'for_customs_officer': user.groups.filter(name__in=['Администратор', 'Сотрудник таможенного отдела'])
+        'for_customs_officer': user.groups.filter(name__in=['Администратор', 'Сотрудник таможенного отдела']),
+        'form': SearchForm(initial={'key': kw, 'paginate_by': paginate_by}),
+        # 'form_paginate': PaginateForm(initial={})
         # 'form': PaginateForm({paginate_by})
     }
     return render(request, 'main/show_gtd.html', context)
@@ -1167,7 +1183,7 @@ def upload_gtd(request):
                 'updated': updated,
                 'new': new,
                 'all': skipped + updated + new,
-                'test': get_goods,
+                # 'test': get_goods,
             }
             return render(request, 'main/upload_gtd_log.html', context)
         # else:

@@ -15,12 +15,13 @@
 
 {% block content %}
     <h2>Количество ГТД по поставщикам {% if show %}в период {{ start|date:"d.m.Y" }} - {{ end|date:"d.m.Y" }}{% endif %}</h2>
-    <div class="align-self-xl-center">
-        <div class="col-3">
+    <div class="align-self-xl-center ">
+        <div class="col-3 ">
             <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <input type="submit" value="Ок">
+{#            <input type="submit" value="Ок">#}
+                {% buttons submit='ОК' %}{% endbuttons %}
             </form>
         </div>
     </div>

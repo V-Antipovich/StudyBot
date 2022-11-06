@@ -7,7 +7,10 @@
 {% block title %}Статистические отчеты{% endblock %}
 <style href="{% static 'main/css/style.css' %}"></style>
 {% block content %}
-    <h3>Отчёты</h3>
+    <div class="container mt-4 align-content-md-center">
+
+
+    <h2 style="text-align: center; margin-left: -10%">Статистические отчёты</h2>
 {#    <div class="row">#}
 {#        <div class="col-md-4"></div>#}
 {#        <div class="col-md-3 d-flex justify-content-center">#}
@@ -16,12 +19,16 @@
 {#            </div>#}
 {#        </div>#}
 {#    </div>#}
-    <div class="container">
+    <div class="container mt-4">
+    <h4>
         <div style="float: left; width: 49%;">
             <a href="{% url 'main:statistics_gtd_per_exporter' %}">Количество ГТД до поставщикам</a>
         </div>
+        </h4>
+        <h4>
         <div style="float:right; width: 49%;">
             <a href="{% url 'main:report_goods_imported' %}">Количество ввезенного оборудования за период</a>
-        </div>
+        </div></h4>
+    </div>
     </div>
 {% endblock %}

@@ -12,18 +12,40 @@
 {% block content %}
     <h2>Таможенные декларации</h2>
     <h5>Щелкните по цифре в колонке "Число групп товаров", чтобы перейти к группам ГТД</h5>
-    <p>Выводится по {{ paginate_by }} записей на странице. Изменить: </p>
-    <form method="get">
-        <select id="input-limit" name="paginate_by" class="form-control">
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-        </select>
-        <input type="submit"> </input>
-    </form>
 
-    <input type="text" class="form-control" placeholder="Начните вводить слова фильтрации" id="search-text" onkeyup="tableSearch()">
+    <div class="col-lg-4">
+{#        <p>Выводится по {{ paginate_by }} записей на странице. Изменить: </p>#}
+{#        <form method="get" class="col-md-auto form-inline"  id="together">#}
+{#            <select id="input-limit" name="paginate_by" class="form-control">#}
+{#                <option value="10">10</option>#}
+{#                <option value="25">25</option>#}
+{#                <option value="50">50</option>#}
+{#                <option value="100">100</option>#}
+{#            </select>#}
+{#            {% csrf_token %}#}
+{#            {{ form_paginate }}#}
+{#            <input type="submit"> </input>#}
+{#        </form>#}
+    <form class="col-md-auto form-inline" method="get"  id="together">
+            {% bootstrap_form form layout='horizontal' %}
+            {% buttons submit='Искать' %}{% endbuttons %}
+{#                {{ form_search }}#}
+{#            <input type="submit" value="Поиск">#}
+{#            {% bootstrap_button submit='Искать' %}#}
+        </form>
+    </div>
+
+
+{#    <input type="text" class="form-control" placeholder="Начните вводить слова фильтрации" id="search-text" onkeyup="tableSearch()">#}
+{#    <div class="col-lg-1">#}
+{#        <form class="col-md-auto form-inline" method="get">#}
+{#            {{ form_search.as_div }}#}
+{#                {{ form_search }}#}
+{#            <input type="submit" value="Поиск">#}
+{#            {% bootstrap_button content='Искать' button_type='submit' %}#}
+{#        </form>#}
+{#    </div>#}
+
     <div style="text-align: center">
     <table size="90%" id="sortable_searchable">
 {#        #}

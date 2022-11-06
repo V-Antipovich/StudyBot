@@ -1,24 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="bearable paginator">
-      <change afterPath="$PROJECT_DIR$/media/handbooks/Валюты.xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/media/handbooks/Государства.xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/media/handbooks/Единицы измерения.xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/media/handbooks/Импортеры.xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/media/handbooks/Классификатор ТН ВЭД.xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/media/handbooks/Классификатор типов документов.xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/media/handbooks/Отделы таможни.xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/media/handbooks/Производители (заводы).xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/media/handbooks/Таможенные процедуры.xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/media/handbooks/Товарные знаки.xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/media/handbooks/Товары.xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/media/handbooks/Торговые марки.xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/media/handbooks/Экспортеры.xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/media/reports/eco/eco 25 02-05-2022-01-11-2022.xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/media/reports/eco/eco 25 05-11-2022-23-11-2022.xlsx" afterDir="false" />
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="made ok-paginator for handbook">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/handbook.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/handbook.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/static/main/css/gtd_tables.css" beforeDir="false" afterPath="$PROJECT_DIR$/main/static/main/css/gtd_tables.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/static/main/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/main/static/main/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/layout/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/layout/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/show_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/show_gtd.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/statistic_reports_menu.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/statistic_reports_menu.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/statistics_report_gtd_per_exporter.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/statistics_report_gtd_per_exporter.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/upload_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/upload_gtd.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/upload_gtd_log.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/upload_gtd_log.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,6 +34,7 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
     <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -50,29 +45,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "DefaultHtmlFileTemplate": "HTML File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "database.data.extractors.current.export.id": "XML-Groovy.xml.groovy",
-    "database.data.extractors.current.id": "Comma-separated (CSV)_id",
-    "last_opened_file_path": "C:/Users/Vitalii/Desktop/new 3.py",
-    "list.type.of.created.stylesheet": "CSS",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;database.data.extractors.current.export.id&quot;: &quot;SQL-Insert-Statements.sql.groovy&quot;,
+    &quot;database.data.extractors.current.id&quot;: &quot;Comma-separated (CSV)_id&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Vitalii/Desktop/new 3.py&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   },
-  "keyToStringList": {
-    "ChangesTree.GroupingKeys": [
+  &quot;keyToStringList&quot;: {
+    &quot;ChangesTree.GroupingKeys&quot;: [
     ],
-    "DatabaseDriversLRU": [
-      "azure",
-      "mysql"
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;azure&quot;,
+      &quot;mysql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Programming\Python\Django\customs_declarations_database\main\templates\main" />
@@ -201,13 +196,7 @@
       <workItem from="1667550048133" duration="25988000" />
       <workItem from="1667582233991" duration="34749000" />
       <workItem from="1667647402293" duration="14362000" />
-    </task>
-    <task id="LOCAL-00042" summary="minor changes and fixes;&#10;uploaded video with 3 user scripts shown">
-      <created>1666725642244</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1666725642244</updated>
+      <workItem from="1667712334655" duration="4321000" />
     </task>
     <task id="LOCAL-00043" summary="minor changes and fixes;&#10;uploaded video with 3 user scripts done">
       <created>1666725729051</created>
@@ -545,7 +534,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667690721426</updated>
     </task>
-    <option name="localTasksCounter" value="91" />
+    <task id="LOCAL-00091" summary="made ok-paginator for handbook">
+      <created>1667691104370</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1667691104370</updated>
+    </task>
+    <option name="localTasksCounter" value="92" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -586,7 +582,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="nav chain in gtd groups updating" />
     <MESSAGE value="gtd good editing + nav chain" />
     <MESSAGE value="added warnings to nav chains in templates of editing gtd groups and gtd goods" />
     <MESSAGE value="made view for adding new gtd good" />
@@ -611,7 +606,8 @@
     <MESSAGE value="made some small fixes" />
     <MESSAGE value="bad pagination to handbooks" />
     <MESSAGE value="bearable paginator" />
-    <option name="LAST_COMMIT_MESSAGE" value="bearable paginator" />
+    <MESSAGE value="made ok-paginator for handbook" />
+    <option name="LAST_COMMIT_MESSAGE" value="made ok-paginator for handbook" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />
