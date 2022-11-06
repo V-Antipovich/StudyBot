@@ -10,6 +10,9 @@ from customs_declarations_database.settings import USER_DIR
 # Роли реализованы в виде групп (уже существующей структуры)
 
 class RegUser(AbstractUser):
+    """
+    Модель пользователя. Добавлены поля подтверждения активаци, почта, отчество и роль
+    """
     is_activated = models.BooleanField(verbose_name='Завершил регистрацию?', default=False)
     email = models.EmailField(verbose_name='Электронная почта', unique=True)
     patronymic = models.CharField(verbose_name='Отчество', max_length=255, null=True, blank=True)
@@ -20,14 +23,23 @@ class RegUser(AbstractUser):
 
 
 class Role(models.Model):
+    """
+    Роли для разграничения доступа к определенным элементам сайта
+    """
     name = models.CharField(max_length=200, verbose_name='Роль')
 
     def __str__(self):
+        """
+        Информация о классе будет отображаться в виде названия роли
+        """
         return self.name
 
 
 # Главная инфа гтд (1 на весь документ)
-class GtdMain(models.Model):  # TODO: при любом изменении поменять wms и erp на false?
+class GtdMain(models.Model):
+    """
+    Модель шапки (основной информации) ГТД. В качестве полей модель содержит самые главные поля шапки
+    """
     gtdId = models.CharField(max_length=23, verbose_name='Номер гтд', unique=True)
     customs_house = models.ForeignKey('CustomsHouse', on_delete=models.SET_NULL,
                                       verbose_name='id таможенного отделения', related_name="+", null=True, blank=True)
@@ -59,12 +71,18 @@ class GtdMain(models.Model):  # TODO: при любом изменении по�
     exported_to_erp = models.BooleanField(verbose_name='Был выполнен экспорт в ERP?', default=False)
 
     class Meta:
+        """
+        Метакласс, определяющий поведение класса GtdMain
+        """
         verbose_name = 'Грузовая таможенная декларация'
         verbose_name_plural = 'Грузовые таможенные декларации'
         ordering = ['-date']
         unique_together = ('gtdId', 'customs_house', 'date', 'order_num')
 
     def recount(self):
+        """
+        Программное вычисление полей стоимости и количества групп товаров
+        """
         groups = GtdGroup.objects.filter(gtd_id=self.pk)
 
         self.total_cost = sum(group.customs_cost for group in groups)
@@ -72,8 +90,12 @@ class GtdMain(models.Model):  # TODO: при любом изменении по�
         self.total_goods_number = groups.count()
         self.save()
 
-    # TODO: Guid это id из базы; ПТиУ это номер ГТД
+
     def export_to_erp(self, comment, user):
+        """
+        Функция генерации xml-файла по данной гтд и помещение в папку,
+        откуда файл смогут экспортировать в ERP
+        """
         goods = GtdGood.objects.filter(gtd_id=self.pk)
         gtd_id = self.gtdId
         struct = ET.Element('Structure')
@@ -169,6 +191,9 @@ class GtdMain(models.Model):  # TODO: при любом изменении по�
         erp_exp.save()
 
     def export_to_wms(self, comment, user):
+        """
+        Функция формирования XML-файла, предназначенного для последующего экспорта в WMS
+        """
         gtd_id = self.gtdId.replace('/', '_')
         gtd_date = self.date
         goods = GtdGood.objects.filter(gtd_id=self.pk)
@@ -220,17 +245,29 @@ class GtdMain(models.Model):  # TODO: при любом изменении по�
         wms_exp.save()
 
     def new_version(self):
+        """
+        В документе произошли изменения,
+        поэтому больше нельзя считать последние файлы экспорта этой модели в базу
+        """
+
         self.exported_to_erp = False
         self.exported_to_wms = False
         self.recount()
         # self.save()
 
     def __str__(self):
+        """
+        Информация о классе представляется в виде номера ГТД
+        """
         return self.gtdId
 
 
 # Отделы таможни - Справочник
 class CustomsHouse(models.Model):
+    """
+    Модель таможенных отделов
+    """
+
     house_num = models.CharField(max_length=8, verbose_name='Номер отдела')
     house_name = models.CharField(max_length=255, verbose_name='Название отдела')
 
@@ -244,6 +281,10 @@ class CustomsHouse(models.Model):
 
 # Экспортеры - Справочник
 class Exporter(models.Model):
+    """
+    Модель экспортера, содержащая стандартную главную информацию
+    о компаниях, экспортирующие свои товары в Россию
+    """
     name = models.CharField(max_length=255, verbose_name='Название компании')
     postal_code = models.CharField(max_length=20, verbose_name='Почтовый индекс', null=True, blank=True)
     country = models.ForeignKey('Country', on_delete=models.SET_NULL,
