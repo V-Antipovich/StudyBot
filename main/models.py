@@ -13,9 +13,17 @@ class RegUser(AbstractUser):
     is_activated = models.BooleanField(verbose_name='Завершил регистрацию?', default=False)
     email = models.EmailField(verbose_name='Электронная почта', unique=True)
     patronymic = models.CharField(verbose_name='Отчество', max_length=255, null=True, blank=True)
+    role = models.ForeignKey('Role', verbose_name='Роль', related_name='+', on_delete=models.SET_NULL, null=True)
 
     class Meta(AbstractUser.Meta):
         pass
+
+
+class Role(models.Model):
+    name = models.CharField(max_length=200, verbose_name='Роль')
+
+    def __str__(self):
+        return self.name
 
 
 # Главная инфа гтд (1 на весь документ)

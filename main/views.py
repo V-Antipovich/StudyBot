@@ -68,7 +68,7 @@ def superuser_check(user):
 def groups_required(allowed_roles=[]):
     def decorator(view_func):
         def wrap(request, *args, **kwargs):
-            if request.user.groups.filter(name__in=allowed_roles).exists():
+            if request.user.role and request.user.role.name in allowed_roles:
                 return view_func(request, *args, **kwargs)
             else:
                 return HttpResponseRedirect(reverse_lazy('main:access_denied'))
@@ -156,7 +156,7 @@ class Profile(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(Profile, self).get_context_data(**kwargs)
         context['user'] = self.request.user
-        context['groups'] = self.request.user.groups
+        # context['groups'] = self.request.user.groups
         return context
 
 
@@ -933,6 +933,7 @@ class HandbookListView(BaseHandbookMixin, ListView):
 
 
 # Загрузка файлов ГТД в формате .xml
+@login_required
 @groups_required(allowed_roles=['Сотрудник таможенного отдела', 'Администратор'])
 def upload_gtd(request):
     if request.method == 'POST':

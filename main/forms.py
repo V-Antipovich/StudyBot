@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 
 from .models import UploadGtd, RegUser, GtdMain, Exporter, Importer, CustomsHouse, GtdGood, GtdGroup, TnVed, Country, \
-    Procedure, Good, MeasureQualifier, Manufacturer, Currency, DealType, TradeMark, GoodsMark, DocumentType
+    Procedure, Good, MeasureQualifier, Manufacturer, Currency, DealType, TradeMark, GoodsMark, DocumentType, Role
 from .apps import user_registered
 
 
@@ -52,10 +52,11 @@ class RegisterUserForm(forms.ModelForm):
     email = forms.EmailField(required=True, label='Адрес электронной почты')
     password = forms.CharField(label='Пароль', widget=forms.PasswordInput,
                                help_text=password_validation.password_validators_help_text_html())
+    role = forms.ModelChoiceField(queryset=Role.objects.all())
 
     class Meta:
         model = RegUser
-        fields = ('username', 'email', 'password', 'first_name', 'last_name', 'patronymic')
+        fields = ('username', 'email', 'password', 'first_name', 'last_name', 'patronymic', 'role')
 
     def clean_password(self):
         psw = self.cleaned_data['password']
