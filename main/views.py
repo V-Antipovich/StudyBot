@@ -65,7 +65,7 @@ def superuser_check(user):
     return user.is_superuser
 
 
-def groups_required(allowed_roles=[]):
+def roles_required(allowed_roles=[]):
     def decorator(view_func):
         def wrap(request, *args, **kwargs):
             if request.user.role and request.user.role.name in allowed_roles:
@@ -118,7 +118,7 @@ class RegUserPasswordChangeView(LoginRequiredMixin, SuccessMessageMixin, Passwor
 
 # Контроллер для добавления нового пользователя
 @method_decorator(login_required, name='dispatch')
-@method_decorator(groups_required(allowed_roles=['Администратор']), name='dispatch')
+@method_decorator(roles_required(allowed_roles=['Администратор']), name='dispatch')
 class RegisterUserView(SuccessMessageMixin, CreateView):
     model = RegUser
     template_name = 'main/register_user.html'
@@ -194,7 +194,7 @@ def show_gtd_list(request):
         'gtds': gtds,
         'paginate_by': paginate_by,
         'context': user,
-        'for_customs_officer': user.groups.filter(name__in=['Администратор', 'Сотрудник таможенного отдела']),
+        'for_customs_officer': user.role.name in ['Администратор', 'Сотрудник таможенного отдела'],  #user.groups.filter(name__in=['Администратор', 'Сотрудник таможенного отдела']),
         'form': SearchForm(initial={'key': kw, 'paginate_by': paginate_by}),
         # 'form_paginate': PaginateForm(initial={})
         # 'form': PaginateForm({paginate_by})
@@ -219,8 +219,8 @@ class GtdDetailView(DetailView):
         context['are_goods_shown'] = open_goods
         user = self.request.user
         context['user'] = user
-        context['for_customs_officer'] = user.groups.filter(name__in=['Администратор', 'Сотрудник таможенного отдела']).exists()
-        context['for_accountant'] = user.groups.filter(name__in=['Администратор', 'Бухгалтер']).exists()
+        context['for_customs_officer'] = user.role.name in ['Администратор', 'Сотрудник таможенного отдела']
+        context['for_accountant'] = user.role.name in ['Администратор', 'Бухгалтер']
         if open_goods:
             context['goods'] = GtdGood.objects.filter(gtd_id=self.kwargs.get('pk'), group=open_goods)
             context['current_group'] = GtdGroup.objects.filter(pk=open_goods)[0]
@@ -231,7 +231,7 @@ class GtdDetailView(DetailView):
 # TODO: страницы для неправильных форм (типа bad request или message.error)
 # Представление редактирования шапки ГТД
 @login_required
-@groups_required(allowed_roles=['Сотрудник таможенного отдела', 'Администратор'])
+@roles_required(allowed_roles=['Сотрудник таможенного отдела', 'Администратор'])
 def update_gtd(request, pk):
     obj = get_object_or_404(GtdMain, pk=pk)
     if request.method == 'POST':
@@ -251,7 +251,7 @@ def update_gtd(request, pk):
 
 
 # @method_decorator(login_required, name='dispatch')
-@method_decorator(groups_required(allowed_roles=['Сотрудник таможенного отдела', 'Администратор']), name='dispatch')
+@method_decorator(roles_required(allowed_roles=['Сотрудник таможенного отдела', 'Администратор']), name='dispatch')
 class GtdGroupCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     """
     Класс, реализующий добавление новой группы товаров в ГТД
@@ -307,7 +307,7 @@ class GtdGroupCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
 
 # Класс добавления нового товара в группу ГТД
-@method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
+@method_decorator(roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdGoodCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):  # TODO: last_edited
     model = GtdGood
     template_name = 'main/create_gtd_good.html'
@@ -344,7 +344,7 @@ class GtdGoodCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):  #
 
 
 # Функция для редактирования группы товаров
-@method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
+@method_decorator(roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdGroupUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = GtdGroup
     template_name = 'main/update_gtd_group.html'
@@ -361,7 +361,7 @@ class GtdGroupUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         return super(GtdGroupUpdateView, self).post(request, *args, **kwargs)
 
 
-@method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
+@method_decorator(roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdGoodUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = GtdGood
     template_name = 'main/update_gtd_good.html'
@@ -379,7 +379,7 @@ class GtdGoodUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
 
 # Страница удаления ГТД
-@method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
+@method_decorator(roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = GtdMain
     template_name = 'main/delete_gtd.html'
@@ -389,7 +389,7 @@ class GtdDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
 
 
 # Страница удаления группы товаров
-@method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
+@method_decorator(roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdGroupDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = GtdGroup
     template_name = 'main/delete_gtd_group.html'
@@ -409,7 +409,7 @@ class GtdGroupDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
 
 
 # Страница удаления товара
-@method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
+@method_decorator(roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdGoodDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = GtdGood
     template_name = 'main/delete_gtd_good.html'
@@ -429,7 +429,7 @@ class GtdGoodDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
 
 # Экологический сбор: выбор периода, сбор данных о ГТД из этого периода, содержащих ТН ВЭД, подлежащие эко сбору
 @login_required
-@groups_required(allowed_roles=['Администратор', 'Бухгалтер'])
+@roles_required(allowed_roles=['Администратор', 'Бухгалтер'])
 def eco_fee(request):
     if request.method == 'GET':
         form = CalendarDate()
@@ -524,7 +524,7 @@ def show_gtd_file(request, filename):
 
 # Представление для генерации xml-файла
 @login_required
-@groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела'])
+@roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела'])
 def to_wms(request, pk):
     gtd = GtdMain.objects.filter(pk=pk)[0]
     if request.method == 'POST':
@@ -553,7 +553,7 @@ def to_wms(request, pk):
 
 # Формирование файла для ERP
 @login_required
-@groups_required(allowed_roles=['Администратор', 'Бухгалтер'])
+@roles_required(allowed_roles=['Администратор', 'Бухгалтер'])
 def to_erp(request, pk):
     gtd = GtdMain.objects.filter(pk=pk)[0]
     if request.method == 'POST':
@@ -591,14 +591,14 @@ def to_erp(request, pk):
 
 # Меню отчетов
 # @login_required
-@method_decorator(groups_required(allowed_roles=['Администратор', 'Аналитик']), name='dispatch')
+@method_decorator(roles_required(allowed_roles=['Администратор', 'Аналитик']), name='dispatch')
 class StatisticsMenu(LoginRequiredMixin, TemplateView):
     template_name = 'main/statistic_reports_menu.html'
 
 
 # Отчет - ГТД по поставщикам
 @login_required
-@groups_required(allowed_roles=['Администратор', 'Аналитик'])
+@roles_required(allowed_roles=['Администратор', 'Аналитик'])
 def statistics_report_gtd_per_exporter(request):
     if request.method == 'POST':
         form = CalendarDate(request.POST)
@@ -653,7 +653,7 @@ def statistics_report_gtd_per_exporter(request):
 
 
 @login_required
-@groups_required(allowed_roles=['Администратор', 'Аналитик'])
+@roles_required(allowed_roles=['Администратор', 'Аналитик'])
 def statistics_report_goods_imported(request):
     if request.method == 'POST':
         form = CalendarDate(request.POST)
@@ -713,7 +713,7 @@ def statistics_report_goods_imported(request):
 
 # Файл xlsx отчета
 @login_required
-@groups_required(allowed_roles=['Администратор', 'Аналитик'])
+@roles_required(allowed_roles=['Администратор', 'Аналитик'])
 def report_xlsx(request, folder, filename):
     filepath = os.path.join(MEDIA_ROOT, 'reports/', folder, filename)
     path = open(filepath, 'rb')
@@ -724,7 +724,7 @@ def report_xlsx(request, folder, filename):
 
 
 @login_required
-@groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела'])
+@roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела'])
 def handbook_xlsx(request, filename):
     filepath = os.path.join(MEDIA_ROOT, 'handbooks/', filename)
     path = open(filepath, 'rb')
@@ -774,7 +774,7 @@ class BaseHandbookMixin:  # TODO: пагинатор.
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
+@method_decorator(roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class HandbookCreateView(BaseHandbookMixin, SuccessMessageMixin, CreateView):
     template_name = 'main/create_handbook_entry.html'
     success_message = 'Запись успешно добавлена'
@@ -797,7 +797,7 @@ class HandbookCreateView(BaseHandbookMixin, SuccessMessageMixin, CreateView):
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
+@method_decorator(roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class HandbookUpdateView(BaseHandbookMixin, SuccessMessageMixin, UpdateView):
     template_name = 'main/update_handbook_entry.html'
     success_message = 'Запись успешно обновлена'
@@ -828,7 +828,7 @@ class HandbookUpdateView(BaseHandbookMixin, SuccessMessageMixin, UpdateView):
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(groups_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
+@method_decorator(roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class HandbookDeleteView(BaseHandbookMixin, SuccessMessageMixin, DeleteView):
     template_name = 'main/delete_handbook_entry.html'
     success_message = 'Запись успешно удалена'
@@ -934,7 +934,7 @@ class HandbookListView(BaseHandbookMixin, ListView):
 
 # Загрузка файлов ГТД в формате .xml
 @login_required
-@groups_required(allowed_roles=['Сотрудник таможенного отдела', 'Администратор'])
+@roles_required(allowed_roles=['Сотрудник таможенного отдела', 'Администратор'])
 def upload_gtd(request):
     if request.method == 'POST':
         form = UploadGtdfilesForm(request.POST, request.FILES)

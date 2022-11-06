@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="fixed some things before global changes">
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="moved from groups to roles">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/layout/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/layout/base.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/templates/main/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/profile.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/tests/test_models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/tests/test_models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templatetags/filtertags.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/templatetags/filtertags.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -192,14 +191,7 @@
       <workItem from="1667582233991" duration="34749000" />
       <workItem from="1667647402293" duration="14362000" />
       <workItem from="1667712334655" duration="17332000" />
-      <workItem from="1667730238840" duration="82000" />
-    </task>
-    <task id="LOCAL-00047" summary="fixed major bug of uploading goods in groups">
-      <created>1667122442512</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
-      <option name="project" value="LOCAL" />
-      <updated>1667122442512</updated>
+      <workItem from="1667730238840" duration="1074000" />
     </task>
     <task id="LOCAL-00048" summary="added menu for statistic reports; added report gtds number per exporter; found js scripts for table sorting and searching (filtering)">
       <created>1667211567911</created>
@@ -537,7 +529,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667729184763</updated>
     </task>
-    <option name="localTasksCounter" value="96" />
+    <task id="LOCAL-00096" summary="moved from groups to roles">
+      <created>1667730435613</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1667730435614</updated>
+    </task>
+    <option name="localTasksCounter" value="97" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -578,7 +577,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added nav chaines with modals in views of editing gtd groups and gtd goods" />
     <MESSAGE value="done with restricting content decorator; modified pages of gtd list and detailed gtd view - hid buttons not for certain groups; started adding decorators to views.py file" />
     <MESSAGE value="continued with adding decorators; fixed minor features of restricting content; new method for gtd - renewing after some changes" />
     <MESSAGE value="made a new, fast and optimized handbook view" />
@@ -603,7 +601,8 @@
     <MESSAGE value="added minor changes" />
     <MESSAGE value="made two first tests" />
     <MESSAGE value="fixed some things before global changes" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed some things before global changes" />
+    <MESSAGE value="moved from groups to roles" />
+    <option name="LAST_COMMIT_MESSAGE" value="moved from groups to roles" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />

@@ -35,12 +35,6 @@
             Электронный адрес: {{ user.email }}
         </div>
         <div>
-{#            Роль в системе: {{ user.groups.name }}#}
-{#            {% if user|has_group:"Администратор" %}#}
-{#                Администратор#}
-{#            {% else %}#}
-{#                {{ user.groups }}#}
-{#            {% endif %}#}
             Должность: {{ user.role }}
 
         </div>
