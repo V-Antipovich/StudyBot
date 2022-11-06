@@ -4,7 +4,7 @@
 {% load bootstrap5 %}
 {% load filtertags %}
 
-{% block title %}ГТД {{ gtd.gtdId }}{% endblock %}
+{% block title %}ГТД {{ gtd }}{% endblock %}
 
 {% block extra_links %}
     <script type="text/javascript" src="{% static 'main/js/jquery-3.6.1.js' %}"></script>
@@ -19,7 +19,7 @@
 {% block content %}
 
 <div class="container mt-2">
-        <h3 class="mb-3"> <a href="{% url 'main:show_gtd' %}">К списку ГТД</a> -> ГТД {{ gtd.gtdId }}</h3>
+        <h3 class="mb-3"> <a href="{% url 'main:show_gtd' %}">К списку ГТД</a> -> ГТД {{ gtd }}</h3>
         <ul class="nav nav-tabs">
             <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="tab" id="gtdmain-tab" href="#gtdmain">Главная</a>

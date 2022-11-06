@@ -13,7 +13,6 @@
 {% endblock %}
 
 {% block content %}
-{#    {{ test }}#}
     <h3>Загружены файлы</h3>
     <div class="small-head"><b> Отправлено на вход:</b> {{ all }}</div>
 
@@ -22,7 +21,7 @@
     <div>Пропущено: {{ skipped }}</div>
             {% for gtd in log.skip %}
                 <li class="list-group-item">
-                    <a href="{% url 'main:per_gtd' pk=gtd.pk %}">{{ gtd.gtdId }}</a>
+                    <a href="{% url 'main:per_gtd' pk=gtd.pk %}">{{ gtd }}</a>
                 </li>
 
             {% endfor %}
@@ -32,7 +31,7 @@
         <div>Обновленные: {{ updated }}</div>
         {% for gtd in log.update %}
             <li class="list-group-item">
-                <a href="{% url 'main:per_gtd' pk=gtd.pk %}">{{ gtd.gtdId }}</a>
+                <a href="{% url 'main:per_gtd' pk=gtd.pk %}">{{ gtd }}</a>
             </li>
         {% endfor %}
     {% endif %}
