@@ -22,7 +22,6 @@ def validate_date_range(start, end):
 
 
 class PaginateForm(forms.Form):
-    # paginate_by = forms.IntegerField(help_text='Кол-во записей на странице')
     paginate_by = forms.ChoiceField(help_text='По сколько записей располагать на странице', choices=(
         (10, '10'),
         (50, '50'),
@@ -30,21 +29,18 @@ class PaginateForm(forms.Form):
         (200, '200'),
     ))
 
-    # def clean(self):
-    #     cleaned_data = super().clean()
-    #     paginate_by = cleaned_data['paginate_by']
-    #     if type(paginate_by) != int and paginate_by <= 0:
-    #         self.add_error('paginate_by', 'Число должно быть целым и положительным')
-
 
 # TODO: Отдельная форма для админов, где можно редачить и роль
 # Редактирование данных пользователя
 class ChangeUserInfoForm(forms.ModelForm):
     email = forms.EmailField(required=True, label='Адрес электронной почты')
+    first_name = forms.CharField(min_length=4, label='Имя')
+    last_name = forms.CharField(min_length=3, label='Фамилия'),
+    patronymic = forms.CharField(min_length=5, label='Отчество')
 
     class Meta:
         model = RegUser
-        fields = ('username', 'email', 'first_name', 'last_name', 'patronymic',)
+        fields = ('username', 'email', 'first_name', 'last_name', 'patronymic')
 
 
 # Форма регистрации пользователя
@@ -96,6 +92,10 @@ class UploadGtdfilesForm(forms.Form):
 
 # Форма редактирования шапки ГТД
 class GtdUpdateForm(forms.ModelForm):
+    customs_house = forms.ModelChoiceField(queryset=CustomsHouse.objects.order_by('house_name'), empty_label=None)
+    exporter = forms.ModelChoiceField(queryset=Exporter.objects.order_by('name'), empty_label=None)
+    importer = forms.ModelChoiceField(queryset=Importer.objects.order_by('name'), empty_label=None)
+    deal_type = forms.ModelChoiceField(queryset=DealType.objects.order_by('code'), empty_label=None)
 
     class Meta:
         model = GtdMain
@@ -175,6 +175,14 @@ class SearchForm(forms.Form):
     ), label='Пагинация')
     key = forms.CharField(required=False, max_length=100, label='Ключевое слово')
 
+
+class HandbookSearchForm(forms.Form):
+    paginate_by = forms.ChoiceField(help_text='По сколько записей располагать на странице', choices=(
+        (50, '50'),
+        (100, '100'),
+        (250, '250'),
+    ), label='Пагинация')
+    key = forms.CharField(required=False, max_length=100, label='Ключевое слово')
 
 class CustomsHouseHandbookCreateUpdateForm(forms.ModelForm):
     house_num = forms.CharField(min_length=6, max_length=8, required=True)

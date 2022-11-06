@@ -19,7 +19,7 @@
     {% endif %}
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Отправить">
+        {% bootstrap_form form layout='horizontal' %}
+        {% buttons submit='ОК' %}{% endbuttons %}
     </form>
 {% endblock %}

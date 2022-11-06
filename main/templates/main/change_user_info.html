@@ -9,5 +9,26 @@
         {% csrf_token %}
         {% bootstrap_form form layout="horizontal" %}
         {% buttons submit='Сохранить' %} {% endbuttons %}
+        <a href="#" class="btn btn-secondary" data-bs-target="#to_profile" data-bs-toggle="modal">Отменить изменения</a>
     </form>
+            <div class="modal fade" id="to_profile" tabindex="-1" role="dialog" aria-labelledby="to_listLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="to_listLabel">Хотите отменить изменения?</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-label="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Изменения не будут сохранены. Нажмите ОК, если хотите вернуться на страницу списка
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Назад</button>
+                        <a class="btn btn-primary" href="{% url 'main:profile' %}">ОК </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 {% endblock %}
+{# {% url 'main:profile' %} #}

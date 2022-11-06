@@ -14,6 +14,14 @@
 
 {% block content %}
     <h2>Справочник - {{ russian_name }}</h2>
+        <form class="col-md-auto form-inline" method="get">
+        <div class="row">
+            <div class="col-lg-7">
+                {% bootstrap_form search_form layout='horizontal' %}
+            </div>
+        </div>
+    {% buttons submit='Искать' %}{% endbuttons %}
+    </form>
     <hr>
     {% if for_customs_officer %}
         <div style="font-size: large ">
@@ -132,7 +140,7 @@
                         </a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="?paginate_by={{ paginate_by }}&page={{ data.paginator.num_pages }}">
+                        <a class="page-link" href="?paginate_by={{ paginate_by }}&page={{ data.paginator.num_pages }}&key={{ key }}">
                             <span>{{ data.paginator.num_pages }}</span>
                         </a>
                     </li>

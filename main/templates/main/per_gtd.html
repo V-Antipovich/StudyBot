@@ -149,10 +149,12 @@
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    Пожалуйста, введите в профиле свои имя и фамилию, чтобы получить доступ
+                                                    Пожалуйста, введите в профиле свои имя, фамилию и отчество, чтобы получить доступ
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Назад</button>
+                                                    <a class="btn btn-primary"  href="{% url 'main:profile' %}">К профилю
+                                                    </a>
 {#                                                            <a href="{% url 'main:to_wms' pk=gtd.pk %}"><button type="button" class="btn btn-primary">OK</button></a>#}
                                                 </div>
                                             </div>

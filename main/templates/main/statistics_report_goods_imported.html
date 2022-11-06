@@ -19,7 +19,8 @@
         <form method="post">
             {% csrf_token %}
             {{ form }}
-            <input type="submit">
+            {% buttons submit='ОК' %}{% endbuttons %}
+{#            <input type="submit">#}
         </form>
     </div>
     {% if show %}

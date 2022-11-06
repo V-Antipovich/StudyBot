@@ -23,7 +23,7 @@ from .forms import UploadGtdfilesForm, GtdUpdateForm, GtdGoodCreateUpdateForm, \
     ProcedureHandbookCreateUpdateForm, \
     GoodHandbookCreateUpdateForm, TradeMarkHandbookCreateUpdateForm, GoodsMarkHandbookCreateUpdateForm, \
     ManufacturerHandbookCreateUpdateForm, \
-    MeasureQualifierHandbookCreateUpdateForm, DocumentTypeHandbookCreateUpdateForm, SearchForm
+    MeasureQualifierHandbookCreateUpdateForm, DocumentTypeHandbookCreateUpdateForm, SearchForm, HandbookSearchForm
 from .models import GtdMain, GtdGroup, GtdGood, UploadGtd, CustomsHouse, Exporter, Country, Currency, Importer, DealType,\
     Procedure, TnVed, Good, GoodsMark, GtdDocument, Document, TradeMark, Manufacturer, MeasureQualifier, DocumentType,\
     UploadGtdFile, Handbook
@@ -210,16 +210,24 @@ def index(request):
 
 @login_required
 def show_gtd_list(request):
-    # gtd_list = GtdMain.objects.all()
-
-    # if 'key' in request.GET:
     kw = request.GET.get('key', '')
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    qstart, qend = Q(), Q()
+    if start_date:
+        st = datetime.strptime(start_date, '%d-%m-%Y')
+        qstart = Q(date__gt=st)
+    if end_date:
+        en = datetime.strptime(end_date, '%d-%m-%Y')
+        qend = Q(date__lt=en)
+    qdate = qstart & qend
+
     q = Q(gtdId__icontains=kw) | Q(customs_house__house_name__icontains=kw) | \
-        Q(date__icontains=kw) | Q(order_num__icontains=kw) | Q(total_goods_number__icontains=kw) | \
+        Q(order_num__icontains=kw) | Q(total_goods_number__icontains=kw) | \
         Q(exporter__name__icontains=kw) | Q(importer__name__icontains=kw) | Q(trading_country__russian_name__icontains=kw) | \
         Q(total_cost__icontains=kw) | Q(currency__short_name__icontains=kw) | Q(total_invoice_amount__icontains=kw) | \
         Q(currency_rate__icontains=kw) | Q(deal_type__code__icontains=kw)
-    gtd_list = GtdMain.objects.filter(q)
+    gtd_list = GtdMain.objects.filter(q).filter(qdate)
 
     paginate_by = request.GET.get('paginate_by', 10)
     page = request.GET.get('page', 1)
@@ -236,9 +244,10 @@ def show_gtd_list(request):
         'paginate_by': paginate_by,
         'context': user,
         'for_customs_officer': user.role.name in ['Администратор', 'Сотрудник таможенного отдела'],  #user.groups.filter(name__in=['Администратор', 'Сотрудник таможенного отдела']),
-        'form': SearchForm(initial={'key': kw, 'paginate_by': paginate_by}),
-        # 'form_paginate': PaginateForm(initial={})
-        # 'form': PaginateForm({paginate_by})
+        'search_form': SearchForm(initial={'key': kw, 'paginate_by': paginate_by}),
+        'calendar_form': CalendarDate(),
+        'start': start_date,
+        'end': end_date
     }
     return render(request, 'main/show_gtd.html', context)
 
@@ -476,7 +485,6 @@ def eco_fee(request):
         form = CalendarDate()
         context = {
             'form': form,
-            'message': ''
         }
         return render(request, 'main/ecological_fee.html', context)
     else:
@@ -613,6 +621,11 @@ def to_erp(request, pk):
             messages.error(request, 'Что-то пошло не так, попробуйте ещё раз')
             return render(request, 'main/wms.html', context)
     else:
+        user = request.user
+        if not user.last_name or not user.first_name or not user.patronymic:
+            messages.error(request, 'Необходимо заполнить ФИО')
+            return redirect('main:profile')
+
         form = ExportComment()
         context = {
             'form': form,
@@ -754,8 +767,10 @@ def statistics_report_goods_imported(request):
 
 # Файл xlsx отчета
 @login_required
-@roles_required(allowed_roles=['Администратор', 'Аналитик'])
+@roles_required(allowed_roles=['Администратор', 'Аналитик', 'Бухгалтер'])
 def report_xlsx(request, folder, filename):
+    if 'eco' in folder and request.user.role.name == 'Аналитик' or 'statistics' in folder and request.user.role.name == 'Бухгалтер':
+        return redirect('main:access_denied')
     filepath = os.path.join(MEDIA_ROOT, 'reports/', folder, filename)
     path = open(filepath, 'rb')
     mime_type, _ = mimetypes.guess_type(filepath)
@@ -895,6 +910,7 @@ class HandbookListView(BaseHandbookMixin, ListView):
     filename = None
     cut_queryset = None
     template_name = 'main/handbook.html'
+    kw = None
 
     def get_context_data(self, *, object_list=None, **kwargs):
         user = self.request.user
@@ -902,11 +918,13 @@ class HandbookListView(BaseHandbookMixin, ListView):
         condition = user.groups.filter(name__in=['Администратор', 'Сотрудник таможенного отдела']).exists()
         if condition:
             self.check_xlsx()
-        raw_data = self.get_queryset()
 
-        paginate_by = 200
+        # paginate_by = 200
+
+        not_paginated = self.get_query(self.get_kw())
+        paginate_by = self.request.GET.get('paginate_by', 100)
         page = self.request.GET.get('page', 1)
-        paginator = Paginator(raw_data, paginate_by)
+        paginator = Paginator(not_paginated, paginate_by)
         try:
             data = paginator.page(page)
         except PageNotAnInteger:
@@ -915,8 +933,8 @@ class HandbookListView(BaseHandbookMixin, ListView):
             data = paginator.page(paginator.num_pages)
 
         context = {
+            'search_form': HandbookSearchForm(initial={'key': self.get_kw(), 'paginate_by': paginate_by}),
             'fields': self.get_handbook_fields(),
-            # 'data': self.get_queryset(),
             'russian_name': self.get_handbook_russian_name(),
             'user': user,
             'for_customs_officer': condition,
@@ -924,22 +942,39 @@ class HandbookListView(BaseHandbookMixin, ListView):
             'handbook': self.get_handbook_context_name(),
             'paginate_by': paginate_by,
             'data': data,
+            'key': self.get_kw(),
         }
         return context
 
-    def get_queryset(self):
+    def get_kw(self):
+        if not self.kw:
+            kw = str(self.request.GET.get('key', '')).lower()
+            self.kw = kw
+        return self.kw
+
+    def get_query(self, kw):
         if not self.queryset:
             raw_queryset = self.get_handbook_model().objects.all()
             fields = self.get_handbook_fields()
             queryset = []
             for obj in raw_queryset:
                 row = []
+                met_kw = False
                 for field in fields:
-                    row.append(getattr(obj, field.name))
-                queryset.append(row)
+                    new = getattr(obj, field.name)
+                    row.append(new)
+                    if not met_kw:
+                        if new is not None:
+                            if kw in str(new).lower():
+                                met_kw = True
+                if met_kw:
+                    queryset.append(row)
             self.queryset = queryset
         return self.queryset
         # return super(HandbookListView, self).get_queryset()
+
+    def get_queryset(self):
+        return self.get_query(self.get_kw())
 
     def get_cut_queryset(self):
         if not self.cut_queryset:

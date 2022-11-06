@@ -18,23 +18,29 @@
     </header>
     <div class="row">
         <div class="dropdown">
-{#            <div class="align-content-md-center">#}
                     {% if user.is_authenticated %}
                         <button class="btn btn-outline-primary dropdown-toggle" type="button"
                             id="documents-dropdown" data-bs-toggle="dropdown" aria-expanded="true">
                             Документы
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="documents-dropdown" >
+                            {% if user|has_role:"Администратор" or user|has_role:"Сотрудник таможенного отдела" %}
                             <li><a href="{% url 'main:upload_gtd' %}" class="dropdown-item">Добавить ГТД</a> </li>
+                            {% endif %}
                             <li><a href="{% url 'main:show_gtd' %}" class="dropdown-item">ГТД</a></li>
                         </ul>
-
+                    {% if user|has_role:"Бухгалтер" or user|has_role:"Аналитик" or user|has_role:"Администратор" %}
                     <button class="btn btn-outline-primary dropdown-toggle" type="button" id="reports-dropdown"
                     data-bs-toggle="dropdown">Отчёты</button>
                     <ul class="dropdown-menu" aria-labelledby="reports-dropdown">
-                        <li><a href="{% url 'main:statistics_menu' %}" class="dropdown-item">Статистические отчеты</a></li>
-                        <li><a href="{% url 'main:eco_fee' %}" class="dropdown-item">Экологический сбор</a> </li>
+                        {% if user|has_role:"Аналитик" or user|has_role:"Администратор" %}
+                            <li><a href="{% url 'main:statistics_menu' %}" class="dropdown-item">Статистические отчеты</a></li>
+                        {% endif %}
+                        {% if user|has_role:"Бухгалтер" or user|has_role:"Администратор" %}
+                            <li><a href="{% url 'main:eco_fee' %}" class="dropdown-item">Экологический сбор</a> </li>
+                        {% endif %}
                     </ul>
+                    {% endif %}
 
                     <button class="btn btn-outline-primary dropdown-toggle" type="button"
                             id="handbooks-dropdown" data-bs-toggle="dropdown">
