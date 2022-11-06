@@ -214,7 +214,8 @@ class GtdMain(models.Model):  # TODO: при любом изменении по�
     def new_version(self):
         self.exported_to_erp = False
         self.exported_to_wms = False
-        self.save()
+        self.recount()
+        # self.save()
 
     def __str__(self):
         return self.gtdId

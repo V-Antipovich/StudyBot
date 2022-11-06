@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="made some small design changes">
-      <change afterPath="$PROJECT_DIR$/main/tests/__init__.py" afterDir="false" />
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="added minor changes">
+      <change afterPath="$PROJECT_DIR$/main/tests/test_models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/per_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/per_gtd.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/show_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/show_gtd.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/upload_gtd_log.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/upload_gtd_log.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/tests.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -191,14 +188,7 @@
       <workItem from="1667550048133" duration="25988000" />
       <workItem from="1667582233991" duration="34749000" />
       <workItem from="1667647402293" duration="14362000" />
-      <workItem from="1667712334655" duration="10025000" />
-    </task>
-    <task id="LOCAL-00044" summary="export to erp with no end redirect">
-      <created>1667077376760</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1667077376760</updated>
+      <workItem from="1667712334655" duration="11709000" />
     </task>
     <task id="LOCAL-00045" summary="export to erp with no end redirect; added patronymic to user">
       <created>1667077487606</created>
@@ -536,7 +526,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667716743022</updated>
     </task>
-    <option name="localTasksCounter" value="93" />
+    <task id="LOCAL-00093" summary="added minor changes">
+      <created>1667722862163</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1667722862163</updated>
+    </task>
+    <option name="localTasksCounter" value="94" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -577,7 +574,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added warnings to nav chains in templates of editing gtd groups and gtd goods" />
     <MESSAGE value="made view for adding new gtd good" />
     <MESSAGE value="added view for creating gtd groups" />
     <MESSAGE value="added nav chaines with modals in views of editing gtd groups and gtd goods" />
@@ -602,7 +598,8 @@
     <MESSAGE value="bearable paginator" />
     <MESSAGE value="made ok-paginator for handbook" />
     <MESSAGE value="made some small design changes" />
-    <option name="LAST_COMMIT_MESSAGE" value="made some small design changes" />
+    <MESSAGE value="added minor changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="added minor changes" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />
