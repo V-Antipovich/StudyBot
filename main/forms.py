@@ -184,6 +184,7 @@ class HandbookSearchForm(forms.Form):
     ), label='Пагинация')
     key = forms.CharField(required=False, max_length=100, label='Ключевое слово')
 
+
 class CustomsHouseHandbookCreateUpdateForm(forms.ModelForm):
     house_num = forms.CharField(min_length=6, max_length=8, required=True)
 
@@ -222,6 +223,7 @@ class CountryHandbookCreateUpdateForm(forms.ModelForm):
 
 
 class CurrencyHandbookCreateUpdateForm(forms.ModelForm):
+    digital_code = forms.CharField(widget=forms.TextInput(attrs={'type': 'number'}))
 
     class Meta:
         model = Currency

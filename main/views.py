@@ -851,6 +851,10 @@ class HandbookCreateView(BaseHandbookMixin, SuccessMessageMixin, CreateView):
             self.success_url = reverse('main:handbook', kwargs={'handbook': self.get_handbook_context_name()})
         return self.success_url
 
+    def post(self, request, *args, **kwargs):
+        self.handbook_needs_renovation()
+        return super(HandbookCreateView, self).post(request, *args, **kwargs)
+
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
@@ -882,6 +886,10 @@ class HandbookUpdateView(BaseHandbookMixin, SuccessMessageMixin, UpdateView):
         self.handbook_needs_renovation()
         return super(HandbookUpdateView, self).form_valid(form)
 
+    def post(self, request, *args, **kwargs):
+        self.handbook_needs_renovation()
+        return super(HandbookUpdateView, self).post(request, *args, **kwargs)
+
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
@@ -904,6 +912,10 @@ class HandbookDeleteView(BaseHandbookMixin, SuccessMessageMixin, DeleteView):
             self.success_url = reverse('main:handbook', kwargs={'handbook': self.get_handbook_context_name()})
         return self.success_url
 
+    def post(self, request, *args, **kwargs):
+        self.handbook_needs_renovation()
+        return super(HandbookDeleteView, self).post(request, *args, **kwargs)
+
 
 @method_decorator(login_required, name='dispatch')
 class HandbookListView(BaseHandbookMixin, ListView):
@@ -915,9 +927,9 @@ class HandbookListView(BaseHandbookMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         user = self.request.user
         filename = self.get_filename()
-        condition = user.groups.filter(name__in=['Администратор', 'Сотрудник таможенного отдела']).exists()
-        if condition:
-            self.check_xlsx()
+        condition = user.role.name in ['Администратор', 'Сотрудник таможенного отдела']  # user.groups.filter(name__in=['Администратор', 'Сотрудник таможенного отдела']).exists()
+        # if condition:
+        self.check_xlsx()
 
         # paginate_by = 200
 
