@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="added final video of user scripts shown done">
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="started models documentation">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -188,14 +187,7 @@
       <workItem from="1667582233991" duration="34749000" />
       <workItem from="1667647402293" duration="14362000" />
       <workItem from="1667712334655" duration="17332000" />
-      <workItem from="1667730238840" duration="26506000" />
-    </task>
-    <task id="LOCAL-00053" summary="registration with email on debugging server">
-      <created>1667372647709</created>
-      <option name="number" value="00053" />
-      <option name="presentableId" value="LOCAL-00053" />
-      <option name="project" value="LOCAL" />
-      <updated>1667372647709</updated>
+      <workItem from="1667730238840" duration="27232000" />
     </task>
     <task id="LOCAL-00054" summary="full user registration with email confirmation">
       <created>1667379118023</created>
@@ -533,7 +525,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667767943597</updated>
     </task>
-    <option name="localTasksCounter" value="102" />
+    <task id="LOCAL-00102" summary="started models documentation">
+      <created>1667769218217</created>
+      <option name="number" value="00102" />
+      <option name="presentableId" value="LOCAL-00102" />
+      <option name="project" value="LOCAL" />
+      <updated>1667769218217</updated>
+    </task>
+    <option name="localTasksCounter" value="103" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -574,7 +573,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="completed forms for all handbooks" />
     <MESSAGE value="created BaseHandbookMixin for inheriting some handbook-only features in CRUD views of handbooks to avoid self-repeating" />
     <MESSAGE value="added a little feature that makes the handbook get rebuilt after changing" />
     <MESSAGE value="edited few of forms fields parameters of validation" />
@@ -599,7 +597,8 @@
     <MESSAGE value="migrated; added small features; added pagination and filtration" />
     <MESSAGE value="several small but nice fixed" />
     <MESSAGE value="added final video of user scripts shown done" />
-    <option name="LAST_COMMIT_MESSAGE" value="added final video of user scripts shown done" />
+    <MESSAGE value="started models documentation" />
+    <option name="LAST_COMMIT_MESSAGE" value="started models documentation" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />
