@@ -20,8 +20,8 @@ class ChangeUserInfoForm(forms.ModelForm):
 
     class Meta:
         """
-        Метакласс, определяющий модель, записи которой обрабатываются формой,
-        а также поля, которые будут присутствовать в форме
+        Метакласс, связывающий модель пользователя с данной формой,
+        а также описывающий поля, которые будут присутствовать в форме
         """
         model = RegUser
         fields = ('username', 'email', 'first_name', 'last_name', 'patronymic')
@@ -38,7 +38,7 @@ class RegisterUserForm(forms.ModelForm):
 
     class Meta:
         """
-        Метакласс, определяющий модель, записи которой создаются/редактируются формой, и поля формы
+        Метакласс, связывающий модель пользователя с данной формой, и определяющий поля формы
         """
         model = RegUser
         fields = ('username', 'email', 'password', 'first_name', 'last_name', 'patronymic', 'role')
@@ -91,8 +91,8 @@ class GtdUpdateForm(forms.ModelForm):
 
     class Meta:
         """
-        Метакласс, определяющий модель, записи которой создаются/редактируются формой,
-        список полей формы и подписи к полям
+        Метакласс, связывающий модель основной информации ГТД с данной формой
+        и определяющий список полей формы и подписи к полям
         """
         model = GtdMain
         fields = ('customs_house', 'total_goods_number', 'exporter',
@@ -110,7 +110,7 @@ class GtdUpdateForm(forms.ModelForm):
 
 class GtdGroupCreateUpdateForm(forms.ModelForm):
     """
-    Форма для редактирования групп (разделов) ГТД
+    Форма для создания и редактирования групп (разделов) ГТД
     """
     tn_ved = forms.ModelChoiceField(queryset=TnVed.objects.order_by('code'), label='ТН ВЭД', empty_label=None)
     number = forms.IntegerField(min_value=1, label='Номер товарной группы')
@@ -129,8 +129,8 @@ class GtdGroupCreateUpdateForm(forms.ModelForm):
 
     class Meta:
         """
-        Метакласс, определяющий модель, записи которой создаются/редактируются формой, и поля этой модели,
-        не входящие в форму
+        Метакласс, связывающий модель группы (раздела) ГТД с данной формой
+        и определяющий поля этой модели, не входящие в форму
         """
         model = GtdGroup
         exclude = ('gtd', 'last_edited_user',)
@@ -138,7 +138,7 @@ class GtdGroupCreateUpdateForm(forms.ModelForm):
 
 class GtdGoodCreateUpdateForm(forms.ModelForm):
     """
-    Форма для редактирования товаров из определенной ГТД
+    Форма для создания и редактирования товаров из определенной ГТД
     """
     good = forms.ModelChoiceField(queryset=Good.objects.all(), label='Товар', empty_label=None)
     good_num = forms.IntegerField(min_value=1, label='Номер товара в группе')
@@ -148,8 +148,8 @@ class GtdGoodCreateUpdateForm(forms.ModelForm):
 
     class Meta:
         """
-        Метакласс, определяющий модель, записи которой добавляются/редактируются формой,
-        и поля модели, не входящие в форму
+        Метакласс, связывающий модель товара ГТД с данной формой
+        и определяющий поля модели, не входящие в форму
         """
         model = GtdGood
         exclude = ('gtd', 'group', 'last_edited_user',)
@@ -163,8 +163,10 @@ class ExportComment(forms.Form):
                               label='Добавьте комментарий/описание, если требуется')
 
 
-# Форма выбора диапазона дат
 class CalendarDate(forms.Form):
+    """
+    Форма выбора диапазона дат
+    """
     start_date = forms.DateField(label='Начало диапазона', input_formats=['%d-%m-%Y'],
                                  widget=forms.DateInput(attrs={'type': 'date',
                                                                'class': 'form-control',
@@ -177,8 +179,10 @@ class CalendarDate(forms.Form):
                                                       ))
 
 
-# Форма для поиска на странице
 class SearchForm(forms.Form):
+    """
+    Форма поиска: задание пагинации и слова фильтрации
+    """
     paginate_by = forms.ChoiceField(help_text='По сколько записей располагать на странице', choices=(
         (10, '10'),
         (50, '50'),
@@ -189,119 +193,214 @@ class SearchForm(forms.Form):
 
 
 class HandbookSearchForm(forms.Form):
+    """
+    Форма поиска в справочнике: задание пагинации (большие, чем в SearchForm, числа) и слова фильтрации
+    """
     paginate_by = forms.ChoiceField(help_text='По сколько записей располагать на странице', choices=(
-        (50, '50'),
         (100, '100'),
+        (150, '150'),
         (250, '250'),
     ), label='Пагинация')
     key = forms.CharField(required=False, max_length=100, label='Ключевое слово')
 
 
 class CustomsHouseHandbookCreateUpdateForm(forms.ModelForm):
+    """
+    Форма создания/редактирования записей справочника таможенных отделов
+    """
     house_num = forms.CharField(min_length=6, max_length=8, required=True)
 
     class Meta:
         model = CustomsHouse
+        """
+        Метакласс, связывающий модель справочника таможенных отделов с данной формой
+        и добавляющий в форму все поля модели
+        """
         fields = '__all__'
 
 
 class ExporterHandbookCreateUpdateForm(forms.ModelForm):
+    """
+    Форма создания/редактирования записей справочника экспортеров
+    """
     country = forms.ModelChoiceField(queryset=Country.objects.order_by('russian_name'), label='Страна', empty_label=None)
-    postal_code = forms.IntegerField(min_value=1000, max_value=9999999999999999999, required=True)
+    postal_code = forms.CharField(min_length=3, max_length=19, required=True,
+                                  widget=forms.TextInput(attrs={'type': 'number'}))
 
     class Meta:
+        """
+        Метакласс, связывающий модель справочника экспортеров с данной формой
+        и добавляющий в форму все поля модели
+        """
         model = Exporter
         fields = '__all__'
 
 
 class ImporterHandbookCreateUpdateForm(forms.ModelForm):
+    """
+    Форма создания/редактирования записей справочника импортеров
+    """
     country = forms.ModelChoiceField(queryset=Country.objects.order_by('russian_name'), label='Страна', empty_label=None)
     postal_code = forms.CharField(min_length=3, max_length=20, widget=forms.TextInput(attrs={'type': 'number'})) #IntegerField(min_value=1000, max_value=9999999999999999999, required=True)
     inn = forms.CharField(max_length=15, widget=forms.TextInput(attrs={'type': 'number'}))
-    # orgn = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'type': 'number'}))
     kpp = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'type': 'number'}))
 
     class Meta:
+        """
+        Метакласс, связывающий модель справочника импортеров с данной формой,
+        и исключающий определенные поля из формы
+        """
         model = Importer
         exclude = ('orgn',)
 
 
 class CountryHandbookCreateUpdateForm(forms.ModelForm):
+    """
+    Форма создания/редактирования записей справочника стран
+    """
     code = forms.CharField(max_length=2)
 
     class Meta:
+        """
+        Метакласс, связывающий модель справочника стран с данной формой
+        и добавляющий в форму все поля модели
+        """
         model = Country
         fields = '__all__'
 
 
 class CurrencyHandbookCreateUpdateForm(forms.ModelForm):
+    """
+    Форма для создания/редактирования записей справочника валют
+    """
     digital_code = forms.CharField(widget=forms.TextInput(attrs={'type': 'number'}))
 
     class Meta:
+        """
+        Метакласс, связывающий модель справочника валют с данной формой
+        и добавляющий в форму все поля модели
+        """
         model = Currency
         fields = '__all__'
 
 
 class DealTypeHandbookCreateUpdateForm(forms.ModelForm):
-
+    """
+    Форма для создания/редактирования записей справочника типов сделок
+    """
     class Meta:
+        """
+        Метакласс, связывающий модель справочника типов сделок с данной формой
+        и добавляющий в форму все поля модели
+        """
         model = DealType
         fields = '__all__'
 
 
 class TnVedHandbookCreateUpdateForm(forms.ModelForm):
+    """
+    Форма для создания/редактирования записей справочника кодов ТН ВЭД
+    """
 
     class Meta:
+        """
+        Метакласс, связывающий модель справочника кодов ТН ВЭД с данной формой
+        и добавляющий в форму все поля модели
+        """
         model = TnVed
         fields = '__all__'
 
 
 class ProcedureHandbookCreateUpdateForm(forms.ModelForm):
-
+    """
+    Форма для создания/редактирования записей справочника типов таможенных процедур
+    """
     class Meta:
+        """
+        Метакласс, связывающий модель справочника типов таможенных процедур с данной формой
+        и добавляющий в форму все поля модели
+        """
         model = Procedure
         fields = '__all__'
 
 
 class GoodHandbookCreateUpdateForm(forms.ModelForm):
+    """
+    Форма для создания/редактирования записей справочника товаров
+    """
     goodsmark = forms.ModelChoiceField(queryset=GoodsMark.objects.order_by('goodsmark'), empty_label=None)
     trademark = forms.ModelChoiceField(queryset=TradeMark.objects.order_by('trademark'), empty_label=None)
 
     class Meta:
+        """
+        Метакласс, связывающий модель справочника товаров с данной формой
+        и добавляющий в форму все поля модели
+        """
         model = Good
         fields = '__all__'
 
 
 class TradeMarkHandbookCreateUpdateForm(forms.ModelForm):
-
+    """
+    Форма для создания/редактирования записей справочника товарных знаков
+    """
     class Meta:
+        """
+        Метакласс, связывающий модель справочника товарных знаков с данной формой
+        и добавляющий в форму все поля модели
+        """
         model = TradeMark
         fields = '__all__'
 
 
 class GoodsMarkHandbookCreateUpdateForm(forms.ModelForm):
+    """
+    Форма для создания/редактирования записей справочника торговых марок (брендов)
+    """
 
     class Meta:
+        """
+        Метакласс, связывающий модель справочника торговых марок с данной формой
+        и добавляющий в форму все поля модели
+        """
         model = GoodsMark
         fields = '__all__'
 
 
 class ManufacturerHandbookCreateUpdateForm(forms.ModelForm):
-
+    """
+    Форма для создания/редактирования записей справочника производителей
+    """
     class Meta:
+        """
+        Метакласс, связывающий модель справочника производителей с данной формой
+        и добавляющий в форму все поля модели
+        """
         model = Manufacturer
         fields = '__all__'
 
 
 class MeasureQualifierHandbookCreateUpdateForm(forms.ModelForm):
-
+    """
+    Форма для создания/редактирования записей справочника единиц измерения
+    """
     class Meta:
+        """
+        Метакласс, связывающий модель справочника единиц измерения с данной формой
+        и добавляющий в форму все поля модели
+        """
         model = MeasureQualifier
         fields = '__all__'
 
 
 class DocumentTypeHandbookCreateUpdateForm(forms.ModelForm):
-
+    """
+    Форма для создания/редактирования записей справочника типов документов
+    """
     class Meta:
+        """
+        Метакласс, связывающий модель справочника типов документов с данной формой
+        и добавляющий в форму все поля модели
+        """
         model = DocumentType
         fields = '__all__'

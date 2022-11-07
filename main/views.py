@@ -289,7 +289,10 @@ def update_gtd(request, pk):
         obj.last_edited_user = request.user
         form = GtdUpdateForm(request.POST, instance=obj)
         if form.is_valid():
-            form.save()
+            this_gtd = form.save(commit=False)
+            this_gtd.last_edited_user = request.user
+            this_gtd.last_edited_time = datetime.now()
+            this_gtd.save()
             messages.success(request, 'ГТД успешно обновлена')
             return redirect('main:per_gtd', pk=pk)
 
@@ -647,15 +650,6 @@ def to_erp(request, pk):
         return render(request, 'main/erp.html', context)
 
 
-# class SuccessfulOutcome(LoginRequiredMixin, TemplateView):
-#     template_name = 'main/successful_outcome.html'
-#
-#     def get_context_data(self, pk, **kwargs):
-#         context_data = super(SuccessfulOutcome, self).get_context_data(**kwargs)
-#         context_data['gtd'] = GtdMain.objects.filter(pk=pk)[0]
-#         return context_data
-
-
 # Меню отчетов
 # @login_required
 @method_decorator(roles_required(allowed_roles=['Администратор', 'Аналитик']), name='dispatch')
@@ -944,7 +938,7 @@ class HandbookListView(BaseHandbookMixin, ListView):
         self.check_xlsx()
 
         not_paginated = self.get_query(self.get_kw())
-        paginate_by = self.request.GET.get('paginate_by', 100)
+        paginate_by = self.request.GET.get('paginate_by', 150)
         page = self.request.GET.get('page', 1)
         paginator = Paginator(not_paginated, paginate_by)
         try:
