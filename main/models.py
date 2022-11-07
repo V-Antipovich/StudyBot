@@ -3,7 +3,7 @@ from datetime import timedelta
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ElTree
 from customs_declarations_database.settings import USER_DIR
 
 
@@ -61,7 +61,7 @@ class GtdMain(models.Model):
     gtd_file = models.ForeignKey('UploadGtdFile', verbose_name='id xml-документа гтд',
                                  on_delete=models.SET_NULL, related_name="+", null=True, blank=True)
     last_edited_user = models.ForeignKey('RegUser', verbose_name='Пользователь, последний внесший изменения',
-                                    related_name='+', null=True, blank=True, on_delete=models.SET_NULL)
+                                         related_name='+', null=True, blank=True, on_delete=models.SET_NULL)
     last_edited_time = models.DateTimeField(verbose_name='Дата и время добавления/последнего редактирования',
                                             null=True, blank=True, auto_now=True)
     exported_to_wms = models.BooleanField(verbose_name='Был выполнен экспорт в WMS?', default=False)
@@ -94,82 +94,82 @@ class GtdMain(models.Model):
         """
         goods = GtdGood.objects.filter(gtd_id=self.pk)
         gtd_id = self.gtdId
-        struct = ET.Element('Structure')
+        struct = ElTree.Element('Structure')
         struct.set('xmlns', 'http://v8.1c.ru/8.1/data/core')
         struct.set('xmlns:xs', 'http://www.w3.org/2001/XMLSchema')
         struct.set('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
 
-        prop_guid = ET.SubElement(struct, 'Property')
+        prop_guid = ElTree.SubElement(struct, 'Property')
         prop_guid.set('name', 'GIUD')
 
-        value_guid = ET.SubElement(prop_guid, 'Value')
+        value_guid = ElTree.SubElement(prop_guid, 'Value')
         value_guid.set('xsi:type', 'xs:string')
         value_guid.text = str(self.pk)
 
-        prop_ptiu = ET.SubElement(struct, 'Property')
+        prop_ptiu = ElTree.SubElement(struct, 'Property')
         prop_ptiu.set('name', 'НомерПТиУ')
-        value_ptiu = ET.SubElement(prop_ptiu, 'Value')
+        value_ptiu = ElTree.SubElement(prop_ptiu, 'Value')
         value_ptiu.set('xsi:type', 'xs:string')
         value_ptiu.text = gtd_id
 
-        prop_date = ET.SubElement(struct, 'Property')
+        prop_date = ElTree.SubElement(struct, 'Property')
         prop_date.set('name', 'Дата')
-        value_date = ET.SubElement(prop_date, 'Value')
+        value_date = ElTree.SubElement(prop_date, 'Value')
         value_date.set('xsi:type', 'xs:string')
         value_date.text = self.date.strftime("%d-%m-%Y %H-%M-%S")
 
-        prop_warehouse = ET.SubElement(struct, 'Property')
+        prop_warehouse = ElTree.SubElement(struct, 'Property')
         prop_warehouse.set('name', 'Склад')
-        value_warehouse = ET.SubElement(prop_warehouse, 'Value')
+        value_warehouse = ElTree.SubElement(prop_warehouse, 'Value')
         value_warehouse.set('xsi:type', 'xs:string')
         value_warehouse.text = 'Склад Хлебниково'
 
-        prop_name = ET.SubElement(struct, 'Property')
+        prop_name = ElTree.SubElement(struct, 'Property')
         prop_name.set('name', 'Ответственный')
-        value_name = ET.SubElement(prop_name, 'Ответственный')
+        value_name = ElTree.SubElement(prop_name, 'Ответственный')
         value_name.set('xsi:type', 'xs:string')
         value_name.text = f'{user.last_name} {user.first_name} {user.patronymic}'
 
-        prop_comment = ET.SubElement(struct, 'Property')
+        prop_comment = ElTree.SubElement(struct, 'Property')
         prop_comment.set('name', 'Комментарий')
-        value_comment = ET.SubElement(prop_comment, 'Value')
+        value_comment = ElTree.SubElement(prop_comment, 'Value')
         value_comment.set('xsi:type', 'xs:string')
         value_comment.text = comment
 
-        prop_status = ET.SubElement(struct, 'Property')
+        prop_status = ElTree.SubElement(struct, 'Property')
         prop_status.set('name', 'Статус')
-        value_status = ET.SubElement(prop_status, 'Value')
+        value_status = ElTree.SubElement(prop_status, 'Value')
         value_status.set('xsi:type', 'xs:string')
         value_status.text = 'К поступлению'
 
-        prop_goods = ET.SubElement(struct, 'Property')
+        prop_goods = ElTree.SubElement(struct, 'Property')
         prop_goods.set('name', 'Товары')
-        value_goods = ET.SubElement(prop_goods, 'Value')
+        value_goods = ElTree.SubElement(prop_goods, 'Value')
         value_goods.set('xsi:type', 'Array')
 
         for good in goods:
-            value_structure = ET.SubElement(value_goods, 'Value')
+            value_structure = ElTree.SubElement(value_goods, 'Value')
             value_structure.set('xsi:type', 'Structure')
 
-            property_marking = ET.SubElement(value_structure, 'Property')
+            property_marking = ElTree.SubElement(value_structure, 'Property')
             property_marking.set('name', 'Номенклатура')
-            value_marking = ET.SubElement(property_marking, 'Value')
+            value_marking = ElTree.SubElement(property_marking, 'Value')
             value_marking.set('xsi:type', 'xs:string')
             value_marking.text = good.good.marking
 
-            property_count = ET.SubElement(value_structure, 'Property')
+            property_count = ElTree.SubElement(value_structure, 'Property')
             property_count.set('name', 'Количество')
-            value_count = ET.SubElement(property_count, 'Value')
+            value_count = ElTree.SubElement(property_count, 'Value')
             value_count.set('xsi:type', 'xs:decimal')
             value_count.text = str(good.quantity)
 
-            property_gtd = ET.SubElement(value_structure, 'Property')
+            property_gtd = ElTree.SubElement(value_structure, 'Property')
             property_gtd.set('name', 'ГТД')
-            value_gtd = ET.SubElement(property_gtd, 'Value')
+            value_gtd = ElTree.SubElement(property_gtd, 'Value')
             value_gtd.set('xsi:type', 'xs:string')
             value_gtd.text = f"{self.gtdId}/{good.group.number}"
 
-        erp_data = ET.tostring(struct, encoding='utf-8', method='xml')
+        erp_data = ElTree.tostring(struct, encoding='utf-8', method='xml')
         filename = f'erp {user.pk} { gtd_id.replace("/", "_")}.xml'
         filepath = os.path.join(USER_DIR, 'erp/', filename)
 
@@ -204,26 +204,26 @@ class GtdMain(models.Model):
             else:
                 unique_goods[marking] = [quantity, qualifier.russian_symbol]
 
-        doc = ET.Element('DOC')
-        doc_in = ET.SubElement(doc, 'DOC_IN')
-        number = ET.SubElement(doc_in, 'NUMBER')
+        doc = ElTree.Element('DOC')
+        doc_in = ElTree.SubElement(doc, 'DOC_IN')
+        number = ElTree.SubElement(doc_in, 'NUMBER')
         number.text = gtd_id
-        date = ET.SubElement(doc_in, 'DATE')
+        date = ElTree.SubElement(doc_in, 'DATE')
         date.text = gtd_date.strftime("%Y-%m-%d")
-        in_date = ET.SubElement(doc_in, 'IN_DATE')
+        in_date = ElTree.SubElement(doc_in, 'IN_DATE')
         in_date.text = (gtd_date + timedelta(days=5)).strftime("%Y-%m-%d T%H-%M-%S")
-        description = ET.SubElement(doc_in, 'DSC')
+        description = ElTree.SubElement(doc_in, 'DSC')
         description.text = comment
         for good, good_attrs in unique_goods.items():
-            content = ET.SubElement(doc_in, 'CONTENT')
-            code = ET.SubElement(content, 'CODE')
+            content = ElTree.SubElement(doc_in, 'CONTENT')
+            code = ElTree.SubElement(content, 'CODE')
             code.set('CODE_ID', good)
-            count = ET.SubElement(code, 'CNT')
+            count = ElTree.SubElement(code, 'CNT')
             count.text = str(good_attrs[0])
-            unit_name = ET.SubElement(code, 'UNIT_NAME')
+            unit_name = ElTree.SubElement(code, 'UNIT_NAME')
             unit_name.text = good_attrs[1]
 
-        wms_data = ET.tostring(doc, encoding='utf-8', method='xml')
+        wms_data = ElTree.tostring(doc, encoding='utf-8', method='xml')
         filename = f'wms {user.pk} {gtd_id}.xml'
         filepath = os.path.join(USER_DIR, 'wms/', filename)
         with open(filepath, 'wb') as wms_file:
@@ -259,7 +259,7 @@ class GtdMain(models.Model):
 
 class CustomsHouse(models.Model):
     """
-    Модель таможенных отделов
+    Модель справочника таможенных отделов
     """
 
     house_num = models.CharField(max_length=8, verbose_name='Номер отдела')
@@ -281,7 +281,7 @@ class CustomsHouse(models.Model):
 
 class Exporter(models.Model):
     """
-    Модель экспортера
+    Модель справочника экспортеров
     """
     name = models.CharField(max_length=255, verbose_name='Название компании')
     postal_code = models.CharField(max_length=20, verbose_name='Почтовый индекс', null=True, blank=True)
@@ -312,7 +312,7 @@ class Exporter(models.Model):
 # Импортеры - Справочник
 class Importer(models.Model):
     """
-    Модель импортеров
+    Модель справочника импортеров
     """
     name = models.CharField(max_length=255, verbose_name='Название компании', unique=True)
     postal_code = models.CharField(max_length=20, verbose_name='Почтовый индекс', null=True, blank=True)
@@ -344,7 +344,7 @@ class Importer(models.Model):
 
 class Country(models.Model):
     """
-    Модель страны
+    Модель справочника стран
     """
     code = models.CharField(max_length=2, verbose_name='Код страны')
     russian_name = models.CharField(max_length=150, verbose_name='Название страны на русском')
@@ -352,7 +352,7 @@ class Country(models.Model):
 
     class Meta:
         """
-        Метакласс, определяющий название модели для пользователя
+        Метакласс, определяющий название модели для человека
         """
         verbose_name = 'Страна'
         verbose_name_plural = 'Страны'
@@ -366,7 +366,7 @@ class Country(models.Model):
 
 class Currency(models.Model):
     """
-    Модель валюты
+    Модель справочника валют
     """
     digital_code = models.CharField(max_length=3, verbose_name='Цифровой код', null=True, blank=True)
     short_name = models.CharField(max_length=3, verbose_name='Обозначение')
@@ -374,34 +374,47 @@ class Currency(models.Model):
 
     class Meta:
         """
-        Метакласс, задающий название модели для пользователя
+        Метакласс, задающий название модели для человека
         """
         verbose_name = 'Валюта'
         verbose_name_plural = 'Валюты'
 
     def __str__(self):
+        """
+        Строковое представление - буквенное обозначение валюты
+        """
         return self.short_name
 
 
 # Характер сделки - Справочник
 class DealType(models.Model):
+    """
+    Модель справочника характеров сделок
+    """
     code = models.CharField(max_length=3, verbose_name='Код характера сделки')
     deal_type = models.TextField(verbose_name='Характер сделки')
 
     class Meta:
+        """
+        Метакласс, определяющий название модели для человека
+        """
         verbose_name = 'Характер сделки'
         verbose_name_plural = 'Классификатор характера сделки'
 
     def __str__(self):
+        """
+        Строковое представление - код
+        """
         return self.code
 
 
 # Группы товаров в ГТД
 class GtdGroup(models.Model):
+    """
+    Модель группы (раздела) ГТД
+    """
     gtd = models.ForeignKey('GtdMain', on_delete=models.CASCADE, verbose_name='id ГТД', related_name="+")
-    # name = models.CharField(verbose_name='Название', max_length=255, null=True, blank=True)
     name = models.TextField(verbose_name='Название', null=True, blank=True)
-    # description = models.TextField(verbose_name='Описание', null=True, blank=True)
     tn_ved = models.ForeignKey('TnVed', on_delete=models.SET_NULL, null=True,
                                verbose_name='id кода товарной группы ТН ВЭД', related_name="+")
     number = models.IntegerField(verbose_name='Номер товарной группы')
@@ -422,16 +435,23 @@ class GtdGroup(models.Model):
                                          verbose_name='Пользователь, последний вносивший изменения')
 
     class Meta:
+        """
+        Метакласс, задающий название модели для человека
+        """
         verbose_name = 'Группа товаров в ГТД'
         verbose_name_plural = 'Группы товаров в ГТД'
-        # unique_together = ('gtd', 'number')
 
     def __str__(self):
+        """
+        Строковое представление - номер группы
+        """
         return str(self.number)
 
 
-# Классификатор товаров ТН ВЭД - Справочник
 class TnVed(models.Model):
+    """
+    Модель справочника кодов ТН ВЭД - Товарой номенклатуры внешнеэкономической деятельности
+    """
     code = models.CharField(max_length=18, verbose_name='Номер группы')
     subposition = models.TextField(verbose_name='Подсубпозиция', null=True, blank=True)
     has_environmental_fee = models.BooleanField(verbose_name='Облагается ли экологическим сбором?',
@@ -440,28 +460,44 @@ class TnVed(models.Model):
     collection_rate = models.FloatField(verbose_name='Ставка сбора', null=True, blank=True, max_length=255)
 
     class Meta:
+        """
+        Метакласс, определяющий название модели для человека
+        """
         verbose_name = 'ТН ВЭД'
         verbose_name_plural = verbose_name
 
     def __str__(self):
+        """
+        Строковое представление - код ТН ВЭД
+        """
         return str(self.code)
 
 
-# Таможенные процедуры - Справочник
 class Procedure(models.Model):
+    """
+    Модель справочника типов таможенных процедур
+    """
     code = models.CharField(max_length=2, verbose_name='Код таможенной процедуры')
     name = models.CharField(max_length=255, verbose_name='Таможенная процедура')
 
     class Meta:
+        """
+        Метакласс, определяющий название модели для человека
+        """
         verbose_name = 'Вид таможенной процедуры'
         verbose_name_plural = 'Классификатор видов таможенных процедур'
 
     def __str__(self):
+        """
+        Строковое представление - код таможенной процедуры
+        """
         return str(self.code)
 
 
-# Товары - Справочник
 class Good(models.Model):
+    """
+    Модель справочника товаров
+    """
     marking = models.CharField(max_length=50, verbose_name='Артикул', unique=True)
     name = models.TextField(verbose_name='Товар')
     goodsmark = models.ForeignKey('GoodsMark', on_delete=models.SET_NULL, verbose_name='Торговая марка',
@@ -470,71 +506,114 @@ class Good(models.Model):
                                   related_name="+", null=True, blank=True)
 
     class Meta:
+        """
+        Метакласс, определяющий название модели для человека
+        """
         verbose_name = 'Товар'
         verbose_name_plural = 'Товары'
 
     def __str__(self):
+        """
+        Строковое представление - артикул товара
+        """
         return str(self.marking)
 
 
-# Товарный знак - Справочник
 class TradeMark(models.Model):
+    """
+    Модель справочника товарных знаков
+    """
     trademark = models.CharField(max_length=100, verbose_name='Товарный знак')
 
     class Meta:
+        """
+        Метакласс, определяющий название модели для человека
+        """
         verbose_name = 'Товарный знак'
         verbose_name_plural = 'Товарные знаки'
 
     def __str__(self):
+        """
+        Строковое отображение - сам товарный знак
+        """
         return self.trademark
 
 
-# Бренд/торговая марка - Справочник
 class GoodsMark(models.Model):
+    """
+    Модель справочника торговых марок (брендов)
+    """
     goodsmark = models.CharField(max_length=100, verbose_name='Торговая марка')
 
     class Meta:
+        """
+        Метакласс, определяющий название модели для человека
+        """
         verbose_name = 'Торговая марка'
         verbose_name_plural = 'Торговые марки'
 
     def __str__(self):
+        """
+        Строковое отображение - сама торговая марка
+        """
         return self.goodsmark
 
 
-# Заводы (производители) - Справочник
 class Manufacturer(models.Model):
+    """
+    Модель справочника производителей (заводов)
+    """
     manufacturer = models.CharField(max_length=255, verbose_name='Производитель')
 
     class Meta:
+        """
+        Метакласс, определяющий название модели для человека
+        """
         verbose_name = 'Производитель'
         verbose_name_plural = 'Производители'
 
     def __str__(self):
+        """
+        Строковое отображение - сам производитель
+        """
         return str(self.manufacturer)
 
 
-# Единицы измерения - Справочник
 class MeasureQualifier(models.Model):
+    """
+    Модель справочника единиц измерения
+    """
     digital_code = models.CharField(max_length=4, verbose_name='Код', unique=True)
     name = models.CharField(max_length=100, verbose_name='Наименование')
-    russian_symbol = models.CharField(max_length=255, verbose_name='Русское условное обозначение', null=True, blank=True)
+    russian_symbol = models.CharField(max_length=255, null=True, blank=True,
+                                      verbose_name='Русское условное обозначение')
     russian_code = models.CharField(max_length=100, verbose_name='Русское кодовое обозначение', null=True, blank=True)
-    english_symbol = models.CharField(max_length=255, verbose_name='Международное условное обозначение', null=True, blank=True)
-    english_code = models.CharField(max_length=20, verbose_name='Международное кодовое обозначение', null=True, blank=True)
+    english_symbol = models.CharField(max_length=255, null=True, blank=True,
+                                      verbose_name='Международное условное обозначение')
+    english_code = models.CharField(max_length=20, null=True, blank=True,
+                                    verbose_name='Международное кодовое обозначение')
 
     class Meta:
+        """
+        Метакласс, определяющий название модели для человека
+        """
         verbose_name = 'Единица измерения'
         verbose_name_plural = 'Единицы измерения'
 
     def __str__(self):
+        """
+        Строковое отображение - русское сокращенное обозначение, для иностранных - наименование
+        """
         if self.russian_code:
             return str(self.russian_code)
         else:
             return str(self.name)
 
 
-# Товары из ГТД
 class GtdGood(models.Model):
+    """
+    Товары, принадлежащие определенным ГТД
+    """
     gtd = models.ForeignKey('GtdMain', on_delete=models.CASCADE,
                             verbose_name='id ГТД', related_name="+")
     group = models.ForeignKey('GtdGroup', on_delete=models.CASCADE,
@@ -548,15 +627,21 @@ class GtdGood(models.Model):
     manufacturer = models.ForeignKey('Manufacturer', on_delete=models.SET_NULL,
                                      related_name="+", verbose_name='id производителя', null=True, blank=True)
     last_edited_user = models.ForeignKey('RegUser', on_delete=models.SET_NULL, related_name='+',
-                                         verbose_name='Пользователь, последний внесший изменения', null=True, blank=True)
+                                         verbose_name='Пользователь, последний внесший изменения',
+                                         null=True, blank=True)
 
     class Meta:
+        """
+        Метакласс, определяющий название модели для человека
+        """
         verbose_name = 'Товар в ГТД'
         verbose_name_plural = 'Товары в ГТД'
 
 
-# Документы - Справочник
 class Document(models.Model):
+    """
+    Модель документов
+    """
     name = models.CharField(max_length=255, verbose_name='Название документа')
     doc_type = models.ForeignKey('DocumentType', verbose_name='Id типа документа', related_name="+",
                                  null=True, blank=True, on_delete=models.SET_NULL)
@@ -566,39 +651,61 @@ class Document(models.Model):
     expire_date = models.DateField(verbose_name='Дата окончания действия', blank=True, null=True)
 
     class Meta:
+        """
+        Метакласс, определяющий название модели для человека
+        """
         verbose_name = 'Документ'
         verbose_name_plural = 'Документы'
 
     def __str__(self):
+        """
+        Строковое отображение - название документа
+        """
         return self.name
 
 
-# Тип документов
 class DocumentType(models.Model):
+    """
+    Модель справочника типов документов
+    """
     code = models.CharField(max_length=8, verbose_name='Код типа документа')
     name = models.TextField(verbose_name='Тип документа')
 
     class Meta:
+        """
+        Метакласс, определяющий название модели для человека
+        """
         verbose_name = 'Тип документа'
         verbose_name_plural = 'Типы документов'
 
     def __str__(self):
+        """
+        Строковое отображение - код типа документа
+        """
         return self.code
 
 
-# Документы группы в гтд
 class GtdDocument(models.Model):
+    """
+    Документы, принадлежащие определенной группе (разделу) ГТД
+    """
     gtd = models.ForeignKey('GtdMain', on_delete=models.CASCADE, verbose_name='id ГТД', related_name="+")
     group = models.ForeignKey('GtdGroup', on_delete=models.CASCADE, verbose_name='id группы товаров', related_name="+")
     document = models.ForeignKey('Document', on_delete=models.CASCADE, verbose_name='id документа', related_name="+")
 
     class Meta:
+        """
+        Метакласс, определяющий название модели для человека
+        """
         verbose_name = 'Документ в ГТД'
         verbose_name_plural = 'Документы в ГТД'
         unique_together = ('gtd', 'group', 'document')
 
 
 class UploadGtd(models.Model):
+    """
+    Записи, свидетельствующие о загрузке в базу какого-то количества ГТД
+    """
     description = models.CharField(max_length=255, blank=True, verbose_name='Краткий комментарий')
     uploaded_at = models.DateTimeField(auto_now_add=True)
     files_num = models.IntegerField(verbose_name='Количество прикрепленных файлов', null=True, blank=True)
@@ -606,23 +713,36 @@ class UploadGtd(models.Model):
                                      related_name='+', verbose_name='Пользователь, загрузивший файл(ы)')
 
     class Meta:
+        """
+        Метакласс, определяющий название модели для человека
+        а также порядок следования записей
+        """
         verbose_name = 'Загруженная ГТД'
         verbose_name_plural = 'Загруженные ГТД'
         ordering = ['uploaded_at']
 
 
 class UploadGtdFile(models.Model):
+    """
+    Модель, записи которой хранят информацию о файле документа ГТД, который был загружен в систему
+    """
     uploaded_gtd = models.ForeignKey('UploadGtd', on_delete=models.CASCADE, related_name='+',
                                      verbose_name='id партии загруженных ГТД')
     document = models.FileField(upload_to='gtd/')
     uploaded_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     class Meta:
+        """
+        Метакласс, определяющий название модели для человека
+        """
         verbose_name = 'Загруженный файл ГТД'
         verbose_name_plural = 'Загруженные файлы ГТД'
 
 
 class WmsExport(models.Model):
+    """
+    Модель, сохраняющая информацию о cформированных по определенным ГТД xml-файлых для WMS
+    """
     gtd = models.ForeignKey('GtdMain', on_delete=models.CASCADE, verbose_name='id ГТД', related_name='+')
     comment = models.TextField(verbose_name='Комментарий', null=True, blank=True)
     filename = models.CharField(verbose_name='Имя файла', max_length=255)
@@ -632,16 +752,26 @@ class WmsExport(models.Model):
 
 
 class ErpExport(models.Model):
+    """
+    Модель, содержащая информацию о сформированных по определенной ГТД xml-файлов для ERP
+    """
     gtd = models.ForeignKey('GtdMain', on_delete=models.CASCADE, verbose_name='id ГТД', related_name='+')
     comment = models.TextField(verbose_name='Комментарий', default='')
     filename = models.CharField(verbose_name='Имя файла', max_length=255)
     datetime = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey('RegUser', on_delete=models.SET_NULL, verbose_name='Пользователь, выполнивший экспорт', null=True)
+    user = models.ForeignKey('RegUser', on_delete=models.SET_NULL,
+                             verbose_name='Пользователь, выполнивший экспорт', null=True)
 
 
 class Handbook(models.Model):
+    """
+    Модель списка справочников
+    """
     name = models.CharField(verbose_name='Название', max_length=255, unique=True)
     is_actual_table = models.BooleanField(verbose_name='Актуальная таблица', default=False)
 
     def __str__(self):
+        """
+        Строковое отображение - название справочника
+        """
         return self.name
