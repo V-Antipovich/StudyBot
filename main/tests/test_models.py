@@ -8,6 +8,7 @@ import datetime
 # Проверка пересчёта данных шапки гтд после редактирования ее групп
 # Проверка роли
 
+
 class GtdMainModelTest(TestCase):
     """
     Тестирование работы с моделью ГТД
@@ -144,3 +145,39 @@ class GtdMainModelTest(TestCase):
         self.assertEqual(gtd.total_cost, 392464866625)
         self.assertEqual(gtd.total_invoice_amount, 11398259369.917519)
         self.assertEqual(gtd.total_goods_number, 2)
+
+
+class AuthTest(TestCase):
+    """
+    Тестирование авторизации с моделью пользователя
+    """
+    def setUp(self) -> None:
+        """
+        Входные тестовые данные - запись в таблице пользователей
+        """
+        RegUser.objects.create(
+            username='test_admin', is_active=True, first_name='a', last_name='b',
+            password='pbkdf2_sha256$390000$ShRQGwb7i56qZgZCT5XiC2$ppAYRg0JNt4m/b/+eBxFra2Golun6CvAq5R9sYpI3fU=',
+        )
+
+    def test_successful_auth(self):
+        """
+        Попытка аутентификации с правильными данными
+        """
+        user = authenticate(username='test_admin',
+                            password='admin')
+        self.assertTrue(user is not None and user.is_authenticated)
+
+    def test_wrong_password(self):
+        """
+        Попытка аутентификации с неправильным паролем
+        """
+        user = authenticate(username='test-admin', password='admina')
+        self.assertFalse(user is not None and user.is_authenticated)
+
+    def test_wrong_username(self):
+        """
+        Попытка аутентификации с неправильным логином
+        """
+        user = authenticate(username='test', password='admin')
+        self.assertFalse(user is not None and user.is_authenticated)

@@ -13,7 +13,7 @@ register.filter('another_dict', another_dict)
 
 
 def has_role(user, role):
-    return user.role.name == role
+    return user.role and user.role.name == role
 
 
 register.filter('has_role', has_role)

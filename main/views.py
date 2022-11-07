@@ -243,7 +243,7 @@ def show_gtd_list(request):
         'gtds': gtds,
         'paginate_by': paginate_by,
         'context': user,
-        'for_customs_officer': user.role.name in ['Администратор', 'Сотрудник таможенного отдела'],  #user.groups.filter(name__in=['Администратор', 'Сотрудник таможенного отдела']),
+        'for_customs_officer': user.role and user.role.name in ['Администратор', 'Сотрудник таможенного отдела'],  #user.groups.filter(name__in=['Администратор', 'Сотрудник таможенного отдела']),
         'search_form': SearchForm(initial={'key': kw, 'paginate_by': paginate_by}),
         'calendar_form': CalendarDate(),
         'start': start_date,
@@ -269,8 +269,8 @@ class GtdDetailView(DetailView):
         context['are_goods_shown'] = open_goods
         user = self.request.user
         context['user'] = user
-        context['for_customs_officer'] = user.role.name in ['Администратор', 'Сотрудник таможенного отдела']
-        context['for_accountant'] = user.role.name in ['Администратор', 'Бухгалтер']
+        context['for_customs_officer'] = user.role and user.role.name in ['Администратор', 'Сотрудник таможенного отдела']
+        context['for_accountant'] = user.role and user.role.name in ['Администратор', 'Бухгалтер']
         if open_goods:
             context['goods'] = GtdGood.objects.filter(gtd_id=self.kwargs.get('pk'), group=open_goods)
             context['current_group'] = GtdGroup.objects.filter(pk=open_goods)[0]
@@ -927,11 +927,8 @@ class HandbookListView(BaseHandbookMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         user = self.request.user
         filename = self.get_filename()
-        condition = user.role.name in ['Администратор', 'Сотрудник таможенного отдела']  # user.groups.filter(name__in=['Администратор', 'Сотрудник таможенного отдела']).exists()
-        # if condition:
+        condition = user.role and user.role.name in ['Администратор', 'Сотрудник таможенного отдела']  # user.groups.filter(name__in=['Администратор', 'Сотрудник таможенного отдела']).exists()
         self.check_xlsx()
-
-        # paginate_by = 200
 
         not_paginated = self.get_query(self.get_kw())
         paginate_by = self.request.GET.get('paginate_by', 100)

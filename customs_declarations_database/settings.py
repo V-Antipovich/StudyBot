@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-+j%wn9q$-0mqrdbhpb6&vcl&3vwbb3g+3yhk5bu_xt#z1(zjw0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -164,5 +164,5 @@ USER_DIR = os.path.join(BASE_DIR, 'USER/')
 
 DATE_INPUT_FORMATS = '%d-%m-%Y'
 
-# LOGIN_REDIRECT_URL = 'accounts/login/'
+LOGIN_REDIRECT_URL = 'accounts/login/'
 # LOGIN_URL = 'accounts/login/'

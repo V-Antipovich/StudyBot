@@ -35,8 +35,11 @@
             Электронный адрес: {{ user.email }}
         </div>
         <div>
-            Должность: {{ user.role }}
-
+            {% if user.role %}
+                Должность: {{ user.role }}
+            {% else %}
+                Должность не задана
+            {% endif %}
         </div>
         <a class="btn btn-outline-info" href="{% url 'main:profile_change' %}">
             Изменить данные профиля

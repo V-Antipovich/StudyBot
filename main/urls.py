@@ -1,12 +1,12 @@
 from django.urls import path
-from .views import index, upload_gtd, show_gtd_file, CDDLogin, CDDLogout, GtdGoodDeleteView,\
+from .views import upload_gtd, show_gtd_file, CDDLogin, CDDLogout, GtdGoodDeleteView,\
     GtdDetailView, update_gtd, GtdDeleteView, Profile, handbook_xlsx, HandbookUpdateView,\
     eco_fee, to_wms, AccessDeniedView, to_erp, StatisticsMenu, GtdGroupDeleteView, users_list,\
     statistics_report_gtd_per_exporter, statistics_report_goods_imported, report_xlsx, ChangeUserInfoView,\
     RegUserPasswordChangeView, RegisterUserView, RegisterDoneView, user_activate, show_gtd_list, HandbookDeleteView,\
     GtdGroupUpdateView, GtdGoodUpdateView, GtdGoodCreateView, GtdGroupCreateView, HandbookListView, HandbookCreateView, \
     UserUpdateView, UserDeleteView
-# CreateGtdGroupView, update_gtd_good,\ update_gtd_group, SuccessfulOutcome,
+# CreateGtdGroupView, update_gtd_good,\ update_gtd_group, SuccessfulOutcome, index,
 
 app_name = 'main'
 urlpatterns = [
@@ -43,11 +43,12 @@ urlpatterns = [
     path('wms/<int:pk>', to_wms, name='to_wms'),
     path('documents/show_gtd/<int:pk>', GtdDetailView.as_view(), name='per_gtd'),
     # path('documents/show_gtd', ShowGtdView.as_view(), name='show_gtd'),
-    path('documents/show_gtd', show_gtd_list, name='show_gtd'),
+
     path('documents/upload_gtd', upload_gtd, name='upload_gtd'),
     path('access_denied', AccessDeniedView.as_view(), name='access_denied'),
     path('users/delete/<int:pk>', UserDeleteView.as_view(), name='user_delete'),
     path('users/update/<int:pk>', UserUpdateView.as_view(), name='user_update'),
     path('users', users_list, name='users'),
-    path('', index, name='index')
+    # path('', index, name='index')
+    path('', show_gtd_list, name='show_gtd'),  # documents/show_gtd
 ]
