@@ -84,7 +84,7 @@ class RegisterUserForm(forms.ModelForm):
 class UploadGtdfilesForm(forms.Form):
     comment = forms.CharField(max_length=255, required=False, label='Комментарий (если требуется)')
     document = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}),
-                               validators=[FileExtensionValidator(allowed_extensions=['xml'])], label='Документы')
+                               validators=[FileExtensionValidator(['xml'])], label='Документы в формате .xml')
     on_duplicate = forms.ChoiceField(choices=(('skip', 'Пропускать'), ('update', 'Обновлять')),
                                      label='Если среди загружаемых ГТД встретятся '
                                                'объекты с номерами, уже присутствующими в базе:')

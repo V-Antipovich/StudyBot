@@ -1026,7 +1026,9 @@ class HandbookListView(BaseHandbookMixin, ListView):
 def upload_gtd(request):
     if request.method == 'POST':
         form = UploadGtdfilesForm(request.POST, request.FILES)
+        # print('Проверка валидности')
         if form.is_valid():
+            print('мы тут')
             on_duplicate = request.POST['on_duplicate']
 
             uploaded_gtd = UploadGtd(
@@ -1275,6 +1277,10 @@ def upload_gtd(request):
                 # 'test': get_goods,
             }
             return render(request, 'main/upload_gtd_log.html', context)
+        else:
+            context = {'form': UploadGtdfilesForm()}
+            messages.error(request, 'Файлы должны иметь расширение xml')
+            return render(request, 'main/upload_gtd.html', context)
         # else:
         #     return render(request, 'main/error.html')
 
