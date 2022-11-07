@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="validate file extention in view">
-      <change afterPath="$PROJECT_DIR$/main/tests/test_views.py" afterDir="false" />
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="first attempts to test the project">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/customs_declarations_database/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/customs_declarations_database/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/profile.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templatetags/filtertags.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/templatetags/filtertags.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/tests/test_models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/tests/test_models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/tests/test_views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/tests/test_views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -74,8 +70,8 @@
       <recent name="D:\Programming\Python\Django\customs_declarations_database" />
     </key>
   </component>
-  <component name="RunManager" selected="Django tests.Test: main.tests.test_views.EnterTest">
-    <configuration name="Test: main.tests.test_views.AuthTest" type="DjangoTestsConfigurationType" temporary="true">
+  <component name="RunManager" selected="Django tests.Test: main.tests.test_views.LoginViewTest.test_login_post">
+    <configuration name="Test: main.tests.test_views.LoginViewTest" type="DjangoTestsConfigurationType" temporary="true">
       <module name="customs_declarations_database" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -88,14 +84,14 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="TARGET" value="main.tests.test_views.AuthTest" />
+      <option name="TARGET" value="main.tests.test_views.LoginViewTest" />
       <option name="SETTINGS_FILE" value="" />
       <option name="CUSTOM_SETTINGS" value="false" />
       <option name="USE_OPTIONS" value="false" />
       <option name="OPTIONS" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Test: main.tests.test_views.EnterTest" type="DjangoTestsConfigurationType" temporary="true">
+    <configuration name="Test: main.tests.test_views.LoginViewTest.test_login_post" type="DjangoTestsConfigurationType" temporary="true">
       <module name="customs_declarations_database" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -108,14 +104,14 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="TARGET" value="main.tests.test_views.EnterTest" />
+      <option name="TARGET" value="main.tests.test_views.LoginViewTest.test_login_post" />
       <option name="SETTINGS_FILE" value="" />
       <option name="CUSTOM_SETTINGS" value="false" />
       <option name="USE_OPTIONS" value="false" />
       <option name="OPTIONS" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Test: main.tests.test_views.EnterTest.test_auth" type="DjangoTestsConfigurationType" temporary="true">
+    <configuration name="Test: main.tests.test_views.ShowGtdListViewTest" type="DjangoTestsConfigurationType" temporary="true">
       <module name="customs_declarations_database" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -128,14 +124,14 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="TARGET" value="main.tests.test_views.EnterTest.test_auth" />
+      <option name="TARGET" value="main.tests.test_views.ShowGtdListViewTest" />
       <option name="SETTINGS_FILE" value="" />
       <option name="CUSTOM_SETTINGS" value="false" />
       <option name="USE_OPTIONS" value="false" />
       <option name="OPTIONS" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Test: main.tests.test_views.UploadGtdTest" type="DjangoTestsConfigurationType" temporary="true">
+    <configuration name="Test: main.tests.test_views.ShowGtdListViewTest.test_filter_by_kw" type="DjangoTestsConfigurationType" temporary="true">
       <module name="customs_declarations_database" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -148,14 +144,14 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="TARGET" value="main.tests.test_views.UploadGtdTest" />
+      <option name="TARGET" value="main.tests.test_views.ShowGtdListViewTest.test_filter_by_kw" />
       <option name="SETTINGS_FILE" value="" />
       <option name="CUSTOM_SETTINGS" value="false" />
       <option name="USE_OPTIONS" value="false" />
       <option name="OPTIONS" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Test: main.tests.test_views.UploadGtdTest.test_start_page" type="DjangoTestsConfigurationType" temporary="true">
+    <configuration name="Test: main.tests.test_views.ShowGtdListViewTest.test_filter_by_time" type="DjangoTestsConfigurationType" temporary="true">
       <module name="customs_declarations_database" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -168,7 +164,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="TARGET" value="main.tests.test_views.UploadGtdTest.test_start_page" />
+      <option name="TARGET" value="main.tests.test_views.ShowGtdListViewTest.test_filter_by_time" />
       <option name="SETTINGS_FILE" value="" />
       <option name="CUSTOM_SETTINGS" value="false" />
       <option name="USE_OPTIONS" value="false" />
@@ -201,19 +197,19 @@
     </configuration>
     <list>
       <item itemvalue="Django Server.customs_declarations_database" />
-      <item itemvalue="Django tests.Test: main.tests.test_views.AuthTest" />
-      <item itemvalue="Django tests.Test: main.tests.test_views.EnterTest" />
-      <item itemvalue="Django tests.Test: main.tests.test_views.EnterTest.test_auth" />
-      <item itemvalue="Django tests.Test: main.tests.test_views.UploadGtdTest" />
-      <item itemvalue="Django tests.Test: main.tests.test_views.UploadGtdTest.test_start_page" />
+      <item itemvalue="Django tests.Test: main.tests.test_views.LoginViewTest" />
+      <item itemvalue="Django tests.Test: main.tests.test_views.LoginViewTest.test_login_post" />
+      <item itemvalue="Django tests.Test: main.tests.test_views.ShowGtdListViewTest" />
+      <item itemvalue="Django tests.Test: main.tests.test_views.ShowGtdListViewTest.test_filter_by_kw" />
+      <item itemvalue="Django tests.Test: main.tests.test_views.ShowGtdListViewTest.test_filter_by_time" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Django tests.Test: main.tests.test_views.EnterTest" />
-        <item itemvalue="Django tests.Test: main.tests.test_views.AuthTest" />
-        <item itemvalue="Django tests.Test: main.tests.test_views.EnterTest.test_auth" />
-        <item itemvalue="Django tests.Test: main.tests.test_views.UploadGtdTest.test_start_page" />
-        <item itemvalue="Django tests.Test: main.tests.test_views.UploadGtdTest" />
+        <item itemvalue="Django tests.Test: main.tests.test_views.LoginViewTest.test_login_post" />
+        <item itemvalue="Django tests.Test: main.tests.test_views.LoginViewTest" />
+        <item itemvalue="Django tests.Test: main.tests.test_views.ShowGtdListViewTest" />
+        <item itemvalue="Django tests.Test: main.tests.test_views.ShowGtdListViewTest.test_filter_by_kw" />
+        <item itemvalue="Django tests.Test: main.tests.test_views.ShowGtdListViewTest.test_filter_by_time" />
       </list>
     </recent_temporary>
   </component>
@@ -256,14 +252,7 @@
       <workItem from="1667582233991" duration="34749000" />
       <workItem from="1667647402293" duration="14362000" />
       <workItem from="1667712334655" duration="17332000" />
-      <workItem from="1667730238840" duration="42799000" />
-    </task>
-    <task id="LOCAL-00056" summary="enhanced detailed gtd view: fixed that broken tab-pane, included cookies to keep the active tab">
-      <created>1667454053583</created>
-      <option name="number" value="00056" />
-      <option name="presentableId" value="LOCAL-00056" />
-      <option name="project" value="LOCAL" />
-      <updated>1667454053583</updated>
+      <workItem from="1667730238840" duration="50030000" />
     </task>
     <task id="LOCAL-00057" summary="edited erp &amp; wms: moved funtions to GtdMain model class">
       <created>1667462938728</created>
@@ -601,7 +590,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667796287248</updated>
     </task>
-    <option name="localTasksCounter" value="105" />
+    <task id="LOCAL-00105" summary="first attempts to test the project">
+      <created>1667808876060</created>
+      <option name="number" value="00105" />
+      <option name="presentableId" value="LOCAL-00105" />
+      <option name="project" value="LOCAL" />
+      <updated>1667808876060</updated>
+    </task>
+    <option name="localTasksCounter" value="106" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -630,7 +626,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="edited few of forms fields parameters of validation" />
     <MESSAGE value="added modals to update handbooks page" />
     <MESSAGE value="small styling update handbook view" />
     <MESSAGE value="united Create and Update of handbook entries" />
@@ -655,16 +650,30 @@
     <MESSAGE value="started models documentation" />
     <MESSAGE value="prepare for splitting" />
     <MESSAGE value="validate file extention in view" />
-    <option name="LAST_COMMIT_MESSAGE" value="validate file extention in view" />
+    <MESSAGE value="first attempts to test the project" />
+    <option name="LAST_COMMIT_MESSAGE" value="first attempts to test the project" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_EnterTest_test_get_login_page.coverage" NAME="Test: main.tests.test_views.EnterTest.test_get_login_page Coverage Results" MODIFIED="1667806746891" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_ShowGtdListViewTest_test_filter_by_time.coverage" NAME="Test: main.tests.test_views.ShowGtdListViewTest.test_filter_by_time Coverage Results" MODIFIED="1667814702302" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_LoginViewTest_test_login_post.coverage" NAME="Test: main.tests.test_views.LoginViewTest.test_login_post Coverage Results" MODIFIED="1667815603121" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_LoginViewTest_test_correct.coverage" NAME="Test: main.tests.test_views.LoginViewTest.test_correct Coverage Results" MODIFIED="1667809305664" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_ShowGtdListViewTest.coverage" NAME="Test: main.tests.test_views.ShowGtdListViewTest Coverage Results" MODIFIED="1667814907957" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_EnterTest.coverage" NAME="Test: main.tests.test_views.EnterTest Coverage Results" MODIFIED="1667808560272" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/customs_declarations_database$.coverage" NAME=" Coverage Results" MODIFIED="1667797352572" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main/tests" />
-    <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_AuthTest.coverage" NAME="Test: main.tests.test_views.AuthTest Coverage Results" MODIFIED="1667808445059" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />
-    <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_UploadGtdTest_test_start_page.coverage" NAME="Test: main.tests.test_views.UploadGtdTest.test_start_page Coverage Results" MODIFIED="1667807083577" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_UploadGtdTest_test_start_page_with_login.coverage" NAME="Test: main.tests.test_views.UploadGtdTest.test_start_page_with_login Coverage Results" MODIFIED="1667810720797" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_ShowGtdListViewTest_test_get_start_page_with_login.coverage" NAME="Test: main.tests.test_views.ShowGtdListViewTest.test_get_start_page_with_login Coverage Results" MODIFIED="1667812073776" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_LoginViewTest.coverage" NAME="Test: main.tests.test_views.LoginViewTest Coverage Results" MODIFIED="1667815093637" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_EnterTest_test_auth.coverage" NAME="Test: main.tests.test_views.EnterTest.test_auth Coverage Results" MODIFIED="1667807832621" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_UploadGtdTest.coverage" NAME="Test: main.tests.test_views.UploadGtdTest Coverage Results" MODIFIED="1667806892355" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_UploadGtdTest_test_start_page.coverage" NAME="Test: main.tests.test_views.UploadGtdTest.test_start_page Coverage Results" MODIFIED="1667811118844" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_ShowGtdListViewTest_test_accessing_full_gtd_list.coverage" NAME="Test: main.tests.test_views.ShowGtdListViewTest.test_accessing_full_gtd_list Coverage Results" MODIFIED="1667813055442" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_UploadGtdTest.coverage" NAME="Test: main.tests.test_views.UploadGtdTest Coverage Results" MODIFIED="1667810192462" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_ShowGtdListViewTest_test_start_page.coverage" NAME="Test: main.tests.test_views.ShowGtdListViewTest.test_start_page Coverage Results" MODIFIED="1667812249025" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_LoginViewTest_test_login_get.coverage" NAME="Test: main.tests.test_views.LoginViewTest.test_login_get Coverage Results" MODIFIED="1667809819430" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_AuthTest.coverage" NAME="Test: main.tests.test_views.AuthTest Coverage Results" MODIFIED="1667808445059" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_ShowGtdListViewTest_test_filter_by_kw.coverage" NAME="Test: main.tests.test_views.ShowGtdListViewTest.test_filter_by_kw Coverage Results" MODIFIED="1667814819466" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/customs_declarations_database$views.coverage" NAME="views Coverage Results" MODIFIED="1660373821763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main" />
+    <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_LoginViewTest_test_somewhat.coverage" NAME="Test: main.tests.test_views.LoginViewTest.test_somewhat Coverage Results" MODIFIED="1667809754000" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_UploadGtdTest_test_get_start_page_with_login.coverage" NAME="Test: main.tests.test_views.UploadGtdTest.test_get_start_page_with_login Coverage Results" MODIFIED="1667811246225" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

@@ -1,12 +1,8 @@
-# from unittest import TestCase
+from django.contrib.auth import authenticate
 from django.test import TestCase
 from main.models import GtdMain, GtdGroup, Currency, CustomsHouse, DealType, Exporter, Importer, Country, TnVed, \
-    Procedure
+    Procedure, RegUser
 import datetime
-# Проверка __str__ у шапки ГТД
-
-# Проверка пересчёта данных шапки гтд после редактирования ее групп
-# Проверка роли
 
 
 class GtdMainModelTest(TestCase):
@@ -15,52 +11,14 @@ class GtdMainModelTest(TestCase):
     """
     @classmethod
     def setUpTestData(cls):
-        Currency.objects.create(
-            name='Доллар США',
-            digital_code=840,
-            short_name='USD'
-        )
-
-        CustomsHouse.objects.create(
-            house_num='10101020',
-            house_name='т/п Валуйский'
-        )
-
-        DealType.objects.create(
-            deal_type='Перемещение товаров на возмездной основе по договору купли-продажи товаров',
-            code='010'
-        )
-
-        Country.objects.create(
-            code='RW',
-            russian_name='Руанда',
-            english_name='Rwanda'
-        )
-        Country.objects.create(
-            code='RU',
-            russian_name='Россия',
-            english_name='Russia',
-        )
-        Country.objects.create(
-            code='US',
-            russian_name='США',
-            english_name='USA'
-        )
-        Importer.objects.create(
-            name='ООО "Боже мой"',
-            postal_code='123454321',
-            country=Country.objects.filter(russian_name='Руанда')[0],
-            inn='34820324',
-            ogrn='328495823432',
-        )
-        Exporter.objects.create(
-            name='Tesla',
-            postal_code='92334284',
-            city='California',
-            street_house='5th Avenue, 45',
-            country=Country.objects.filter(russian_name='США')[0]
-        )
-
+        Currency.objects.create(name='Доллар США', digital_code=840, short_name='USD')
+        CustomsHouse.objects.create(house_num='10101020', house_name='т/п Валуйский')
+        DealType.objects.create(deal_type='Перемещение товаров на возмездной основе по договору купли-продажи товаров',code='010')
+        Country.objects.create(code='RW', russian_name='Руанда', english_name='Rwanda')
+        Country.objects.create(code='RU', russian_name='Россия', english_name='Russia')
+        Country.objects.create(code='US', russian_name='США', english_name='USA')
+        Importer.objects.create(name='ООО "Боже мой"', postal_code='123454321', country=Country.objects.filter(russian_name='Руанда')[0], inn='34820324', ogrn='328495823432')
+        Exporter.objects.create(name='Tesla', postal_code='92334284', city='California', street_house='5th Avenue, 45',country=Country.objects.filter(russian_name='США')[0])
         GtdMain.objects.create(
             gtdId='11111111/111121/1111111',
             date=datetime.datetime(2011, 11, 11),

@@ -190,6 +190,7 @@ class UserDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('main:users')
     template_name = 'main/delete_user.html'
 
+
 # Страница с данными пользователя
 class Profile(LoginRequiredMixin, TemplateView):
     template_name = 'main/profile.html'
@@ -202,9 +203,9 @@ class Profile(LoginRequiredMixin, TemplateView):
 
 
 # Страница '/' - перенаправление на основную
-@login_required
-def index(request):
-    return redirect('main:show_gtd')
+# @login_required
+# def index(request):
+#     return redirect('main:show_gtd')
     # return render(request, 'main/index.html')
 
 
@@ -216,10 +217,10 @@ def show_gtd_list(request):
     qstart, qend = Q(), Q()
     if start_date:
         st = datetime.strptime(start_date, '%d-%m-%Y')
-        qstart = Q(date__gt=st)
+        qstart = Q(date__gte=st)
     if end_date:
         en = datetime.strptime(end_date, '%d-%m-%Y')
-        qend = Q(date__lt=en)
+        qend = Q(date__lte=en)
     qdate = qstart & qend
 
     q = Q(gtdId__icontains=kw) | Q(customs_house__house_name__icontains=kw) | \
@@ -242,7 +243,7 @@ def show_gtd_list(request):
     context = {
         'gtds': gtds,
         'paginate_by': paginate_by,
-        'context': user,
+        # 'context': user,
         'for_customs_officer': user.role and user.role.name in ['Администратор', 'Сотрудник таможенного отдела'],  #user.groups.filter(name__in=['Администратор', 'Сотрудник таможенного отдела']),
         'search_form': SearchForm(initial={'key': kw, 'paginate_by': paginate_by}),
         'calendar_form': CalendarDate(),
