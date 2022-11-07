@@ -38,4 +38,11 @@
             </li>
         {% endfor %}
     {% endif %}
+
+    {% if rejected %}
+        <div>Файлы, которые не подошли под формат ГТД: {{ rejected }} </div>
+        {% for item in log.rejected  %}
+            <li class="list-group-item">{{ item }}</li>
+        {% endfor %}
+    {% endif %}
 {% endblock %}

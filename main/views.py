@@ -38,34 +38,27 @@ import pandas as pd
 from datetime import datetime
 
 
-# Словарь со всеми справочниками системы
-# Ключ - параметр url, Значение - (<Модель этого справочника>, <Название справочника для пользователей>, <Форма> )
-avaliable_handbooks = {
-    'customs_houses': (CustomsHouse, 'Отделы таможни', CustomsHouseHandbookCreateUpdateForm),
-    'exporters': (Exporter, 'Экспортеры', ExporterHandbookCreateUpdateForm),
-    'importers': (Importer, 'Импортеры', ImporterHandbookCreateUpdateForm),
-    'countries': (Country, 'Государства', CountryHandbookCreateUpdateForm),
-    'currencies': (Currency, 'Валюты', CurrencyHandbookCreateUpdateForm),
-    'deal_types': (DealType, 'Классификатор характера сделки', DealTypeHandbookCreateUpdateForm),
-    'tn_ved': (TnVed, 'Классификатор ТН ВЭД', TnVedHandbookCreateUpdateForm),
-    'procedures': (Procedure, 'Таможенные процедуры', ProcedureHandbookCreateUpdateForm),
-    'goods': (Good, 'Товары', GoodHandbookCreateUpdateForm),
-    'trade_marks': (TradeMark, 'Товарные знаки', TradeMarkHandbookCreateUpdateForm),
-    'goods_marks': (GoodsMark, 'Торговые марки', GoodsMarkHandbookCreateUpdateForm),
-    'manufacturers': (Manufacturer, 'Производители (заводы)', ManufacturerHandbookCreateUpdateForm),
-    'qualifiers': (MeasureQualifier, 'Единицы измерения', MeasureQualifierHandbookCreateUpdateForm),
-    'doc_types': (DocumentType, 'Классификатор типов документов', DocumentTypeHandbookCreateUpdateForm),
-}
-
-
-# TODO: docstrings!!!
-# TODO: all todo in extra staff
-# Вспомогательные функции контроля доступа - проверка пользователя, является ли он суперпользователем
-def superuser_check(user):
-    return user.is_superuser
+def paginate_func(raw_data, request, auto):
+    """
+    Вспомогательная функция для некоторых представлений-функций,
+    принимающая массив данных и запрос на вход и возвращающая пагинированные данные
+    """
+    paginate_by = request.GET.get('paginate_by', auto)
+    page = request.GET.get('page', 1)
+    paginator = Paginator(raw_data, paginate_by)
+    try:
+        data = paginator.page(page)
+    except PageNotAnInteger:
+        data = paginator.page(1)
+    except EmptyPage:
+        data = paginator.page(paginator.num_pages)
+    return data, paginate_by
 
 
 def roles_required(allowed_roles=[]):
+    """
+    Декоратор, проверяющий наличие у пользователя нужной роли
+    """
     def decorator(view_func):
         def wrap(request, *args, **kwargs):
             if request.user.role and request.user.role.name in allowed_roles:
@@ -76,23 +69,31 @@ def roles_required(allowed_roles=[]):
     return decorator
 
 
-# Страница уведомляющая об отсутствии нужных прав
 class AccessDeniedView(TemplateView):
+    """
+    Представление страницы уведомления об ограничении доступа
+    """
     template_name = 'main/no_access.html'
 
 
-# Авторизация
 class CDDLogin(LoginView):
+    """
+    Представление для авторизации
+    """
     template_name = 'main/login.html'
 
 
-# Выход из аккаунта
 class CDDLogout(LogoutView, LoginRequiredMixin):
+    """
+    Представление для выхода из аккаунта
+    """
     template_name = 'main/logout.html'
 
 
-# Редактирование данных пользователя
 class ChangeUserInfoView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    """
+    Представление для изменения данных пользователя
+    """
     model = RegUser
     template_name = 'main/change_user_info.html'
     form_class = ChangeUserInfoForm
@@ -100,26 +101,36 @@ class ChangeUserInfoView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     success_message = 'Данные пользователя изменены'
 
     def setup(self, request, *args, **kwargs):
+        """
+        Метод определяет атрибут, нужный в дальнейшем для поиска объекта,
+        который будет редактироваться
+        """
         self.user_id = request.user.pk
         return super(ChangeUserInfoView, self).setup(request, *args, **kwargs)
 
     def get_object(self, queryset=None):
+        """
+        Получения объекта для редактирования
+        """
         if not queryset:
             queryset = self.get_queryset()
         return get_object_or_404(queryset, pk=self.user_id)
 
 
-# Смена пароля
 class RegUserPasswordChangeView(LoginRequiredMixin, SuccessMessageMixin, PasswordChangeView):
+    """
+    Представление для смены пароля
+    """
     template_name = 'main/password_change.html'
     success_url = reverse_lazy('main:profile')
     success_message = 'Пароль успешно изменен'
 
 
-# Контроллер для добавления нового пользователя
-@method_decorator(login_required, name='dispatch')
 @method_decorator(roles_required(allowed_roles=['Администратор']), name='dispatch')
-class RegisterUserView(SuccessMessageMixin, CreateView):
+class RegisterUserView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    """
+    Представление для добавления нового пользователя
+    """
     model = RegUser
     template_name = 'main/register_user.html'
     form_class = RegisterUserForm
@@ -127,13 +138,18 @@ class RegisterUserView(SuccessMessageMixin, CreateView):
     success_message = 'Пользователь добавлен'
 
 
-# Страница сообщения об успешной регистрации
 class RegisterDoneView(TemplateView):
+    """
+    Представление для вывода сообщения о том, что учетная запись пользователя создана
+    (Ещё потребуется активация)
+    """
     template_name = 'main/register_done.html'
 
 
-# Активация пользователя после перехода по ссылке
 def user_activate(request, sign):
+    """
+    Представление для активации аккаунта пользователя после перехода по ссылке
+    """
     try:
         username = signer.unsign(sign)
     except BadSignature:
@@ -152,22 +168,18 @@ def user_activate(request, sign):
 @login_required
 @roles_required(allowed_roles=['Администратор'])
 def users_list(request):
+    """
+    Представления для вывода списка всех пользователей, возможна фильтрация
+    """
+    # Получение ключевого слова
     kw = request.GET.get('key', '')
+
+    # Фильтрация по ключевому слову
     q = Q(first_name__icontains=kw) | Q(username__icontains=kw) | Q(last_name__icontains=kw) | \
         Q(patronymic__icontains=kw) | Q(email__icontains=kw) | Q(role__name__icontains=kw)
-
     users = RegUser.objects.filter(q)
 
-    paginate_by = request.GET.get('paginate_by', 10)
-    page = request.GET.get('page', 1)
-    paginator = Paginator(users, paginate_by)
-    try:
-        users = paginator.page(page)
-    except PageNotAnInteger:
-        users = paginator.page(1)
-    except EmptyPage:
-        users = paginator.page(paginator.num_pages)
-
+    users, paginate_by = paginate_func(users, request, 10)
     context = {
         'users': users,
         'paginate_by': paginate_by,
@@ -178,6 +190,9 @@ def users_list(request):
 
 @method_decorator(roles_required(allowed_roles=['Администратор']), name='dispatch')
 class UserUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Представление для изменения данных пользователей
+    """
     model = RegUser
     success_url = reverse_lazy('main:users')
     form_class = ChangeUserInfoForm
@@ -186,32 +201,39 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 
 @method_decorator(roles_required(allowed_roles=['Администратор']), name='dispatch')
 class UserDeleteView(LoginRequiredMixin, DeleteView):
+    """
+    Представление для удаления пользователя
+    """
     model = RegUser
     success_url = reverse_lazy('main:users')
     template_name = 'main/delete_user.html'
 
 
-# Страница с данными пользователя
 class Profile(LoginRequiredMixin, TemplateView):
+    """
+    Представление для вывода информации профиля пользователя
+    """
     template_name = 'main/profile.html'
 
     def get_context_data(self, **kwargs):
+        """
+        Получение контекста (переменных) html шаблона
+        """
         context = super(Profile, self).get_context_data(**kwargs)
         context['user'] = self.request.user
-        # context['groups'] = self.request.user.groups
         return context
-
-
-# Страница '/' - перенаправление на основную
-# @login_required
-# def index(request):
-#     return redirect('main:show_gtd')
-    # return render(request, 'main/index.html')
 
 
 @login_required
 def show_gtd_list(request):
+    """
+    Представление для вывода списка ГТД
+    (по умолчанию - всего, но возможна фильтрация)
+    """
+    # Получение ключевого слова
     kw = request.GET.get('key', '')
+
+    # Получение и обработка диапазона дат
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
     qstart, qend = Q(), Q()
@@ -221,8 +243,9 @@ def show_gtd_list(request):
     if end_date:
         en = datetime.strptime(end_date, '%d-%m-%Y')
         qend = Q(date__lte=en)
-    qdate = qstart & qend
 
+    # Фильтрация по ключевому слову и времени
+    qdate = qstart & qend
     q = Q(gtdId__icontains=kw) | Q(customs_house__house_name__icontains=kw) | \
         Q(order_num__icontains=kw) | Q(total_goods_number__icontains=kw) | \
         Q(exporter__name__icontains=kw) | Q(importer__name__icontains=kw) | Q(trading_country__russian_name__icontains=kw) | \
@@ -230,21 +253,13 @@ def show_gtd_list(request):
         Q(currency_rate__icontains=kw) | Q(deal_type__code__icontains=kw)
     gtd_list = GtdMain.objects.filter(q).filter(qdate)
 
-    paginate_by = request.GET.get('paginate_by', 10)
-    page = request.GET.get('page', 1)
-    paginator = Paginator(gtd_list, paginate_by)
-    try:
-        gtds = paginator.page(page)
-    except PageNotAnInteger:
-        gtds = paginator.page(1)
-    except EmptyPage:
-        gtds = paginator.page(paginator.num_pages)
+    gtds, paginate_by = paginate_func(gtd_list, request, 10)
+
     user = request.user
     context = {
         'gtds': gtds,
         'paginate_by': paginate_by,
-        # 'context': user,
-        'for_customs_officer': user.role and user.role.name in ['Администратор', 'Сотрудник таможенного отдела'],  #user.groups.filter(name__in=['Администратор', 'Сотрудник таможенного отдела']),
+        'for_customs_officer': user.role and user.role.name in ['Администратор', 'Сотрудник таможенного отдела'],
         'search_form': SearchForm(initial={'key': kw, 'paginate_by': paginate_by}),
         'calendar_form': CalendarDate(),
         'start': start_date,
@@ -253,14 +268,19 @@ def show_gtd_list(request):
     return render(request, 'main/show_gtd.html', context)
 
 
-# Представление персональной страницы ГТД
 @method_decorator(login_required, name='dispatch')
 class GtdDetailView(DetailView):
+    """
+    Представление для страницы с данными одной ГТД
+    """
     model = GtdMain
     template_name = 'main/per_gtd.html'
     context_object_name = 'gtd'
 
     def get_context_data(self, **kwargs):
+        """
+        Формирование контекста шаблона: получение самой ГТД и зависимых от неё групп и товаров
+        """
         context = super().get_context_data(**kwargs)
         gtd = GtdMain.objects.filter(pk=self.kwargs.get('pk'))[0]
         gtd.recount()
@@ -275,15 +295,15 @@ class GtdDetailView(DetailView):
         if open_goods:
             context['goods'] = GtdGood.objects.filter(gtd_id=self.kwargs.get('pk'), group=open_goods)
             context['current_group'] = GtdGroup.objects.filter(pk=open_goods)[0]
-            # context['user'] = self.request.user.f
         return context
 
 
-# TODO: страницы для неправильных форм (типа bad request или message.error)
-# Представление редактирования шапки ГТД
 @login_required
 @roles_required(allowed_roles=['Сотрудник таможенного отдела', 'Администратор'])
 def update_gtd(request, pk):
+    """
+    Представление для редактирования основной информации (шапки) ГТД
+    """
     obj = get_object_or_404(GtdMain, pk=pk)
     if request.method == 'POST':
         obj.last_edited_user = request.user
@@ -295,7 +315,9 @@ def update_gtd(request, pk):
             this_gtd.save()
             messages.success(request, 'ГТД успешно обновлена')
             return redirect('main:per_gtd', pk=pk)
-
+        else:
+            messages.error(request, 'Что-то пошло не так при редактировании ГТД. '
+                                    'Попробуйте снова, на этот раз внимательно заполняя поля')
     form = GtdUpdateForm(instance=obj)
     context = {
         'form': form,
@@ -304,11 +326,10 @@ def update_gtd(request, pk):
     return render(request, 'main/update_gtd.html', context)
 
 
-# @method_decorator(login_required, name='dispatch')
 @method_decorator(roles_required(allowed_roles=['Сотрудник таможенного отдела', 'Администратор']), name='dispatch')
 class GtdGroupCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     """
-    Класс, реализующий добавление новой группы товаров в ГТД
+    Представление-класс, реализующий добавление новой группы товаров в ГТД
     """
     model = GtdGroup
     template_name = 'main/create_gtd_group.html'
@@ -318,15 +339,18 @@ class GtdGroupCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     success_message = 'Группа успешно добавлена'
 
     def get_gtd(self):
+        """
+        Метод для получения ГТД, которой будет принадлежать создаваемая группа
+        """
         if not self.gtd:
             self.gtd = get_object_or_404(GtdMain, pk=self.kwargs.get('pk'))
         return self.gtd
 
-    # Переопределение работы метода, вызываемого при валидности формы
     def form_valid(self, form):
         """
-        Функция, вызываемая если форма заполнена корректно.
-        Заполняет оставшееся поле и позволяет сохранить новый объект
+        Метод, вызываемый если форма заполнена корректно.
+        Заполняет поля, которые не должны быть заполнены вручную,
+        и позволяет сохранить новый объект
         """
         new_group = form.save(commit=False)
         gtd = self.get_gtd()
@@ -361,9 +385,11 @@ class GtdGroupCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         return super(GtdGroupCreateView, self).post(request, *args, **kwargs)
 
 
-# Класс добавления нового товара в группу ГТД
 @method_decorator(roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
-class GtdGoodCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):  # TODO: last_edited
+class GtdGoodCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    """
+    Представление для добавления нового товара в группу ГТД
+    """
     model = GtdGood
     template_name = 'main/create_gtd_good.html'
     context_object_name = 'good'
@@ -372,11 +398,18 @@ class GtdGoodCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):  #
     success_message = 'Товар успешно добавлен'
 
     def get_group(self):
+        """
+        Метод получения группы, которой будет принадлежать создаваемый товар
+        """
         if not self.group:
             self.group = get_object_or_404(GtdGroup, pk=self.kwargs.get('pk'))
         return self.group
 
     def form_valid(self, form):
+        """
+        Метод, исполняемый при валидности формы: заполняются оставшиеся необходимые данные,
+        которые пользователь не мог модифицировать вручную
+        """
         group = self.get_group()
         new_good = form.save(commit=False)
         new_good.gtd = group.gtd
@@ -385,23 +418,36 @@ class GtdGoodCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):  #
         return super(GtdGoodCreateView, self).form_valid(form)
 
     def get_success_url(self):
+        """
+        Метод для получения ссылки, по которой совершается переход
+        после успешной отправки формы
+        """
         group = self.get_group()
         return reverse('main:per_gtd', kwargs={'pk': group.gtd.pk}) + f'?group={ group.pk }'
 
     def get_context_data(self, **kwargs):
+        """
+        Получение контекста (переменных) для шаблона html
+        """
         context = super(GtdGoodCreateView, self).get_context_data(**kwargs)
         context['group'] = self.get_group()
         return context
 
     def post(self, request, *args, **kwargs):
+        """
+        Переопределение метода отправки POST-запроса:
+        вызов функции обновления некоторых данных в ГТД, которой будет принадлежать новый товар
+        """
         obj = self.get_group()
         obj.gtd.new_version()
         return super(GtdGoodCreateView, self).post(request, *args, **kwargs)
 
 
-# Функция для редактирования группы товаров
 @method_decorator(roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdGroupUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    """
+    Представление для редактирования группы (раздела) ГТД
+    """
     model = GtdGroup
     template_name = 'main/update_gtd_group.html'
     context_object_name = 'group'
@@ -409,14 +455,24 @@ class GtdGroupUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     success_message = 'Группа успешно обновлена'
 
     def get_success_url(self):
+        """
+        Получение ссылки для возвращения на страницу информации о ГТД в случае отсутствия ошибок:
+        """
         return reverse('main:per_gtd', kwargs={'pk': self.object.gtd.pk})
 
     def form_valid(self, form):
+        """
+        Редактирование некоторых данных перед окончательным сохранением формы:
+        вносятся изменения в поля, которые были недоступны пользователю
+        """
         this_group = form.save(commit=False)
         this_group.last_edited_user = self.request.user
         return super(GtdGroupUpdateView, self).form_valid(form)
 
     def post(self, request, *args, **kwargs):
+        """
+        Вызов функции изменения некоторых данных в ГТД после заполнения формы
+        """
         obj = self.get_object()
         obj.gtd.new_version()
         return super(GtdGroupUpdateView, self).post(request, *args, **kwargs)
@@ -424,6 +480,9 @@ class GtdGroupUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
 @method_decorator(roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdGoodUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    """
+    Представление для редактирования данных товара в ГТД
+    """
     model = GtdGood
     template_name = 'main/update_gtd_good.html'
     context_object_name = 'good'
@@ -431,22 +490,33 @@ class GtdGoodUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     success_message = 'Товар успешно обновлен'
 
     def get_success_url(self):
+        """
+        Получение ссылки для возвращения на страницу ГТД после успешного заполнения формы
+        """
         return reverse('main:per_gtd', kwargs={'pk': self.object.gtd.pk}) + f'?group={ self.object.group.pk }'
 
     def form_valid(self, form):
+        """
+        Заполнение полей, недоступных пользователю перед сохранением формы
+        """
         this_good = form.save(commit=False)
         this_good.last_edited_user = self.request.user
         return super(GtdGoodUpdateView, self).form_valid(form)
 
     def post(self, request, *args, **kwargs):
+        """
+        Вызов функции обновления некоторых данных в ГТД после заполнения формы
+        """
         obj = self.get_object()
         obj.gtd.new_version()
         return super(GtdGoodUpdateView, self).post(request, *args, **kwargs)
 
 
-# Страница удаления ГТД
 @method_decorator(roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    """
+    Представление для удаления ГТД
+    """
     model = GtdMain
     template_name = 'main/delete_gtd.html'
     success_url = reverse_lazy('main:show_gtd')
@@ -457,46 +527,67 @@ class GtdDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
 # Страница удаления группы товаров
 @method_decorator(roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdGroupDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    """
+    Представление для удаления группы ГТД
+    """
     model = GtdGroup
     template_name = 'main/delete_gtd_group.html'
     context_object_name = 'group'
     success_message = 'Группа успешно удалена'
 
     def get_object(self, queryset=None):
+        """
+        Получение объекта (группы) для удаления
+        """
         obj = super(GtdGroupDeleteView, self).get_object(queryset)
         gtd = obj.gtd
         self.success_url = reverse('main:per_gtd', kwargs={'pk': gtd.pk})
         return obj
 
     def post(self, request, *args, **kwargs):
+        """
+        Вызов функции для обновления информации в ГТД из-за удаления группы внутри неё
+        """
         obj = self.get_object()
         obj.gtd.new_version()
         return super(GtdGroupDeleteView, self).post(request, *args, **kwargs)
 
 
-# Страница удаления товара
 @method_decorator(roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class GtdGoodDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    """
+    Представление для удаления товара ГТД
+    """
     model = GtdGood
     template_name = 'main/delete_gtd_good.html'
     context_object_name = 'good'
     success_message = 'Товар успешно удален'
 
     def get_object(self, queryset=None):
+        """
+        Получение объекта товара ГТД для удаления
+        """
         obj = super(GtdGoodDeleteView, self).get_object(queryset)
         self.success_url = reverse('main:per_gtd', kwargs={'pk': obj.gtd.pk}) + f'?group={ obj.group.pk }'
         return obj
 
     def post(self, request, *args, **kwargs):
+        """
+        Вызов функции обновления некоторой информации в ГТД из-за удаления товара
+        """
         obj = self.get_object()
         obj.gtd.new_version()
         return super(GtdGoodDeleteView, self).post(request, *args, *kwargs)
 
 
-# Экологический сбор: выбор периода, сбор данных о ГТД из этого периода, содержащих ТН ВЭД, подлежащие эко сбору
 @login_required
 @roles_required(allowed_roles=['Администратор', 'Бухгалтер'])
 def eco_fee(request):
+    """
+    Представление для подготовки данных для отчета по экологическому сбору:
+    получение временного диапазона и формирование таблицы с кодами ТН ВЭД
+    (и с номерами ГТД из этого временного промежутка)
+    """
     if request.method == 'GET':
         form = CalendarDate()
         context = {
@@ -511,10 +602,12 @@ def eco_fee(request):
             end = cd['end_date']
 
             if start <= end:
+                # Формирование диапазона
                 gtds_range = GtdMain.objects.filter(date__range=[start, end])
 
                 all_groups = GtdGroup.objects.filter(gtd_id__in=gtds_range, tn_ved__has_environmental_fee=True)
 
+                # Проход по ГТД, получение необходимых ТН ВЭД кодов
                 by_tnved = {'expanded': {}, 'total': {}}
                 for group in all_groups:
                     gtdId = group.gtd.gtdId
@@ -538,6 +631,7 @@ def eco_fee(request):
                         by_tnved['expanded'][tn_ved][gtdId] = row
                         by_tnved['total'][tn_ved] = row
 
+                # Формирование xlsx-файла отчета
                 filename = f"eco {request.user.pk} {start.strftime('%d-%m-%Y')}-{end.strftime('%d-%m-%Y')}.xlsx"
                 path = os.path.join(MEDIA_ROOT, 'reports/eco', filename)
                 workbook = xlsxwriter.Workbook(path)
@@ -558,6 +652,8 @@ def eco_fee(request):
                     i += 1
 
                 workbook.close()
+
+                # Формирование контекста
                 newform = CalendarDate({'start_date': start, 'end_date': end})
                 context = {
                     'form': newform,
@@ -568,35 +664,41 @@ def eco_fee(request):
                     'total': by_tnved['total'],
                     'expanded': by_tnved['expanded'],
                 }
-
                 return render(request, 'main/ecological_fee.html', context)
 
+        # В случае неправильного заполнения формы
         form = CalendarDate()
         context = {
             'form': form,
-            # 'message': 'Некорректный диапазон. Попробуйте ещё раз.',
         }
         messages.error(request, 'Что-то пошло не так. Проверьте правильность заполнения формы')
         return render(request, 'main/ecological_fee.html', context)
 
 
-# Вывод xml-файла выбранной ГТД
 @login_required
 def show_gtd_file(request, filename):
+    """
+    Представление для вывода xml-файла выбранной ГТД
+    """
     get_path = os.path.join(MEDIA_ROOT, str(filename))
     return HttpResponse(open(get_path, 'r', encoding='utf-8'), content_type='application/xml')
 
 
-# Представление для генерации xml-файла
 @login_required
 @roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела'])
 def to_wms(request, pk):
+    """
+    Представление для генерации xml по ГТД для WMS
+    """
     gtd = GtdMain.objects.filter(pk=pk)[0]
     if request.method == 'POST':
         form = ExportComment(request.POST)
         if form.is_valid():
             comment = form.cleaned_data.get('comment', '')
+
+            # Вызов функции генерации, реализованной в модели
             gtd.export_to_wms(comment, request.user)
+
             messages.success(request, 'XML-файл успешно сгенерирован')
             return redirect('main:per_gtd', pk=pk)
         else:
@@ -616,15 +718,18 @@ def to_wms(request, pk):
         return render(request, 'main/wms.html', context)
 
 
-# Формирование файла для ERP
 @login_required
 @roles_required(allowed_roles=['Администратор', 'Бухгалтер'])
 def to_erp(request, pk):
+    """
+    Представление для формирования xml-файла по ГТД для ERP
+    """
     gtd = GtdMain.objects.filter(pk=pk)[0]
     if request.method == 'POST':
         form = ExportComment(request.POST)
         if form.is_valid():
             comment = request.POST.get('comment', '')
+            # Вызов функции для генерации xml, реализованной в модели
             gtd.export_to_erp(comment, request.user)
             messages.success(request, 'XML-файл успешно сгенерирован')
             return redirect('main:per_gtd', pk=pk)
@@ -638,6 +743,7 @@ def to_erp(request, pk):
             return render(request, 'main/wms.html', context)
     else:
         user = request.user
+        # Нет доступа к форме если не заполнены ФИО
         if not user.last_name or not user.first_name or not user.patronymic:
             messages.error(request, 'Необходимо заполнить ФИО')
             return redirect('main:profile')
@@ -650,24 +756,31 @@ def to_erp(request, pk):
         return render(request, 'main/erp.html', context)
 
 
-# Меню отчетов
-# @login_required
 @method_decorator(roles_required(allowed_roles=['Администратор', 'Аналитик']), name='dispatch')
 class StatisticsMenu(LoginRequiredMixin, TemplateView):
+    """
+    Представление для вывода страницы выбора статистических отчетов
+    """
     template_name = 'main/statistic_reports_menu.html'
 
 
-# Отчет - ГТД по поставщикам
 @login_required
 @roles_required(allowed_roles=['Администратор', 'Аналитик'])
 def statistics_report_gtd_per_exporter(request):
+    """
+    Представление для формирования отчёта "ГТД по поставщикам":
+    получение массива ГТД и вывод таблицы поставщики - число ГТД
+    """
     if request.method == 'POST':
         form = CalendarDate(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            start = cd['start_date']  # datetime.strptime(cd['start_date'], "%Y-%m-%d")
-            end = cd['end_date']  # datetime.strptime(cd['end_date'], "%Y-%m-%d")
+            start = cd['start_date']
+            end = cd['end_date']
+            # Формирование диапазона
             gtds_range = GtdMain.objects.filter(date__range=[start, end])
+
+            # Формирование непосредственно списка
             exporters = {}
             for gtd in gtds_range:
                 exp = gtd.exporter.name
@@ -677,6 +790,8 @@ def statistics_report_gtd_per_exporter(request):
                     exporters[exp] = 1
             exporters = list(exporters.items())
             exporters.sort(key=lambda x: x[0])
+
+            # Создание xlsx файла отчета
             filename = f"gtds_per_exporter {request.user.pk} {start.strftime('%d-%m-%Y')}-{end.strftime('%d-%m-%Y')}.xlsx"
             path = os.path.join(MEDIA_ROOT, 'reports/statistics', filename)
             workbook = xlsxwriter.Workbook(path)
@@ -699,6 +814,7 @@ def statistics_report_gtd_per_exporter(request):
             }
             return render(request, 'main/statistics_report_gtd_per_exporter.html', context)
         else:
+            # Возвращение к форме при неправильном заполнении диапазона дат
             form = CalendarDate()
             context = {
                 'form': form,
@@ -706,6 +822,7 @@ def statistics_report_gtd_per_exporter(request):
             messages.error(request, 'Что-то пошло не так, проверьте правильность заполнения формы')
             return render(request, 'main/statistics_report_gtd_per_exporter.html', context)
     else:
+        # GET
         form = CalendarDate()
         context = {
             'form': form,
@@ -716,16 +833,22 @@ def statistics_report_gtd_per_exporter(request):
 @login_required
 @roles_required(allowed_roles=['Администратор', 'Аналитик'])
 def statistics_report_goods_imported(request):
+    """
+    Представление для создания отчета по ввезенному оборудованию:
+    выборка товаров и их количества за определенный период
+    """
     if request.method == 'POST':
         form = CalendarDate(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
+
             start = cd['start_date']  # datetime.strptime(cd['start_date'], "%Y-%m-%d")
             end = cd['end_date']  # datetime.strptime(cd['end_date'], "%Y-%m-%d")
-
+            # Формирование диапазона
             gtds = GtdMain.objects.filter(date__range=[start, end])
             goods = GtdGood.objects.filter(gtd__in=gtds)
 
+            # Формирование списка товаров
             unique_goods = {}
             for good in goods:
                 marking = good.good.marking
@@ -735,6 +858,7 @@ def statistics_report_goods_imported(request):
                     unique_goods[marking] = [good.good.name, good.quantity]
             unique_goods = sorted(list(unique_goods.items()), key=lambda x: x[0])
 
+            # Создание xlsx файла отчёта
             filename = f"goods_imported {request.user.pk} {start.strftime('%d-%m-%Y')}-{end.strftime('%d-%m-%Y')}.xlsx"
             path = os.path.join(MEDIA_ROOT, 'reports/statistics', filename)
             workbook = xlsxwriter.Workbook(path)
@@ -759,12 +883,14 @@ def statistics_report_goods_imported(request):
             }
             return render(request, 'main/statistics_report_goods_imported.html', context)
         else:
+            # Сообщение об ошибке при неправильном диапазоне
             context = {
                 'form': CalendarDate(),
             }
             messages.error(request, 'Что-то пошло не так, убедитесь в правильности заполнения формы')
             return render(request, 'main/statistics_report_goods_imported.html', context)
     else:
+        # GET
         form = CalendarDate()
         context = {
             'form': form,
@@ -772,10 +898,12 @@ def statistics_report_goods_imported(request):
         return render(request, 'main/statistics_report_goods_imported.html', context)
 
 
-# Файл xlsx отчета
 @login_required
 @roles_required(allowed_roles=['Администратор', 'Аналитик', 'Бухгалтер'])
 def report_xlsx(request, folder, filename):
+    """
+    Представление для получения xlsx файла отчета
+    """
     if 'eco' in folder and request.user.role.name == 'Аналитик' or 'statistics' in folder and request.user.role.name == 'Бухгалтер':
         return redirect('main:access_denied')
     filepath = os.path.join(MEDIA_ROOT, 'reports/', folder, filename)
@@ -789,6 +917,9 @@ def report_xlsx(request, folder, filename):
 @login_required
 @roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела'])
 def handbook_xlsx(request, filename):
+    """
+    Представление для получение xlsx файла справочника
+    """
     filepath = os.path.join(MEDIA_ROOT, 'handbooks/', filename)
     path = open(filepath, 'rb')
     mime_type, _ = mimetypes.guess_type(filepath)
@@ -797,40 +928,80 @@ def handbook_xlsx(request, filename):
     return response
 
 
-# class HandbookCreateView(CreateView):
-class BaseHandbookMixin:  # TODO: пагинатор.
+class BaseHandbookMixin:
+    """
+    Собственный миксин для работы со справочниками
+    """
     handbook_context_name = None
     handbook_properties = None
     handbook_model = None
     handbook_russian_name = None
     handbook_fields = None
 
+    # Служебный словарь со всеми справочниками системы.
+    # Нужен для динамического определения данных справочника (достаточно хорошо масштабируется) без создания большого количества страниц и контроллеров (view)
+    # Ключ - параметр url, Значение кортеж из Модели этого справочника, Названия справочника для пользователей, Формы
+    available_handbooks = {
+        'customs_houses': (CustomsHouse, 'Отделы таможни', CustomsHouseHandbookCreateUpdateForm),
+        'exporters': (Exporter, 'Экспортеры', ExporterHandbookCreateUpdateForm),
+        'importers': (Importer, 'Импортеры', ImporterHandbookCreateUpdateForm),
+        'countries': (Country, 'Государства', CountryHandbookCreateUpdateForm),
+        'currencies': (Currency, 'Валюты', CurrencyHandbookCreateUpdateForm),
+        'deal_types': (DealType, 'Классификатор характера сделки', DealTypeHandbookCreateUpdateForm),
+        'tn_ved': (TnVed, 'Классификатор ТН ВЭД', TnVedHandbookCreateUpdateForm),
+        'procedures': (Procedure, 'Таможенные процедуры', ProcedureHandbookCreateUpdateForm),
+        'goods': (Good, 'Товары', GoodHandbookCreateUpdateForm),
+        'trade_marks': (TradeMark, 'Товарные знаки', TradeMarkHandbookCreateUpdateForm),
+        'goods_marks': (GoodsMark, 'Торговые марки', GoodsMarkHandbookCreateUpdateForm),
+        'manufacturers': (Manufacturer, 'Производители (заводы)', ManufacturerHandbookCreateUpdateForm),
+        'qualifiers': (MeasureQualifier, 'Единицы измерения', MeasureQualifierHandbookCreateUpdateForm),
+        'doc_types': (DocumentType, 'Классификатор типов документов', DocumentTypeHandbookCreateUpdateForm),
+    }
+
     def get_handbook_context_name(self):
+        """
+        Получение английского названия справочника-ключа словаря из ссылки
+        """
         if not self.handbook_context_name:
             self.handbook_context_name = self.kwargs.get('handbook')
         return self.handbook_context_name
 
     def get_handbook_properties(self):
+        """
+        Получение данных из словаря available_handbooks
+        """
         if not self.handbook_properties:
-            self.handbook_properties = avaliable_handbooks[self.get_handbook_context_name()]
+            self.handbook_properties = self.available_handbooks[self.get_handbook_context_name()]
         return self.handbook_properties
 
     def get_handbook_model(self):
+        """
+        Получение модели справочника
+        """
         if not self.handbook_model:
             self.handbook_model = self.get_handbook_properties()[0]
         return self.handbook_model
 
     def get_handbook_russian_name(self):
+        """
+        Получение русского названия справочника
+        """
         if not self.handbook_russian_name:
             self.handbook_russian_name = self.get_handbook_properties()[1]
         return self.handbook_russian_name
 
     def get_handbook_fields(self):
+        """
+        Получение полей модели справочника
+        """
         if not self.handbook_fields:
             self.handbook_fields = self.get_handbook_model()._meta.get_fields()  # [1:]
         return self.handbook_fields
 
     def handbook_needs_renovation(self):
+        """
+        Справочник требует обновления, данные в нём изменены
+        """
         handbook_db = get_object_or_404(Handbook, name=self.get_handbook_russian_name())
         handbook_db.is_actual_table = False
         handbook_db.save()
@@ -839,26 +1010,43 @@ class BaseHandbookMixin:  # TODO: пагинатор.
 @method_decorator(login_required, name='dispatch')
 @method_decorator(roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class HandbookCreateView(BaseHandbookMixin, SuccessMessageMixin, CreateView):
+    """
+    Представление для создания записи в справочнике
+    """
     template_name = 'main/create_handbook_entry.html'
     success_message = 'Запись успешно добавлена'
 
     def get_form_class(self):
+        """
+        Получение формы, через которую будет осуществляться добавление
+        """
         if not self.form_class:
-            self.form_class = avaliable_handbooks[self.get_handbook_context_name()][2]
+            self.form_class = self.available_handbooks[self.get_handbook_context_name()][2]
         return self.form_class
 
     def get_context_data(self, **kwargs):
+        """
+        Формирование контекста шаблона
+        """
         context = super(HandbookCreateView, self).get_context_data(**kwargs)
         context['handbook'] = self.get_handbook_context_name()
         context['handbook_name'] = self.get_handbook_russian_name()
         return context
 
     def get_success_url(self):
+        """
+        Получение ссылки для автоматического возвращения к справочнику
+        после успешного добавления записи
+        """
         if not self.success_url:
             self.success_url = reverse('main:handbook', kwargs={'handbook': self.get_handbook_context_name()})
         return self.success_url
 
     def post(self, request, *args, **kwargs):
+        """
+        Вызов функции, которая отмечает справочник как не актуальный
+        (требующий переформирования данных и генерации нового файла)
+        """
         self.handbook_needs_renovation()
         return super(HandbookCreateView, self).post(request, *args, **kwargs)
 
@@ -866,88 +1054,119 @@ class HandbookCreateView(BaseHandbookMixin, SuccessMessageMixin, CreateView):
 @method_decorator(login_required, name='dispatch')
 @method_decorator(roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class HandbookUpdateView(BaseHandbookMixin, SuccessMessageMixin, UpdateView):
+    """
+    Представление для редактирования записи справочника
+    """
     template_name = 'main/update_handbook_entry.html'
     success_message = 'Запись успешно обновлена'
 
     def get_queryset(self):
-        model = avaliable_handbooks[self.get_handbook_context_name()][0]
+        """
+        Получение данных, которые надо отредактировать
+        """
+        model = self.available_handbooks[self.get_handbook_context_name()][0]
         return model.objects.filter(pk=self.kwargs.get('pk'))
 
     def get_form_class(self):
+        """
+        Получение класса формы, через которуб будет осуществляться редактирование
+        """
         if not self.form_class:
-            self.form_class = avaliable_handbooks[self.get_handbook_context_name()][2]
+            self.form_class = self.available_handbooks[self.get_handbook_context_name()][2]
         return self.form_class
 
     def get_context_data(self, **kwargs):
+        """
+        Формирование контекста шаблона
+        """
         context = super(HandbookUpdateView, self).get_context_data(**kwargs)
         context['handbook'] = self.get_handbook_context_name()
         context['handbook_name'] = self.get_handbook_russian_name()
         return context
 
     def get_success_url(self):
+        """
+        Получение ссылки для автоматического перенаправления к справочнику после успешного редактирования
+        """
         if not self.success_url:
             self.success_url = reverse('main:handbook', kwargs={'handbook': self.get_handbook_context_name()})
         return self.success_url
 
     def form_valid(self, form):
+        """
+        Вызов функции, отмечающей справочник как неактуальный
+        (требующий очередной генерации файла)
+        """
         self.handbook_needs_renovation()
         return super(HandbookUpdateView, self).form_valid(form)
-
-    def post(self, request, *args, **kwargs):
-        self.handbook_needs_renovation()
-        return super(HandbookUpdateView, self).post(request, *args, **kwargs)
 
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(roles_required(allowed_roles=['Администратор', 'Сотрудник таможенного отдела']), name='dispatch')
 class HandbookDeleteView(BaseHandbookMixin, SuccessMessageMixin, DeleteView):
+    """
+    Представление для удаления записи справочника
+    """
     template_name = 'main/delete_handbook_entry.html'
     success_message = 'Запись успешно удалена'
 
     def get_context_data(self, **kwargs):
+        """
+        Формирование контекста шаблона
+        """
         context = super(HandbookDeleteView, self).get_context_data(**kwargs)
         context['handbook'] = self.get_handbook_context_name()
         context['handbook_name'] = self.get_handbook_russian_name()
         return context
 
     def get_queryset(self):
+        """
+        Получение объекта, который необходимо удалить
+        """
         model = self.get_handbook_model()
         return model.objects.filter(pk=self.kwargs.get('pk'))
 
     def get_success_url(self):
+        """
+        Получение ссылки для автоматического перенаправления к справочнику после успешного удаления
+        """
         if not self.success_url:
             self.success_url = reverse('main:handbook', kwargs={'handbook': self.get_handbook_context_name()})
         return self.success_url
 
     def post(self, request, *args, **kwargs):
+        """
+        Вызов функции, отмечающей справочник как неактуальный
+        (требующий очередной генерации файла с актуальными данными)
+        """
         self.handbook_needs_renovation()
         return super(HandbookDeleteView, self).post(request, *args, **kwargs)
 
 
 @method_decorator(login_required, name='dispatch')
 class HandbookListView(BaseHandbookMixin, ListView):
+    """
+    Представление для списка записей определенного справочника
+    """
     filename = None
     cut_queryset = None
     template_name = 'main/handbook.html'
     kw = None
 
     def get_context_data(self, *, object_list=None, **kwargs):
+        """
+        Формирование контекста шаблона
+        """
         user = self.request.user
         filename = self.get_filename()
         condition = user.role and user.role.name in ['Администратор', 'Сотрудник таможенного отдела']  # user.groups.filter(name__in=['Администратор', 'Сотрудник таможенного отдела']).exists()
         self.check_xlsx()
 
+        # Получение массива данных и пагинация
         not_paginated = self.get_query(self.get_kw())
-        paginate_by = self.request.GET.get('paginate_by', 150)
-        page = self.request.GET.get('page', 1)
-        paginator = Paginator(not_paginated, paginate_by)
-        try:
-            data = paginator.page(page)
-        except PageNotAnInteger:
-            data = paginator.page(1)
-        except EmptyPage:
-            data = paginator.page(paginator.num_pages)
+        data, paginate_by = paginate_func(not_paginated, self.request, 150)
 
+        # Формирование самого контекста
         context = {
             'search_form': HandbookSearchForm(initial={'key': self.get_kw(), 'paginate_by': paginate_by}),
             'fields': self.get_handbook_fields(),
@@ -963,12 +1182,18 @@ class HandbookListView(BaseHandbookMixin, ListView):
         return context
 
     def get_kw(self):
+        """
+        Получение ключевого слова для поиска
+        """
         if not self.kw:
             kw = str(self.request.GET.get('key', '')).lower()
             self.kw = kw
         return self.kw
 
     def get_query(self, kw):
+        """
+        Получение массива данных ещё без пагинации
+        """
         if not self.queryset:
             raw_queryset = self.get_handbook_model().objects.all()
             fields = self.get_handbook_fields()
@@ -987,12 +1212,17 @@ class HandbookListView(BaseHandbookMixin, ListView):
                     queryset.append(row)
             self.queryset = queryset
         return self.queryset
-        # return super(HandbookListView, self).get_queryset()
 
     def get_queryset(self):
+        """
+        Переопределение обязательного в данном случае метода по получению массива данных без пагинации
+        """
         return self.get_query(self.get_kw())
 
     def get_cut_queryset(self):
+        """
+        Получение "срезанных" данных - та же таблица, но без первичных ключей
+        """
         if not self.cut_queryset:
             raw_queryset = self.get_handbook_model().objects.all()
             fields = self.get_handbook_fields()[1:]
@@ -1006,11 +1236,17 @@ class HandbookListView(BaseHandbookMixin, ListView):
         return self.cut_queryset
 
     def get_filename(self):
+        """
+        Получение имени файла с записями справочника
+        """
         if not self.filename:
             self.filename = f"{ self.get_handbook_russian_name() }.xlsx"
         return self.filename
 
     def check_xlsx(self):
+        """
+        Проверка xlsx файла, если он не актуален или отсутствует, он генерируется заново
+        """
         filepath = os.path.join(MEDIA_ROOT, 'handbooks/', self.get_filename())
         handbook_db_obj = get_object_or_404(Handbook, name=self.get_handbook_russian_name())
         if not os.path.exists(filepath) or not handbook_db_obj.is_actual_table:
@@ -1024,23 +1260,26 @@ class HandbookListView(BaseHandbookMixin, ListView):
             handbook_db_obj.save()
 
 
-# Загрузка файлов ГТД в формате .xml
 @login_required
 @roles_required(allowed_roles=['Сотрудник таможенного отдела', 'Администратор'])
 def upload_gtd(request):
+    """
+    Представление для загрузки xml документа ГТД и его обработки
+    """
     if request.method == 'POST':
         form = UploadGtdfilesForm(request.POST, request.FILES)
-        # print('Проверка валидности')
+
         if form.is_valid():
-            print('мы тут')
+            # Получение данных из формы для определения действий при появлении дубликатов
             on_duplicate = request.POST['on_duplicate']
 
-            uploaded_gtd = UploadGtd(
-                description=request.POST['comment']
-            )
+            # Создание записи в базе о поступлении ГТД
+            uploaded_gtd = UploadGtd(description=request.POST['comment'])
             uploaded_gtd.save()
+
             files = request.FILES.getlist('document')
             file_objects = []
+            # Создание записей о конкретных файлах
             for file in files:
                 uploaded_gtd_file = UploadGtdFile(
                     uploaded_gtd=uploaded_gtd,
@@ -1057,26 +1296,31 @@ def upload_gtd(request):
                 'skip': [],
                 'new': [],
                 'update': [],
+                'rejected': []
             }
+            # Проходимся по каждому файлу
             for gtd in file_objects:
-
                 last_file = gtd.document
 
                 path = os.path.join(MEDIA_ROOT, str(last_file))
-                # Получили словарь с распарсенной гтд
-                get_gtdmain, get_gtdgroups = parse_gtd(path)
+                # Получаем словарь с распарсенной гтд
+                try:
+                    get_gtdmain, get_gtdgroups = parse_gtd(path)
+                except (UnicodeDecodeError, EOFError):
+                    log['rejected'].append(str(last_file))
+                    continue
                 # Сначала проверим, надо ли вообще добавлять ГТД, если таковая имеется.
                 obj = GtdMain.objects.filter(gtdId=get_gtdmain['gtdId'])
                 if obj.exists():
                     if on_duplicate == 'skip':
-                        log['skip'].append(obj[0]) #get_gtdmain['gtdId'])
+                        log['skip'].append(obj[0])
                         continue
+
+                # where_to_put - переменна для добавления в нужный отдел словаря log
                     else:
                         where_to_put = 'update'
-                        # log[where_to_put].append(get_gtdmain['gtdId'])
                 else:
                     where_to_put = 'new'
-                    # Работа с GtdMain - основная инфа в шапке ГТД
 
                 # Обновим справочник экспортеров если требуется
                 exporter_info = get_gtdmain["exporter"]
@@ -1131,10 +1375,9 @@ def upload_gtd(request):
                     add_gtdmain.gtd_file = gtd
                     add_gtdmain.last_edited = request.user
                     add_gtdmain.save()
-                log[where_to_put].append(add_gtdmain)  # get_gtdmain['gtdId'])
+                log[where_to_put].append(add_gtdmain)
 
                 # Теперь в цикле надо пройтись по группам ГТД.
-                # gtd_id = GtdMain.objects.get(gtdId=get_gtdmain["gtdId"])
                 for group in get_gtdgroups:
                     # Заносим группу, если такой ещё не было
                     # Проверяем ТН ВЭД
@@ -1143,9 +1386,6 @@ def upload_gtd(request):
                         code = code[1:]
                     tn_ved = TnVed.objects.filter(code=code)
 
-                    # add_tnved, tnved_created = TnVed.objects.update_or_create(
-                    #     code=group["tn_ved"]
-                    # )
                     if len(tn_ved) == 0:
                         code = group["tn_ved"]
                         met = False
@@ -1172,7 +1412,6 @@ def upload_gtd(request):
                     add_gtdgroup, gtdgroup_created = GtdGroup.objects.update_or_create(
                         gtd=add_gtdmain,
                         name=group['name'],
-                        # description=group['desc'],
                         tn_ved=TnVed.objects.filter(code=str(group['tn_ved']))[0],
                         number=group["number"],
                         gross_weight=group['gross_weight'],
@@ -1211,12 +1450,6 @@ def upload_gtd(request):
                             add_goodsmark = None
 
                         # Обновляем таблицу товаров
-                        # add_good, good_created = Good.objects.update_or_create(
-                        #     marking=good_itself['marking'],
-                        #     name=good_itself['name'],
-                        #     trademark=add_trademark,
-                        #     goodsmark=add_goodsmark
-                        # )
                         add_good = Good.objects.filter(marking=good_itself['marking'])
                         if not add_good.exists():
                             add_good = Good.objects.create(
@@ -1271,25 +1504,23 @@ def upload_gtd(request):
             skipped = len(log['skip'])
             updated = len(log['update'])
             new = len(log['new'])
+            rejected = len(log['rejected'])
             context = {
                 'log': log,
                 'skipped': skipped,
                 'updated': updated,
                 'new': new,
                 'all': skipped + updated + new,
-                # 'test': get_goods,
+                'rejected': rejected
             }
             return render(request, 'main/upload_gtd_log.html', context)
         else:
+            # Если ошибка с расширением обнаружилась сразу, перенаправление на страницу с формой
             context = {'form': UploadGtdfilesForm()}
             messages.error(request, 'Файлы должны иметь расширение xml')
             return render(request, 'main/upload_gtd.html', context)
-        # else:
-        #     return render(request, 'main/error.html')
-
     else:
+        # GET
         form = UploadGtdfilesForm()
         context = {'form': form}
         return render(request, 'main/upload_gtd.html', context)
-
-# TODO: сброс пароля
