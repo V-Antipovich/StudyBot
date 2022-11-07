@@ -9,14 +9,14 @@ from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
-from django.views.generic.list import ListView, BaseListView
-from django.views.generic.detail import DetailView, SingleObjectMixin
+from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormMixin
-from django.http import FileResponse, HttpResponse, HttpResponseRedirect
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from .forms import UploadGtdfilesForm, GtdUpdateForm, GtdGoodCreateUpdateForm, \
-    CalendarDate, ExportComment, ChangeUserInfoForm, RegisterUserForm, PaginateForm, GtdGroupCreateUpdateForm, \
+    CalendarDate, ExportComment, ChangeUserInfoForm, RegisterUserForm, GtdGroupCreateUpdateForm, \
     CustomsHouseHandbookCreateUpdateForm, ExporterHandbookCreateUpdateForm, ImporterHandbookCreateUpdateForm, \
     CountryHandbookCreateUpdateForm, \
     CurrencyHandbookCreateUpdateForm, DealTypeHandbookCreateUpdateForm, TnVedHandbookCreateUpdateForm, \
@@ -326,8 +326,9 @@ class GtdGroupCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         Заполняет оставшееся поле и позволяет сохранить новый объект
         """
         new_group = form.save(commit=False)
-        gtd = self.get_gtd() #get_object_or_404(GtdMain, pk=self.kwargs.get('pk'))
+        gtd = self.get_gtd()
         new_group.gtd = gtd
+        new_group.last_edited_user = self.request.user
         return super(GtdGroupCreateView, self).form_valid(form)
 
     def get_success_url(self):
@@ -377,6 +378,7 @@ class GtdGoodCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):  #
         new_good = form.save(commit=False)
         new_good.gtd = group.gtd
         new_good.group = group
+        new_good.last_edited_user = self.request.user
         return super(GtdGoodCreateView, self).form_valid(form)
 
     def get_success_url(self):
@@ -406,6 +408,11 @@ class GtdGroupUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     def get_success_url(self):
         return reverse('main:per_gtd', kwargs={'pk': self.object.gtd.pk})
 
+    def form_valid(self, form):
+        this_group = form.save(commit=False)
+        this_group.last_edited_user = self.request.user
+        return super(GtdGroupUpdateView, self).form_valid(form)
+
     def post(self, request, *args, **kwargs):
         obj = self.get_object()
         obj.gtd.new_version()
@@ -422,6 +429,11 @@ class GtdGoodUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
     def get_success_url(self):
         return reverse('main:per_gtd', kwargs={'pk': self.object.gtd.pk}) + f'?group={ self.object.group.pk }'
+
+    def form_valid(self, form):
+        this_good = form.save(commit=False)
+        this_good.last_edited_user = self.request.user
+        return super(GtdGoodUpdateView, self).form_valid(form)
 
     def post(self, request, *args, **kwargs):
         obj = self.get_object()

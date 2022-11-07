@@ -1,103 +1,99 @@
 import time
 
 from django import forms
-from django.contrib.auth import password_validation, get_user_model, authenticate
-from django.core.exceptions import ValidationError
+from django.contrib.auth import password_validation
 from django.core.validators import FileExtensionValidator
 
-from .models import UploadGtd, RegUser, GtdMain, Exporter, Importer, CustomsHouse, GtdGood, GtdGroup, TnVed, Country, \
+from .models import RegUser, GtdMain, Exporter, Importer, CustomsHouse, GtdGood, GtdGroup, TnVed, Country,\
     Procedure, Good, MeasureQualifier, Manufacturer, Currency, DealType, TradeMark, GoodsMark, DocumentType, Role
 from .apps import user_registered
 
 
-value_cannot_be_negative = 'Это значение не может быть отрицательным'
-
-
-# Валидатор дат
-def validate_date_range(start, end):
-    start = time.strptime(start, '%d-%m-%Y')
-    end = time.strptime(end, '%d-%m-%Y')
-    if start >= end:
-        raise ValidationError('Вы не можете выбрать такой диапазон дат')
-
-
-class PaginateForm(forms.Form):
-    paginate_by = forms.ChoiceField(help_text='По сколько записей располагать на странице', choices=(
-        (10, '10'),
-        (50, '50'),
-        (100, '100'),
-        (200, '200'),
-    ))
-
-
-# TODO: Отдельная форма для админов, где можно редачить и роль
-# Редактирование данных пользователя
 class ChangeUserInfoForm(forms.ModelForm):
+    """
+    Форма редактирования данных пользователя
+    """
     email = forms.EmailField(required=True, label='Адрес электронной почты')
     first_name = forms.CharField(min_length=4, label='Имя')
     last_name = forms.CharField(min_length=3, label='Фамилия'),
     patronymic = forms.CharField(min_length=5, label='Отчество')
 
     class Meta:
+        """
+        Метакласс, определяющий модель, записи которой обрабатываются формой,
+        а также поля, которые будут присутствовать в форме
+        """
         model = RegUser
         fields = ('username', 'email', 'first_name', 'last_name', 'patronymic')
 
 
-# Форма регистрации пользователя
 class RegisterUserForm(forms.ModelForm):
+    """
+    Форма регистрации пользователя администратором
+    """
     email = forms.EmailField(required=True, label='Адрес электронной почты')
     password = forms.CharField(label='Пароль', widget=forms.PasswordInput,
                                help_text=password_validation.password_validators_help_text_html())
     role = forms.ModelChoiceField(queryset=Role.objects.all(), label='Роль')
 
     class Meta:
+        """
+        Метакласс, определяющий модель, записи которой создаются/редактируются формой, и поля формы
+        """
         model = RegUser
         fields = ('username', 'email', 'password', 'first_name', 'last_name', 'patronymic', 'role')
 
     def clean_password(self):
+        """
+        Очистка и проверка пароля
+        """
         psw = self.cleaned_data['password']
         if psw:
             password_validation.validate_password(psw)
         return psw
 
     def save(self, commit=True):
+        """
+        Переопределение метода сохранения с отправкой сигнала для формирования письма
+        """
         user = super().save(commit=False)
-        # cd = self.cleaned_data
-        # roles = self.cleaned_data['role']
-        # print(roles)
-        # for role in roles:
-            # user.role.add
         psw = self.cleaned_data['password']
         user.set_password(psw)
         user.is_active = False
         user.is_activated = False
         if commit:
             user.save()
-        # for role in roles:
-        #     user.roles.add(role)
-        # user.save()
-        user_registered.send(RegisterUserForm, instance=user, password=psw)  # Сигнал отсылать письмо
+        # Сигнал отсылать письмо
+        user_registered.send(RegisterUserForm, instance=user, password=psw)
         return user
 
 
-# Форма для xml-файлов ГТД
 class UploadGtdfilesForm(forms.Form):
+    """
+    Форма для загрузки xml- файлов
+    """
     comment = forms.CharField(max_length=255, required=False, label='Комментарий (если требуется)')
     document = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}),
                                validators=[FileExtensionValidator(['xml'])], label='Документы в формате .xml')
     on_duplicate = forms.ChoiceField(choices=(('skip', 'Пропускать'), ('update', 'Обновлять')),
                                      label='Если среди загружаемых ГТД встретятся '
-                                               'объекты с номерами, уже присутствующими в базе:')
+                                           'объекты с номерами, уже присутствующими в базе:')
 
 
-# Форма редактирования шапки ГТД
 class GtdUpdateForm(forms.ModelForm):
+    """
+    Форма редактирования основной информации ГТД (в шапке)
+    """
     customs_house = forms.ModelChoiceField(queryset=CustomsHouse.objects.order_by('house_name'), empty_label=None)
     exporter = forms.ModelChoiceField(queryset=Exporter.objects.order_by('name'), empty_label=None)
     importer = forms.ModelChoiceField(queryset=Importer.objects.order_by('name'), empty_label=None)
     deal_type = forms.ModelChoiceField(queryset=DealType.objects.order_by('code'), empty_label=None)
 
     class Meta:
+        """
+        Метакласс, определяющий модель, записи которой создаются/редактируются формой,
+        список полей формы и подписи к полям
+        """
         model = GtdMain
         fields = ('customs_house', 'total_goods_number', 'exporter',
                   'importer', 'trading_country', 'currency', 'total_invoice_amount', 'currency_rate',
@@ -112,15 +108,19 @@ class GtdUpdateForm(forms.ModelForm):
         }
 
 
-# Форма редактирования групп ГТД
 class GtdGroupCreateUpdateForm(forms.ModelForm):
+    """
+    Форма для редактирования групп (разделов) ГТД
+    """
     tn_ved = forms.ModelChoiceField(queryset=TnVed.objects.order_by('code'), label='ТН ВЭД', empty_label=None)
     number = forms.IntegerField(min_value=1, label='Номер товарной группы')
     gross_weight = forms.FloatField(min_value=0, label='Масса брутто')
     net_weight = forms.FloatField(min_value=0, label='Масса нетто')
     country = forms.ModelChoiceField(queryset=Country.objects.all(), label='Страна', empty_label=None)
-    procedure = forms.ModelChoiceField(queryset=Procedure.objects.all(), label='Заявляемая таможенная процедура', empty_label=None)
-    prev_procedure = forms.ModelChoiceField(queryset=Procedure.objects.all(), label='Предыдущая таможенная процедура', empty_label=None)
+    procedure = forms.ModelChoiceField(queryset=Procedure.objects.all(), empty_label=None,
+                                       label='Заявляемая таможенная процедура')
+    prev_procedure = forms.ModelChoiceField(queryset=Procedure.objects.all(), empty_label=None,
+                                            label='Предыдущая таможенная процедура')
     customs_cost = forms.FloatField(min_value=0, label='Таможенная стоимость')
     fee = forms.FloatField(min_value=0, label='Сумма пошлины')
     fee_percent = forms.FloatField(min_value=0, label='Процентная ставка пошлины')
@@ -128,12 +128,18 @@ class GtdGroupCreateUpdateForm(forms.ModelForm):
     ndc_percent = forms.FloatField(min_value=0, label='Процент НДС')
 
     class Meta:
+        """
+        Метакласс, определяющий модель, записи которой создаются/редактируются формой, и поля этой модели,
+        не входящие в форму
+        """
         model = GtdGroup
         exclude = ('gtd', 'last_edited_user',)
 
 
-# Форма для редактирования товаров ГТД
 class GtdGoodCreateUpdateForm(forms.ModelForm):
+    """
+    Форма для редактирования товаров из определенной ГТД
+    """
     good = forms.ModelChoiceField(queryset=Good.objects.all(), label='Товар', empty_label=None)
     good_num = forms.IntegerField(min_value=1, label='Номер товара в группе')
     quantity = forms.FloatField(min_value=0, label='Количество')
@@ -141,12 +147,18 @@ class GtdGoodCreateUpdateForm(forms.ModelForm):
     manufacturer = forms.ModelChoiceField(queryset=Manufacturer.objects.all(), label='Производитель (завод)', empty_label=None)
 
     class Meta:
+        """
+        Метакласс, определяющий модель, записи которой добавляются/редактируются формой,
+        и поля модели, не входящие в форму
+        """
         model = GtdGood
         exclude = ('gtd', 'group', 'last_edited_user',)
 
 
-# Форма для подготовки к формированию xml для WMS
 class ExportComment(forms.Form):
+    """
+    Форма опционального комментария перед формированием xml файла
+    """
     comment = forms.CharField(widget=forms.Textarea(attrs={'rows': 1, 'cols': 50}), required=False,
                               label='Добавьте комментарий/описание, если требуется')
 
