@@ -1,5 +1,5 @@
 {% extends 'layout/base.html' %}
-{% load static %}
+
 {% load bootstrap5 %}
 
 {% block title %}Редактировать товар{% endblock %}
@@ -51,9 +51,7 @@
     </h3>
     <form method="post">
         {% csrf_token %}
-{#        {{ form.as_p }}#}
         {% bootstrap_form form %}
-{#        <input type="submit" value="Сохранить">#}
         {% buttons submit='Ок' %}{% endbuttons %}
     </form>
 {% endblock %}

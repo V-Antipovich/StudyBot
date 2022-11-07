@@ -1,3 +1,4 @@
+// Функция поиска данных по ключевому слову в табличке
 function tableSearch(){
     var phrase = document.getElementById('search-text');
     var table = document.getElementById('sortable_searchable');

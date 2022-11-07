@@ -1,6 +1,9 @@
 {% extends 'layout/base.html' %}
+
 {% load bootstrap5 %}
+
 {% block title %}Редактировать пользователя{% endblock %}
+
 {% block content %}
     <form method="post">
         {% csrf_token %}

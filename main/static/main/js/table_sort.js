@@ -1,3 +1,4 @@
+// Функция для сортировки по колонкам
 document.addEventListener('DOMContentLoaded',
     function (){
     const table = document.getElementById('sortable_searchable');
@@ -9,6 +10,7 @@ document.addEventListener('DOMContentLoaded',
     const directions = Array.from(headers).map(function (header) {
         return '';
         });
+
     // Преобразование содержимого
     const transform = function (index, content) {
         const type = headers[index].getAttribute('data-type');

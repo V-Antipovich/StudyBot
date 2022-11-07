@@ -1,13 +1,14 @@
 {% extends 'layout/base.html' %}
+
 {% load bootstrap5 %}
+
 {% block title %}Загрузить ГТД{% endblock %}
+
 {% block content %}
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-{#        {{ form.as_p  }}#}
         {% bootstrap_form form layout='horizontal' %}
         {% buttons submit='Загрузить' %}{% endbuttons %}
-{#        <button type="submit">Загрузить</button>#}
     </form>
-{#    <p><a href="{% url 'main:index' %}">*Временно* на "главную"</a> </p>#}
+
 {% endblock %}

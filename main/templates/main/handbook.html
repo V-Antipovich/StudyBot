@@ -46,7 +46,6 @@
     <table id="sortable_searchable">
         <thead>
             <tr>
-{#                <th>ID check</th>#}
                 {% for field in fields|cut_id %}
                     <th>{{ field.verbose_name }}</th>
                 {% endfor %}
@@ -59,10 +58,6 @@
         <tbody>
             {% for row in data %}
                 <tr>
-                        {# {% for field in fields %} #}
-            {#            <td>{{ obj|get_attr:field }}</td> #}
-    {#                    {% endfor %}#}
-                    {#          <td>{{ row.0 }}</td>#}
                     {% for item in row|cut_id %}
                         <td>{{ item }}</td>
                     {% endfor %}
@@ -87,21 +82,6 @@
             {% endfor %}
         </tbody>
     </table>
-{#    {% if data.has_other_pages %}#}
-{#        <nav class="pagination-lg">#}
-{#            <ul>#}
-{#                {% for p in paginator.page_range %}#}
-{#                    {% if data.number == p %}#}
-{#                        <li class="page-item">{{ p }}</li>#}
-{#                    {% elif p >= data.number|add:-3 and p <= data.number|add:3 %}#}
-{#                        <li class="page-item">#}
-{#                            <a href="?page={{ p }}">{{ p }}</a>#}
-{#                        </li>#}
-{#                    {% endif %}#}
-{#                {% endfor %}#}
-{#            </ul>#}
-{#        </nav>#}
-{#    {% endif %}#}
     {% if data.has_other_pages %}
         <nav>
             <ul class="pagination justify-content-center">
