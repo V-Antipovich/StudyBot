@@ -1162,7 +1162,6 @@ def upload_gtd(request):
                             recycling_standart=rec_standart,
                             collection_rate=col_rate,
                         )
-                        # add_tnved.subposition = get_tnved_name(str(group["tn_ved"]))
                         add_tnved.save()
                     add_gtdgroup, gtdgroup_created = GtdGroup.objects.update_or_create(
                         gtd=add_gtdmain,

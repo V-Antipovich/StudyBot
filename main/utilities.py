@@ -156,9 +156,7 @@ def parse_gtd(filename):
         # Номер товарной группы
         group_number = raw_group.find("GoodsNumeric").text
         name_n_desc = raw_group.find_all('GoodsDescription')
-        # group_name = name_n_desc[0].text
         group_name = ''.join([block.text for block in name_n_desc[:2]])
-        # group_description = name_n_desc[1].text
         # Подсубпозиция товара (код ТН ВЭД)
         TN_VED = str(int(raw_group.find('GoodsTNVEDCode').text))
 
@@ -181,8 +179,8 @@ def parse_gtd(filename):
         # Код предыдущей таможенной процедуры
         prev_type_code = raw_group.find('PrecedingCustomsModeCode').text
 
-        # Особенность таможенной процедуры
-        transfer_feature_code = raw_group.find('GoodsTransferFeature').text
+        # # Особенность таможенной процедуры
+        # transfer_feature_code = raw_group.find('GoodsTransferFeature').text
 
         # Таможенная стоимость (база для начисления пошлин)
         customs_cost = raw_group.find('CustomsCost').text
@@ -219,9 +217,6 @@ def parse_gtd(filename):
             doc_number = raw_doc.find('PrDocumentNumber')
             if doc_number:
                 doc_number = doc_number.text
-
-            # Номер признака представления
-            present_code_num = raw_doc.find('DocPresentKindCode').text
 
             # Дата
             doc_date = raw_doc.find('PrDocumentDate')
@@ -266,6 +261,7 @@ def parse_gtd(filename):
                 good_name = good_name[1:]
 
             raw_good_infos = raw_good.find_all('GoodsGroupInformation')
+
             # Номер товара в группе
             good_group_num = raw_good.find('GroupNum').text
             for raw_good_info in raw_good_infos:
@@ -316,7 +312,6 @@ def parse_gtd(filename):
 
         gtd_group = {
             'name': group_name,
-            # 'desc': group_description,
             'tn_ved': TN_VED,
             'number': group_number,
             'gross_weight': gross_weight,
@@ -333,7 +328,6 @@ def parse_gtd(filename):
             'goods': gtd_goods,
         }
         gtd_groups.append(gtd_group)
-    # print(gtd_main, gtd_groups, sep='\n')
     return gtd_main, gtd_groups
 
 
@@ -343,7 +337,6 @@ def get_tnved_name(code):
     response = requests.get(url)
     soup = Bs(response.text, 'html.parser')
     name = soup.find('ul', {'class': 'tnved'})
-    # TODO:
     if name:
         final_name = name.find('li').text[len(code)+5:]
     else:
