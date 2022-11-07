@@ -1,39 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="passed some tests">
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="made front files code look more nice">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/main/js/activeTabPane.js" beforeDir="false" afterPath="$PROJECT_DIR$/main/static/main/js/activeTabPane.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/main/js/expand_tables.js" beforeDir="false" afterPath="$PROJECT_DIR$/main/static/main/js/expand_tables.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/main/js/table_search.js" beforeDir="false" afterPath="$PROJECT_DIR$/main/static/main/js/table_search.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/main/js/table_sort.js" beforeDir="false" afterPath="$PROJECT_DIR$/main/static/main/js/table_sort.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/create_gtd_group.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/create_gtd_group.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/create_handbook_entry.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/create_handbook_entry.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/delete_gtd_good.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/delete_gtd_good.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/delete_gtd_group.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/delete_gtd_group.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/delete_handbook_entry.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/delete_handbook_entry.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/delete_user.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/delete_user.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/ecological_fee.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/ecological_fee.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/erp.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/erp.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/handbook.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/handbook.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/per_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/per_gtd.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/profile.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/register_user.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/register_user.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/show_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/show_gtd.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/statistic_reports_menu.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/statistic_reports_menu.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/statistics_report_goods_imported.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/statistics_report_goods_imported.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/statistics_report_gtd_per_exporter.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/statistics_report_gtd_per_exporter.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/successful_outcome.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/successful_outcome.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/update_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/update_gtd.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/update_gtd_good.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/update_gtd_good.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/update_gtd_group.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/update_gtd_group.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/update_handbook_entry.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/update_handbook_entry.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/update_user.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/update_user.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/upload_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/upload_gtd.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/upload_gtd_log.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/upload_gtd_log.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/users_list.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/users_list.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templatetags/filtertags.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/templatetags/filtertags.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/apps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/layout/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/layout/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/tests/test_models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/tests/test_models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/tests/test_views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/tests/test_views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/utilities.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -280,14 +256,7 @@
       <workItem from="1667582233991" duration="34749000" />
       <workItem from="1667647402293" duration="14362000" />
       <workItem from="1667712334655" duration="17332000" />
-      <workItem from="1667730238840" duration="52041000" />
-    </task>
-    <task id="LOCAL-00058" summary="modified handbooks: filtering, sorting, downloading, edited urls; new model for handbooks">
-      <created>1667480909162</created>
-      <option name="number" value="00058" />
-      <option name="presentableId" value="LOCAL-00058" />
-      <option name="project" value="LOCAL" />
-      <updated>1667480909162</updated>
+      <workItem from="1667730238840" duration="52672000" />
     </task>
     <task id="LOCAL-00059" summary="added gtdgroup detete with recounting the total summ feature">
       <created>1667486470497</created>
@@ -625,7 +594,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667816233056</updated>
     </task>
-    <option name="localTasksCounter" value="107" />
+    <task id="LOCAL-00107" summary="made front files code look more nice">
+      <created>1667818240400</created>
+      <option name="number" value="00107" />
+      <option name="presentableId" value="LOCAL-00107" />
+      <option name="project" value="LOCAL" />
+      <updated>1667818240400</updated>
+    </task>
+    <option name="localTasksCounter" value="108" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -654,7 +630,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="small styling update handbook view" />
     <MESSAGE value="united Create and Update of handbook entries" />
     <MESSAGE value="splited create and update; added deleteview for handbooks" />
     <MESSAGE value="added decorators and messages mixins" />
@@ -679,7 +654,8 @@
     <MESSAGE value="validate file extention in view" />
     <MESSAGE value="first attempts to test the project" />
     <MESSAGE value="passed some tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="passed some tests" />
+    <MESSAGE value="made front files code look more nice" />
+    <option name="LAST_COMMIT_MESSAGE" value="made front files code look more nice" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_EnterTest_test_get_login_page.coverage" NAME="Test: main.tests.test_views.EnterTest.test_get_login_page Coverage Results" MODIFIED="1667806746891" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />

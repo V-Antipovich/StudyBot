@@ -59,12 +59,14 @@ class ShowGtdListViewTest(TestCase):
                                 ogrn='328495823432')
         Exporter.objects.create(name='Tesla', postal_code='92334284', city='California', street_house='5th Avenue, 45',
                                 country=Country.objects.filter(russian_name='США')[0])
-        Exporter.objects.create(name='ЭЭЭ "Наше место"', postal_code='32424234', city='jsnfksdfa', street_house='aerfarf',
+        Exporter.objects.create(name='ЭЭЭ "Наше место"', postal_code='32424234', city='jsnfksdfa',
+                                street_house='aerfarf',
                                 country=Country.objects.filter(russian_name='США')[0])
         Exporter.objects.create(name='ААА "Паук на руке"', postal_code='32424234', city='jsnfksdfa',
                                 street_house='aerfarf',
                                 country=Country.objects.filter(russian_name='США')[0])
-        GtdMain.objects.create(gtdId='11111111/111121/1111111',
+        GtdMain.objects.create(
+            gtdId='11111111/111121/1111111',
             date=datetime.datetime(2011, 11, 11),
             order_num='1111111',
             total_goods_number=2,
@@ -75,8 +77,8 @@ class ShowGtdListViewTest(TestCase):
             currency=Currency.objects.get(short_name='USD'),
             total_invoice_amount=32432421,
             currency_rate=34.432,
-            deal_type=DealType.objects.get(code='010')
-        )
+            deal_type=DealType.objects.get(code='010'))
+
         GtdMain.objects.create(
             gtdId='22222222/131121/2222222',
             date=datetime.datetime(2011, 11, 13),

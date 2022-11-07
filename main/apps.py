@@ -13,6 +13,10 @@ user_registered = Signal(['instance'])
 
 # Обработчик сигнала
 def user_registered_dispatcher(sender, **kwargs):
+    """
+    Обработчик сигнала о регистрации пользователя,
+    вызывающий функцию отправки письма
+    """
     send_activation_email(kwargs['instance'], kwargs['password'])
 
 

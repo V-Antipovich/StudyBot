@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import RegUser, CustomsHouse, Country, Currency, DealType, TnVed, Procedure, GtdMain, Exporter, Importer, GtdGroup, GtdGood, Good, TradeMark, GoodsMark, Manufacturer, GtdDocument, Document, UploadGtd, DocumentType, UploadGtdFile, MeasureQualifier
+from .models import RegUser, CustomsHouse, Country, Currency, DealType, TnVed, Procedure, GtdMain, Exporter, Importer,\
+    GtdGroup, GtdGood, Good, TradeMark, GoodsMark, Manufacturer, GtdDocument, Document, UploadGtd, DocumentType,\
+    UploadGtdFile, MeasureQualifier
 # Register your models here.
 
 

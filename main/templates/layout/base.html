@@ -7,12 +7,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
     <title>{% block title %}{% endblock %} - База таможенных деклараций</title>
-{#    <link rel="stylesheet" type="text/css" href="{% static 'main/css/style.css' %}">#}
     {% bootstrap_css %}
     {% bootstrap_javascript %}
     {% block extra_links %}{% endblock %}
 </head>
-<body class="container-fluid "> {# justify-content-center #}
+<body class="container-fluid ">
     <header class="mb-4">
         <h3 class="display-5 text-center">База таможенных деклараций</h3>
     </header>
@@ -63,15 +62,12 @@
                         <li><a class="dropdown-item" href="{% url 'main:handbook' handbook='exporters' %}">Экспортёры</a> </li>
                     </ul>
 
-        {#            <a class="btn btn-outline-primary" type="button" id="settings" href="#">Настройки</a>#}
-
                     <button class="btn btn-outline-primary dropdown-toggle" type="button"
                             id="profile-dropdown" data-bs-toggle="dropdown">
                         Профиль
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="profile-dropdown">
                         <li><a class="dropdown-item" href="{% url 'main:profile' %}">Мои данные</a> </li>
-        {#                <li><a class="dropdown-item" href="#">Изменить пароль</a></li>#}
                         {% if user|has_role:"Администратор" %}
                             <li><a class="dropdown-item" href="{% url 'main:register' %}">Добавить пользователя</a></li>
                             <li><a class="dropdown-item" href="{% url 'main:users' %}">Пользователи</a> </li>
@@ -83,7 +79,6 @@
                 {% else %}
                     <a class="btn btn-outline-primary" id="login" href={% url 'main:login' %}>Вход</a>
                 {% endif %}
-{#            </div>#}
         </div>
     </div>
 
