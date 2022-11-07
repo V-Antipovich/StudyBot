@@ -1,4 +1,5 @@
-from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordResetView,\
+    PasswordResetConfirmView, PasswordResetCompleteView, PasswordResetDoneView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
@@ -163,6 +164,34 @@ def user_activate(request, sign):
         user.is_activated = True
         user.save()
     return render(request, template)
+
+
+class CDDPasswordResetView(PasswordResetView):
+    """Представление для сброса пароля"""
+    template_name = 'main/password_reset_view.html'
+    email_template_name = 'email/'
+
+
+class CDDPasswordResetDoneView(PasswordResetDoneView):
+    """
+    Представление для уведомления о письме с ссылкой для сброса пароля
+    """
+    template_name = 'main/password_reset_done.html'
+
+
+class CDDPasswordResetConfirmView(PasswordResetConfirmView):
+    """
+    Представление для установления нового пароля
+    """
+    template_name = 'main/password_reset_confirm.html'
+    success_url = reverse_lazy('main:password_reset_complete')
+
+
+class CDDPasswordResetCompleteView(PasswordResetCompleteView):
+    """
+    Представление завершения операции сброса пароля
+    """
+    template_name = 'main/password_reset_complete.html'
 
 
 @login_required
@@ -372,7 +401,6 @@ class GtdGroupCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         """
         context = super(GtdGroupCreateView, self).get_context_data(**kwargs)
         context['gtd'] = get_object_or_404(GtdMain, pk=self.kwargs.get('pk'))
-
         return context
 
     def post(self, request, *args, **kwargs):

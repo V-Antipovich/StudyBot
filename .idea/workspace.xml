@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="finished writing documentation for forms, fixed a tiny issue because of form editing">
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="writed most of documentation for views.py">
+      <change afterPath="$PROJECT_DIR$/main/templates/email/password_reset_email" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/templates/main/password_reset_complete.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/templates/main/password_reset_confirm.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/templates/main/password_reset_done.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/templates/main/password_reset_view.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/customs_declarations_database/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/customs_declarations_database/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/handbook.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/handbook.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/upload_gtd_log.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/upload_gtd_log.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -253,14 +255,7 @@
       <workItem from="1667582233991" duration="34749000" />
       <workItem from="1667647402293" duration="14362000" />
       <workItem from="1667712334655" duration="17332000" />
-      <workItem from="1667730238840" duration="67468000" />
-    </task>
-    <task id="LOCAL-00065" summary="nav chain in gtd groups updating">
-      <created>1667556569850</created>
-      <option name="number" value="00065" />
-      <option name="presentableId" value="LOCAL-00065" />
-      <option name="project" value="LOCAL" />
-      <updated>1667556569850</updated>
+      <workItem from="1667730238840" duration="69172000" />
     </task>
     <task id="LOCAL-00066" summary="gtd good editing + nav chain">
       <created>1667558819399</created>
@@ -598,7 +593,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667826820099</updated>
     </task>
-    <option name="localTasksCounter" value="114" />
+    <task id="LOCAL-00114" summary="writed most of documentation for views.py">
+      <created>1667834802925</created>
+      <option name="number" value="00114" />
+      <option name="presentableId" value="LOCAL-00114" />
+      <option name="project" value="LOCAL" />
+      <updated>1667834802925</updated>
+    </task>
+    <option name="localTasksCounter" value="115" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -627,7 +629,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="bad pagination to handbooks" />
     <MESSAGE value="bearable paginator" />
     <MESSAGE value="made ok-paginator for handbook" />
     <MESSAGE value="made some small design changes" />
@@ -652,7 +653,8 @@
     <MESSAGE value="reviewed comments in utilities" />
     <MESSAGE value="adding documentation to forms and added small features to group and good  updating - remembering last user hwo edited it" />
     <MESSAGE value="finished writing documentation for forms, fixed a tiny issue because of form editing" />
-    <option name="LAST_COMMIT_MESSAGE" value="finished writing documentation for forms, fixed a tiny issue because of form editing" />
+    <MESSAGE value="writed most of documentation for views.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="writed most of documentation for views.py" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_EnterTest_test_get_login_page.coverage" NAME="Test: main.tests.test_views.EnterTest.test_get_login_page Coverage Results" MODIFIED="1667806746891" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
