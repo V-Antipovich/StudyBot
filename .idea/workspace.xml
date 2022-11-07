@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="finished with password reset">
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="made one of final commits">
+      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/customs_declarations_database.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/customs_declarations_database.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/customs_declarations_database/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/customs_declarations_database/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/static/main/css/report_tables.css" beforeDir="false" afterPath="$PROJECT_DIR$/main/static/main/css/report_tables.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/ecological_fee.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/ecological_fee.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/password_reset_email" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/upload_gtd.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/upload_gtd.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/users_list.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/users_list.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -249,14 +258,7 @@
       <workItem from="1667582233991" duration="34749000" />
       <workItem from="1667647402293" duration="14362000" />
       <workItem from="1667712334655" duration="17332000" />
-      <workItem from="1667730238840" duration="70325000" />
-    </task>
-    <task id="LOCAL-00068" summary="made view for adding new gtd good">
-      <created>1667568430911</created>
-      <option name="number" value="00068" />
-      <option name="presentableId" value="LOCAL-00068" />
-      <option name="project" value="LOCAL" />
-      <updated>1667568430911</updated>
+      <workItem from="1667730238840" duration="74474000" />
     </task>
     <task id="LOCAL-00069" summary="added view for creating gtd groups">
       <created>1667570430408</created>
@@ -594,7 +596,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667837360672</updated>
     </task>
-    <option name="localTasksCounter" value="117" />
+    <task id="LOCAL-00117" summary="made one of final commits">
+      <created>1667837665331</created>
+      <option name="number" value="00117" />
+      <option name="presentableId" value="LOCAL-00117" />
+      <option name="project" value="LOCAL" />
+      <updated>1667837665331</updated>
+    </task>
+    <option name="localTasksCounter" value="118" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -623,7 +632,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="made some small design changes" />
     <MESSAGE value="added minor changes" />
     <MESSAGE value="made two first tests" />
     <MESSAGE value="fixed some things before global changes" />
@@ -648,7 +656,8 @@
     <MESSAGE value="writed most of documentation for views.py" />
     <MESSAGE value="made password reset CBVs" />
     <MESSAGE value="finished with password reset" />
-    <option name="LAST_COMMIT_MESSAGE" value="finished with password reset" />
+    <MESSAGE value="made one of final commits" />
+    <option name="LAST_COMMIT_MESSAGE" value="made one of final commits" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_EnterTest_test_get_login_page.coverage" NAME="Test: main.tests.test_views.EnterTest.test_get_login_page Coverage Results" MODIFIED="1667806746891" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />

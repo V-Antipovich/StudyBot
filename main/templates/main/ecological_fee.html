@@ -13,10 +13,7 @@
 {% endblock %}
 
 {% block content %}
-    <h3>Отчёт по экологическому сбору{% if show %}: {{ start|date:"d.m.Y" }} - {{ end|date:"d.m.Y" }}{% endif %}</h3>
-    {% if message %}
-        <div class="error_message">{{ message }}</div>
-    {% endif %}
+    <h3 style="margin-left: -69%">Отчёт по экологическому сбору{% if show %}: {{ start|date:"d.m.Y" }} - {{ end|date:"d.m.Y" }}{% endif %}</h3>
     <div class="col-3">
         <form method="post">
             {% csrf_token %}

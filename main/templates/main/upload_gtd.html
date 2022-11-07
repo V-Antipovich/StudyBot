@@ -5,6 +5,7 @@
 {% block title %}Загрузить ГТД{% endblock %}
 
 {% block content %}
+    <h2>Загрузить xml-файлы ГТД</h2>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {% bootstrap_form form layout='horizontal' %}

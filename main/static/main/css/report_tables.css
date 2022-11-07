@@ -38,8 +38,7 @@ td, th {
     display: none;
 }
 h3 {
-    text-align: center;
-    align-items: center;
+    text-align: left;
 }
 
 div .error_message {
