@@ -7,8 +7,6 @@ import xml.etree.ElementTree as ET
 from customs_declarations_database.settings import USER_DIR
 
 
-# Роли реализованы в виде групп (уже существующей структуры)
-
 class RegUser(AbstractUser):
     """
     Модель пользователя. Добавлены поля подтверждения активаци, почта, отчество и роль
@@ -35,7 +33,6 @@ class Role(models.Model):
         return self.name
 
 
-# Главная инфа гтд (1 на весь документ)
 class GtdMain(models.Model):
     """
     Модель шапки (основной информации) ГТД. В качестве полей модель содержит самые главные поля шапки
@@ -89,7 +86,6 @@ class GtdMain(models.Model):
         self.total_invoice_amount = self.total_cost / self.currency_rate
         self.total_goods_number = groups.count()
         self.save()
-
 
     def export_to_erp(self, comment, user):
         """
@@ -253,7 +249,6 @@ class GtdMain(models.Model):
         self.exported_to_erp = False
         self.exported_to_wms = False
         self.recount()
-        # self.save()
 
     def __str__(self):
         """
@@ -262,7 +257,6 @@ class GtdMain(models.Model):
         return self.gtdId
 
 
-# Отделы таможни - Справочник
 class CustomsHouse(models.Model):
     """
     Модель таможенных отделов
@@ -272,18 +266,22 @@ class CustomsHouse(models.Model):
     house_name = models.CharField(max_length=255, verbose_name='Название отдела')
 
     class Meta:
+        """
+        Метакласс, задающий отображение названия модели для пользователей
+        """
         verbose_name = 'Таможенный отдел'
         verbose_name_plural = 'Таможенные отделы'
 
     def __str__(self):
+        """
+        Строковое представление объекта модели - название отдела
+        """
         return self.house_name
 
 
-# Экспортеры - Справочник
 class Exporter(models.Model):
     """
-    Модель экспортера, содержащая стандартную главную информацию
-    о компаниях, экспортирующие свои товары в Россию
+    Модель экспортера
     """
     name = models.CharField(max_length=255, verbose_name='Название компании')
     postal_code = models.CharField(max_length=20, verbose_name='Почтовый индекс', null=True, blank=True)
@@ -296,16 +294,26 @@ class Exporter(models.Model):
     region = models.CharField(max_length=100, verbose_name='Регион', null=True, blank=True)
 
     class Meta:
+        """
+        Метакласс, задающий название модели для человека
+        и поля, которые должны быть уникальными, взятые вместе
+        """
         verbose_name = 'Экспортер'
         verbose_name_plural = 'Экспортеры'
         unique_together = ('name', 'postal_code', 'city', 'street_house')
 
     def __str__(self):
+        """
+        Строковое представление - название компании
+        """
         return self.name
 
 
 # Импортеры - Справочник
 class Importer(models.Model):
+    """
+    Модель импортеров
+    """
     name = models.CharField(max_length=255, verbose_name='Название компании', unique=True)
     postal_code = models.CharField(max_length=20, verbose_name='Почтовый индекс', null=True, blank=True)
     country = models.ForeignKey('Country', on_delete=models.SET_NULL,
@@ -319,35 +327,55 @@ class Importer(models.Model):
     kpp = models.CharField(max_length=20, verbose_name='КПП', null=True, blank=True)
 
     class Meta:
+        """
+        Метакласс, определяющий человеческое название модели
+        и уникальные взятые вместе поля
+        """
         verbose_name = 'Импортер'
         verbose_name_plural = 'Импортеры'
         unique_together = ('name', 'postal_code',)
 
     def __str__(self):
+        """
+        Строковое представление - название компании
+        """
         return self.name
 
 
-# Государства - Справочник
 class Country(models.Model):
+    """
+    Модель страны
+    """
     code = models.CharField(max_length=2, verbose_name='Код страны')
     russian_name = models.CharField(max_length=150, verbose_name='Название страны на русском')
     english_name = models.CharField(max_length=150, verbose_name='Название страны на английском')
 
     class Meta:
+        """
+        Метакласс, определяющий название модели для пользователя
+        """
         verbose_name = 'Страна'
         verbose_name_plural = 'Страны'
 
     def __str__(self):
+        """
+        Строковое представление - название страны
+        """
         return self.russian_name
 
 
-# Валюты - Справочник
 class Currency(models.Model):
+    """
+    Модель валюты
+    """
     digital_code = models.CharField(max_length=3, verbose_name='Цифровой код', null=True, blank=True)
     short_name = models.CharField(max_length=3, verbose_name='Обозначение')
     name = models.CharField(max_length=100, verbose_name='Название')
 
     class Meta:
+        """
+        Метакласс, задающий название модели для пользователя
+        """
         verbose_name = 'Валюта'
         verbose_name_plural = 'Валюты'
 
