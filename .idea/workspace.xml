@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="writed most of documentation for views.py">
-      <change afterPath="$PROJECT_DIR$/main/templates/email/password_reset_email" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/templates/main/password_reset_complete.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/templates/main/password_reset_confirm.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/templates/main/password_reset_done.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/templates/main/password_reset_view.html" afterDir="false" />
+    <list default="true" id="e9bdebb9-399f-4e6f-9c81-c490aa8d2b7c" name="Changes" comment="made password reset CBVs">
+      <change afterPath="$PROJECT_DIR$/main/templates/main/password_reset_email.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/email/password_reset_email" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/password_reset_email" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/password_reset_view.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/password_reset_form.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -66,9 +66,9 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Programming\Python\Django\customs_declarations_database\main\templates\main" />
       <recent name="D:\Programming\Python\Django\customs_declarations_database\templates" />
       <recent name="D:\Programming\Python\Django\customs_declarations_database\static" />
-      <recent name="D:\Programming\Python\Django\customs_declarations_database\main\templates\main" />
       <recent name="D:\Programming\Python\Django\customs_declarations_database\OLD_APPLICATIONS" />
       <recent name="D:\Programming\Python\Django\customs_declarations_database" />
     </key>
@@ -255,14 +255,7 @@
       <workItem from="1667582233991" duration="34749000" />
       <workItem from="1667647402293" duration="14362000" />
       <workItem from="1667712334655" duration="17332000" />
-      <workItem from="1667730238840" duration="69172000" />
-    </task>
-    <task id="LOCAL-00066" summary="gtd good editing + nav chain">
-      <created>1667558819399</created>
-      <option name="number" value="00066" />
-      <option name="presentableId" value="LOCAL-00066" />
-      <option name="project" value="LOCAL" />
-      <updated>1667558819399</updated>
+      <workItem from="1667730238840" duration="70034000" />
     </task>
     <task id="LOCAL-00067" summary="added warnings to nav chains in templates of editing gtd groups and gtd goods">
       <created>1667560649187</created>
@@ -600,7 +593,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667834802925</updated>
     </task>
-    <option name="localTasksCounter" value="115" />
+    <task id="LOCAL-00115" summary="made password reset CBVs">
+      <created>1667836495166</created>
+      <option name="number" value="00115" />
+      <option name="presentableId" value="LOCAL-00115" />
+      <option name="project" value="LOCAL" />
+      <updated>1667836495166</updated>
+    </task>
+    <option name="localTasksCounter" value="116" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -629,7 +629,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="bearable paginator" />
     <MESSAGE value="made ok-paginator for handbook" />
     <MESSAGE value="made some small design changes" />
     <MESSAGE value="added minor changes" />
@@ -654,7 +653,8 @@
     <MESSAGE value="adding documentation to forms and added small features to group and good  updating - remembering last user hwo edited it" />
     <MESSAGE value="finished writing documentation for forms, fixed a tiny issue because of form editing" />
     <MESSAGE value="writed most of documentation for views.py" />
-    <option name="LAST_COMMIT_MESSAGE" value="writed most of documentation for views.py" />
+    <MESSAGE value="made password reset CBVs" />
+    <option name="LAST_COMMIT_MESSAGE" value="made password reset CBVs" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/customs_declarations_database$Test__main_tests_test_views_EnterTest_test_get_login_page.coverage" NAME="Test: main.tests.test_views.EnterTest.test_get_login_page Coverage Results" MODIFIED="1667806746891" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />

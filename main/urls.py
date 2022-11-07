@@ -5,7 +5,8 @@ from .views import upload_gtd, show_gtd_file, CDDLogin, CDDLogout, GtdGoodDelete
     statistics_report_gtd_per_exporter, statistics_report_goods_imported, report_xlsx, ChangeUserInfoView,\
     RegUserPasswordChangeView, RegisterUserView, RegisterDoneView, user_activate, show_gtd_list, HandbookDeleteView,\
     GtdGroupUpdateView, GtdGoodUpdateView, GtdGoodCreateView, GtdGroupCreateView, HandbookListView, HandbookCreateView,\
-    UserUpdateView, UserDeleteView
+    UserUpdateView, UserDeleteView, CDDPasswordResetView, CDDPasswordResetDoneView, CDDPasswordResetCompleteView,\
+    CDDPasswordResetConfirmView
 
 
 app_name = 'main'
@@ -16,6 +17,11 @@ urlpatterns = [
     path('handbook/<str:handbook>/create', HandbookCreateView.as_view(), name='create_handbook_entry'),
     path('handbook/<str:handbook>/update/<int:pk>', HandbookUpdateView.as_view(), name='update_handbook'),
     path('handbook/<str:handbook>/', HandbookListView.as_view(), name='handbook'),
+    path('accounts/password/reset/done', CDDPasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('accounts/password/reset/confirm/<uidb64>/<token>/', CDDPasswordResetConfirmView.as_view(),
+         name='password_reset_confirm'),
+    path('accounts/password/reset/complete', CDDPasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    path('accounts/password/reset/', CDDPasswordResetView.as_view(), name='password_reset'),
     path('accounts/register/activate/<str:sign>/', user_activate, name='register_activate'),
     path('accounts/register/done/', RegisterDoneView.as_view(), name='register_done'),
     path('accounts/register/', RegisterUserView.as_view(), name='register'),

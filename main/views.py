@@ -168,8 +168,9 @@ def user_activate(request, sign):
 
 class CDDPasswordResetView(PasswordResetView):
     """Представление для сброса пароля"""
-    template_name = 'main/password_reset_view.html'
-    email_template_name = 'email/'
+    template_name = 'main/password_reset_form.html'
+    email_template_name = 'main/password_reset_email.html'
+    success_url = reverse_lazy('main:password_reset_done')
 
 
 class CDDPasswordResetDoneView(PasswordResetDoneView):

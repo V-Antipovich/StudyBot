@@ -14,6 +14,7 @@
             {% bootstrap_form form layout='horizontal' %}
             <input type="hidden" name="next" value="{{ next }}">
             {% buttons submit='Войти' %}{% endbuttons %}
+            <a href="{% url 'main:password_reset' %}">Забыли пароль?</a>
         </form>
     {% endif %}
 {% endblock %}
